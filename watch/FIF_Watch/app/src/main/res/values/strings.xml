@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">FIF_Watch</string>
+    <!--
+    This string is used for square devices and overridden by hello_world in
+    values-round/strings.xml for round devices.
+    -->
+    <string name="profile_img_desc">프로필 이미지</string>
+    <string name="not_select_recipe">진행 중인 요리가 없습니다</string>
+    <string name="btn_recipe_desc">레시피 버튼</string>
+    <string name="btn_shopping_list_desc">쇼핑 리스트 버튼</string>
+    <string name="btn_timer_desc">타이머 버튼</string>
+    <string name="shopping_list">쇼핑 리스트</string>
+</resources>

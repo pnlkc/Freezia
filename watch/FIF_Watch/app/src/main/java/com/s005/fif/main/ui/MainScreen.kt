@@ -35,15 +35,24 @@ import com.s005.fif.utils.ScreenSize.toSpSize
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
+    navigateToShoppingList: () -> Unit,
+    navigateToRecipe: () -> Unit,
+    navigateToTimerList: () -> Unit
 ) {
     MainBody(
-        modifier = modifier
+        modifier = modifier,
+        navigateToShoppingList = navigateToShoppingList,
+        navigateToRecipe = navigateToRecipe,
+        navigateToTimerList = navigateToTimerList
     )
 }
 
 @Composable
 fun MainBody(
     modifier: Modifier = Modifier,
+    navigateToShoppingList: () -> Unit,
+    navigateToRecipe: () -> Unit,
+    navigateToTimerList: () -> Unit
 ) {
     val btnSize = ScreenSize.screenHeightDp.toDpSize(22)
     val btnBottomPadding = ScreenSize.screenHeightDp.toDpSize(10)
@@ -57,7 +66,10 @@ fun MainBody(
         btnSize = btnSize,
         btnBottomPadding = btnBottomPadding,
         btnSpaceBy = btnSpaceBy,
-        isRecipeSelected = isRecipeSelected
+        isRecipeSelected = isRecipeSelected,
+        navigateToShoppingList = navigateToShoppingList,
+        navigateToRecipe = navigateToRecipe,
+        navigateToTimerList = navigateToTimerList
     )
 }
 
@@ -67,7 +79,10 @@ fun MainBody(
     btnSize: Dp,
     btnBottomPadding: Dp,
     btnSpaceBy: Dp,
-    isRecipeSelected: Boolean
+    isRecipeSelected: Boolean,
+    navigateToShoppingList: () -> Unit,
+    navigateToRecipe: () -> Unit,
+    navigateToTimerList: () -> Unit
 ) {
     Box(
         modifier = modifier
@@ -89,7 +104,7 @@ fun MainBody(
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 fontSize = if (isRecipeSelected) ScreenSize.screenHeightDp.toSpSize(10) else ScreenSize.screenHeightDp.toSpSize(8),
-                color = MaterialTheme.colors.onBackground,
+                color = Color.White,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -107,7 +122,7 @@ fun MainBody(
                 modifier = Modifier
                     .padding(bottom = btnBottomPadding)
                     .size(btnSize),
-                onClick = { /*TODO*/ },
+                onClick = { navigateToRecipe() },
                 enabled = isRecipeSelected
             ) {
                 Icon(
@@ -124,7 +139,7 @@ fun MainBody(
             Button(
                 modifier = Modifier
                     .size(btnSize),
-                onClick = { /*TODO*/ }
+                onClick = { navigateToShoppingList() }
             ) {
                 Icon(
                     modifier = Modifier
@@ -140,7 +155,7 @@ fun MainBody(
                 modifier = Modifier
                     .padding(bottom = btnBottomPadding)
                     .size(btnSize),
-                onClick = { /*TODO*/ },
+                onClick = { navigateToTimerList() },
                 enabled = isRecipeSelected
             ) {
                 Icon(
@@ -173,7 +188,7 @@ fun ProfileColumn(
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             fontSize = ScreenSize.screenHeightDp.toSpSize(7.5f),
-            color = MaterialTheme.colors.onBackground,
+            color = Color.White,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
@@ -199,20 +214,5 @@ fun ProfileImage(
             contentDescription = stringResource(id = R.string.profile_img_desc),
             tint = Color.White
         )
-    }
-}
-
-@Preview
-@Composable
-fun MainPreview() {
-    FIF_WatchTheme {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colors.background),
-            contentAlignment = Alignment.Center
-        ) {
-            MainScreen()
-        }
     }
 }

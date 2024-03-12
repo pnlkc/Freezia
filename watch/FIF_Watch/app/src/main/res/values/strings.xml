@@ -10,4 +10,15 @@
     <string name="btn_shopping_list_desc">쇼핑 리스트 버튼</string>
     <string name="btn_timer_desc">타이머 버튼</string>
     <string name="shopping_list">쇼핑 리스트</string>
+    <string name="cook_time_text">요리 시간 %1$d분</string>
+    <string name="use_timer">타이머 사용하기</string>
+    <string name="btn_recipe_step_back">레시피 뒤로 가기 버튼</string>
+    <string name="btn_recipe_step_forward">레시피 앞으로 가기 버튼</string>
+    <string name="btn_recipe_step_tts">레시피 TTS 버튼</string>
+    <string name="recipe_done_message">냉장고 패널에서 요리를\n더 자세히 기록해보세요!</string>
+    <string name="recipe_done">요리 완료하기</string>
+    <string name="record_panel">패널에서 기록할래요</string>
+    <string name="warning_text">%1$s는 %2$s에\n좋지 않습니다</string>
+    <string name="timer_list">타이머 목록</string>
+    <string name="timer_list_to_detail_icon">타이머 세부 화면 이동 아이콘</string>
 </resources>

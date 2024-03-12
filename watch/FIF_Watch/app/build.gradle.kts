@@ -98,6 +98,9 @@ dependencies {
 
     // Glide-Compose - 이미지 처리 라이브러리
     implementation(libs.glide.compose)
+
+    // drawablepainter - 이미지 변환 라이브러리
+    implementation(libs.drawable.painter)
 }
 
 kapt {

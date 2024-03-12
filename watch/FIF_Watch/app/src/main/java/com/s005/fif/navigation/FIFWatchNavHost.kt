@@ -4,10 +4,20 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
-import com.s005.fif.navigation.NavigationDestination.Main
-import com.s005.fif.navigation.NavigationDestination.ShoppingList
 import com.s005.fif.main.ui.MainScreen
+import com.s005.fif.navigation.NavigationDestination.Main
+import com.s005.fif.navigation.NavigationDestination.Recipe
+import com.s005.fif.navigation.NavigationDestination.RecipeDetail
+import com.s005.fif.navigation.NavigationDestination.ShoppingList
+import com.s005.fif.navigation.NavigationDestination.Warning
+import com.s005.fif.navigation.NavigationDestination.TimerList
+import com.s005.fif.navigation.NavigationDestination.TimerDetail
+import com.s005.fif.recipe.ui.RecipeDetailScreen
+import com.s005.fif.recipe.ui.RecipeScreen
 import com.s005.fif.shopping_list.ui.ShoppingListScreen
+import com.s005.fif.timer.ui.TimerDetailScreen
+import com.s005.fif.timer.ui.TimerListScreen
+import com.s005.fif.warning.ui.WarningScreen
 
 @Composable
 fun FIFWatchNavHost(
@@ -15,16 +25,72 @@ fun FIFWatchNavHost(
 ) {
     SwipeDismissableNavHost(
         navController = navController,
-        startDestination = Main.route
+        startDestination = Main.route,
     ) {
         composable(route = Main.route) {
             MainScreen(
+                navigateToShoppingList = {
+                    navController.navigate(route = ShoppingList.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToRecipe = {
+                    navController.navigate(route = Recipe.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToTimerList = {
+                    navController.navigate(route = TimerList.route) {
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        composable(
+            route = ShoppingList.route
+        ) {
+            ShoppingListScreen(
 
             )
         }
 
-        composable(route = ShoppingList.route) {
-            ShoppingListScreen(
+        composable(route = Recipe.route) {
+            RecipeScreen(
+                navigateToRecipeDetail = {
+                    navController.navigate(route = RecipeDetail.route) {
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        composable(route = RecipeDetail.route) {
+            RecipeDetailScreen(
+                navigateToMain = {
+                    navController.popBackStack(route = Main.route, inclusive = false)
+                }
+            )
+        }
+
+        composable(route = Warning.route) {
+            WarningScreen(
+
+            )
+        }
+
+        composable(route = TimerList.route) {
+            TimerListScreen(
+                navigateToTimerDetail = {
+                    navController.navigate(TimerDetail.route) {
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        composable(route = TimerDetail.route) {
+            TimerDetailScreen(
 
             )
         }

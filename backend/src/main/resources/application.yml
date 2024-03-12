@@ -1,16 +1,4 @@
 spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/fif?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    username: fridgeisfree
-    password: fif123
-
-  jpa:
-    database: mysql
-    show-sql: false
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate.format_sql: true
-      hibernate.use_sql_comments: false
-      hibernate.default_batch_fetch_size: 100
+  profiles:
+    include:
+      - dev

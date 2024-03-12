@@ -40,7 +40,7 @@ public class RecipeStep {
 	private Recipe recipe;
 
 	@Column(nullable = false)
-	private Integer order;
+	private Integer stepNumber;
 
 	@Column(nullable = false)
 	@Size(max = Constant.COMMON_CONTENT_LENGTH)

@@ -42,5 +42,5 @@ public class ShoppingList {
 
 	@Column(nullable = false)
 	@ColumnDefault("false")
-	private Boolean check;
+	private Boolean checkYn;
 }

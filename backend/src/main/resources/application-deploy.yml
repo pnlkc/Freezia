@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/fif?serverTimezone=Asia/Seoul
+    url: jdbc:mysql://docker-compose-mysql-1:3306/fif?serverTimezone=Asia/Seoul
     username: fridgeisfree
     password: fif123
 

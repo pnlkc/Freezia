@@ -12,10 +12,12 @@ import com.s005.fif.navigation.NavigationDestination.ShoppingList
 import com.s005.fif.navigation.NavigationDestination.Warning
 import com.s005.fif.navigation.NavigationDestination.TimerList
 import com.s005.fif.navigation.NavigationDestination.TimerDetail
+import com.s005.fif.navigation.NavigationDestination.TimerDone
 import com.s005.fif.recipe.ui.RecipeDetailScreen
 import com.s005.fif.recipe.ui.RecipeScreen
 import com.s005.fif.shopping_list.ui.ShoppingListScreen
 import com.s005.fif.timer.ui.TimerDetailScreen
+import com.s005.fif.timer.ui.TimerDoneScreen
 import com.s005.fif.timer.ui.TimerListScreen
 import com.s005.fif.warning.ui.WarningScreen
 
@@ -30,17 +32,22 @@ fun FIFWatchNavHost(
         composable(route = Main.route) {
             MainScreen(
                 navigateToShoppingList = {
-                    navController.navigate(route = ShoppingList.route) {
+                    navController.navigate(ShoppingList.route) {
                         launchSingleTop = true
                     }
                 },
                 navigateToRecipe = {
-                    navController.navigate(route = Recipe.route) {
+                    navController.navigate(Recipe.route) {
                         launchSingleTop = true
                     }
                 },
                 navigateToTimerList = {
-                    navController.navigate(route = TimerList.route) {
+                    navController.navigate(TimerList.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToWarning =  {
+                    navController.navigate(Warning.route) {
                         launchSingleTop = true
                     }
                 }
@@ -58,7 +65,7 @@ fun FIFWatchNavHost(
         composable(route = Recipe.route) {
             RecipeScreen(
                 navigateToRecipeDetail = {
-                    navController.navigate(route = RecipeDetail.route) {
+                    navController.navigate(RecipeDetail.route) {
                         launchSingleTop = true
                     }
                 }
@@ -91,7 +98,22 @@ fun FIFWatchNavHost(
 
         composable(route = TimerDetail.route) {
             TimerDetailScreen(
+                navigateUp = {
+                    navController.navigateUp()
+                },
+                navigateToTimerDone = {
+                    navController.navigate(TimerDone.route) {
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
 
+        composable(route = TimerDone.route) {
+            TimerDoneScreen(
+                navigateUp = {
+                    navController.navigateUp()
+                }
             )
         }
     }

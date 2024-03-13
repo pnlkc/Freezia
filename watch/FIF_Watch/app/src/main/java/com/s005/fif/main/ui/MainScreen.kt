@@ -1,6 +1,10 @@
 package com.s005.fif.main.ui
 
+import android.app.Activity
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -37,13 +42,15 @@ fun MainScreen(
     modifier: Modifier = Modifier,
     navigateToShoppingList: () -> Unit,
     navigateToRecipe: () -> Unit,
-    navigateToTimerList: () -> Unit
+    navigateToTimerList: () -> Unit,
+    navigateToWarning: () -> Unit
 ) {
     MainBody(
         modifier = modifier,
         navigateToShoppingList = navigateToShoppingList,
         navigateToRecipe = navigateToRecipe,
-        navigateToTimerList = navigateToTimerList
+        navigateToTimerList = navigateToTimerList,
+        navigateToWarning = navigateToWarning
     )
 }
 
@@ -52,7 +59,8 @@ fun MainBody(
     modifier: Modifier = Modifier,
     navigateToShoppingList: () -> Unit,
     navigateToRecipe: () -> Unit,
-    navigateToTimerList: () -> Unit
+    navigateToTimerList: () -> Unit,
+    navigateToWarning: () -> Unit
 ) {
     val btnSize = ScreenSize.screenHeightDp.toDpSize(22)
     val btnBottomPadding = ScreenSize.screenHeightDp.toDpSize(10)
@@ -69,7 +77,8 @@ fun MainBody(
         isRecipeSelected = isRecipeSelected,
         navigateToShoppingList = navigateToShoppingList,
         navigateToRecipe = navigateToRecipe,
-        navigateToTimerList = navigateToTimerList
+        navigateToTimerList = navigateToTimerList,
+        navigateToWarning = navigateToWarning
     )
 }
 
@@ -82,7 +91,8 @@ fun MainBody(
     isRecipeSelected: Boolean,
     navigateToShoppingList: () -> Unit,
     navigateToRecipe: () -> Unit,
-    navigateToTimerList: () -> Unit
+    navigateToTimerList: () -> Unit,
+    navigateToWarning: () -> Unit
 ) {
     Box(
         modifier = modifier
@@ -95,7 +105,10 @@ fun MainBody(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(ScreenSize.screenHeightDp.toDpSize(11))
         ) {
-            ProfileColumn()
+            ProfileColumn(
+                modifier = modifier
+                    .clickable { navigateToWarning() }
+            )
 
             Text(
                 modifier = Modifier
@@ -110,64 +123,17 @@ fun MainBody(
             )
         }
 
-        Row(
+        MainBtnRow(
             modifier = Modifier
                 .align(Alignment.BottomCenter),
-            horizontalArrangement = Arrangement
-                .spacedBy(btnSpaceBy),
-            verticalAlignment = Alignment.Bottom
-        ) {
-
-            Button(
-                modifier = Modifier
-                    .padding(bottom = btnBottomPadding)
-                    .size(btnSize),
-                onClick = { navigateToRecipe() },
-                enabled = isRecipeSelected
-            ) {
-                Icon(
-                    modifier = Modifier
-                        .background(if (isRecipeSelected) Color.White else MaterialTheme.colors.onSecondary)
-                        .padding(ScreenSize.screenHeightDp.toDpSize(6)),
-                    painter = painterResource(id = R.drawable.food),
-                    contentDescription = stringResource(id = R.string.btn_recipe_desc),
-                    tint = if (isRecipeSelected) MaterialTheme.colors.primary else MaterialTheme.colors.secondary
-                )
-            }
-
-
-            Button(
-                modifier = Modifier
-                    .size(btnSize),
-                onClick = { navigateToShoppingList() }
-            ) {
-                Icon(
-                    modifier = Modifier
-                        .background(MaterialTheme.colors.primary)
-                        .padding(ScreenSize.screenHeightDp.toDpSize(6)),
-                    painter = painterResource(id = R.drawable.shopping_cart),
-                    contentDescription = stringResource(id = R.string.btn_shopping_list_desc),
-                    tint = Color.White
-                )
-            }
-
-            Button(
-                modifier = Modifier
-                    .padding(bottom = btnBottomPadding)
-                    .size(btnSize),
-                onClick = { navigateToTimerList() },
-                enabled = isRecipeSelected
-            ) {
-                Icon(
-                    modifier = Modifier
-                        .background(if (isRecipeSelected) Color.White else MaterialTheme.colors.onSecondary)
-                        .padding(ScreenSize.screenHeightDp.toDpSize(4)),
-                    painter = painterResource(id = R.drawable.timer),
-                    contentDescription = stringResource(id = R.string.btn_timer_desc),
-                    tint = if (isRecipeSelected) MaterialTheme.colors.primary else MaterialTheme.colors.secondary
-                )
-            }
-        }
+            btnSpaceBy = btnSpaceBy,
+            btnBottomPadding = btnBottomPadding,
+            btnSize = btnSize,
+            isRecipeSelected = isRecipeSelected,
+            navigateToShoppingList = navigateToShoppingList,
+            navigateToRecipe = navigateToRecipe,
+            navigateToTimerList = navigateToTimerList
+        )
     }
 }
 
@@ -176,7 +142,7 @@ fun ProfileColumn(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = Modifier,
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         ProfileImage(imgUrl = "")
@@ -214,5 +180,75 @@ fun ProfileImage(
             contentDescription = stringResource(id = R.string.profile_img_desc),
             tint = Color.White
         )
+    }
+}
+
+@Composable
+fun MainBtnRow(
+    modifier: Modifier = Modifier,
+    btnSpaceBy: Dp,
+    btnBottomPadding: Dp,
+    btnSize: Dp,
+    isRecipeSelected: Boolean,
+    navigateToShoppingList: () -> Unit,
+    navigateToRecipe: () -> Unit,
+    navigateToTimerList: () -> Unit
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement
+            .spacedBy(btnSpaceBy),
+        verticalAlignment = Alignment.Bottom
+    ) {
+
+        Button(
+            modifier = Modifier
+                .padding(bottom = btnBottomPadding)
+                .size(btnSize),
+            onClick = { navigateToRecipe() },
+            enabled = isRecipeSelected
+        ) {
+            Icon(
+                modifier = Modifier
+                    .background(if (isRecipeSelected) Color.White else MaterialTheme.colors.onSecondary)
+                    .padding(ScreenSize.screenHeightDp.toDpSize(6)),
+                painter = painterResource(id = R.drawable.food),
+                contentDescription = stringResource(id = R.string.btn_recipe_desc),
+                tint = if (isRecipeSelected) MaterialTheme.colors.primary else MaterialTheme.colors.secondary
+            )
+        }
+
+
+        Button(
+            modifier = Modifier
+                .size(btnSize),
+            onClick = { navigateToShoppingList() }
+        ) {
+            Icon(
+                modifier = Modifier
+                    .background(MaterialTheme.colors.primary)
+                    .padding(ScreenSize.screenHeightDp.toDpSize(6)),
+                painter = painterResource(id = R.drawable.shopping_cart),
+                contentDescription = stringResource(id = R.string.btn_shopping_list_desc),
+                tint = Color.White
+            )
+        }
+
+        Button(
+            modifier = Modifier
+                .padding(bottom = btnBottomPadding)
+                .size(btnSize),
+            onClick = { navigateToTimerList() },
+            enabled = isRecipeSelected
+        ) {
+            Icon(
+                modifier = Modifier
+                    .background(if (isRecipeSelected) Color.White else MaterialTheme.colors.onSecondary)
+                    .padding(ScreenSize.screenHeightDp.toDpSize(4)),
+                painter = painterResource(id = R.drawable.timer),
+                contentDescription = stringResource(id = R.string.btn_timer_desc),
+                tint = if (isRecipeSelected) MaterialTheme.colors.primary else MaterialTheme.colors.secondary
+            )
+        }
     }
 }

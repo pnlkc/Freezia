@@ -6,24 +6,32 @@ import android.os.CombinedVibration
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import androidx.core.content.getSystemService
 
 object VibrateUtil {
-    fun vibrate(context: Context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            val vibrator =
-                context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
-            val vibrationEffect =
+    private var vibrator: Vibrator? = null
+
+    fun vibrateWarning(context: Context) {
+        val vibratorManager =
+            context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+        vibrator = vibratorManager.defaultVibrator
+        val pattern = longArrayOf(0, 500, 200, 500, 200, 500)
+        val vibrationEffect =
 //                VibrationEffect.createOneShot(1000L, VibrationEffect.DEFAULT_AMPLITUDE)
-                VibrationEffect.createWaveform(longArrayOf(0, 500, 200, 500, 200, 500), -1)
-            val combinedVibration = CombinedVibration.createParallel(vibrationEffect)
-            vibrator.vibrate(combinedVibration)
-        } else {
-            @Suppress("DEPRECATION") val vibrator =
-                context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-            val vibrationEffect =
-//                VibrationEffect.createOneShot(1000L, VibrationEffect.DEFAULT_AMPLITUDE)
-                VibrationEffect.createWaveform(longArrayOf(0, 500, 200, 500, 200, 500), -1)
-            vibrator.vibrate(vibrationEffect)
-        }
+            VibrationEffect.createWaveform(pattern, -1)
+        vibrator?.vibrate(vibrationEffect)
+    }
+
+    fun vibrateTimerDone(context: Context) {
+        val vibratorManager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+        vibrator = vibratorManager.defaultVibrator
+        val pattern = longArrayOf(0, 100, 400, 100, 400, 100, 400)
+        val vibrationEffect =
+            VibrationEffect.createWaveform(pattern, 0)
+        vibrator?.vibrate(vibrationEffect)
+    }
+
+    fun cancel() {
+        vibrator?.cancel()
     }
 }

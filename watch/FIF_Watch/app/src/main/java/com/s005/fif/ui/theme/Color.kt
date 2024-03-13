@@ -10,6 +10,7 @@ val disableOrange = Color(0xFF985B22)
 val chipBlack = Color(0xFF202124)
 val warningRed = Color(0xFFDD4247)
 val timerWhite = Color(0xFFD9D9D9)
+val timerBtnGray = Color(0xFF48494B)
 
 internal val fifWatchColorPalette: Colors = Colors(
     primary = mainOrange,
@@ -19,7 +20,7 @@ internal val fifWatchColorPalette: Colors = Colors(
     onSurface = Color.Black,
 //    onSurfaceVariant = Color.White
     secondary = disableOrange,
-//    secondaryVariant = Teal200,
+    secondaryVariant = timerBtnGray,
     onSecondary = disableWhite,
     background = Color.Black,
     onBackground = mainOrange,

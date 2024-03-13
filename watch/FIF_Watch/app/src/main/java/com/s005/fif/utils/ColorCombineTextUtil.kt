@@ -66,4 +66,25 @@ object ColorCombineTextUtil {
 
         return annotatedString
     }
+
+    fun makeTimerDoneText(timerName: String, context: Context): AnnotatedString {
+        val text = context.getString(
+            R.string.timer_done_text,
+            timerName
+        )
+
+        val start = text.indexOf(timerName)
+        val end = start + timerName.lastIndex
+
+        val annotatedString = buildAnnotatedString {
+            withStyle(style = SpanStyle(color = fifWatchColorPalette.primary)) {
+                append(text.slice(start..end))
+            }
+            withStyle(style = SpanStyle(color = Color.White)) {
+                append(text.slice(end + 1..text.lastIndex))
+            }
+        }
+
+        return annotatedString
+    }
 }

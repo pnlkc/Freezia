@@ -1,5 +1,7 @@
 package com.s005.fif.timer.ui
 
+import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -125,7 +128,8 @@ fun TimerListChip(
             isStart = isStart,
             startBtnClicked = {
                 isStart = !isStart
-            }
+            },
+            size = 30
         )
 
         Column(
@@ -175,16 +179,18 @@ fun TimerListChip(
 fun TimerBtn(
     modifier: Modifier = Modifier,
     isStart: Boolean,
-    startBtnClicked: () -> Unit
+    startBtnClicked: () -> Unit,
+    size: Int = 30
 ) {
     Box(
         modifier = modifier
             .clickable { startBtnClicked() }
+            .clip(CircleShape)
     ) {
         Box(
             modifier = Modifier
                 .clip(CircleShape)
-                .size(ScreenSize.screenHeightDp.toDpSize(24))
+                .size(ScreenSize.screenHeightDp.toDpSize(maxOf(size - 6, 0)))
                 .background(if (isStart) Color.White else MaterialTheme.colors.primary)
                 .align(Alignment.Center)
         )
@@ -192,10 +198,10 @@ fun TimerBtn(
         Icon(
             modifier = Modifier
                 .clip(CircleShape)
-                .size(ScreenSize.screenHeightDp.toDpSize(30))
+                .size(ScreenSize.screenHeightDp.toDpSize(size))
                 .align(Alignment.Center),
             painter = painterResource(id = if (isStart) R.drawable.pause else R.drawable.play),
-            contentDescription = "",
+            contentDescription = stringResource(id = R.string.btn_timer_play),
             tint = if(isStart) MaterialTheme.colors.primary else Color.White,
         )
     }

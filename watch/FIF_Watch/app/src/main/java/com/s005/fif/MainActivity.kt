@@ -24,7 +24,12 @@ import com.s005.fif.ui.theme.FIF_WatchTheme
 import com.s005.fif.ui.FIFWatchApp
 import com.s005.fif.utils.ScreenSize.screenHeightDp
 import com.s005.fif.utils.ScreenSize.screenWidthDp
+import com.s005.fif.utils.VibrateUtil
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

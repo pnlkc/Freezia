@@ -1,6 +1,7 @@
 package com.s005.fif.recipe.ui
 
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,6 +19,7 @@ import androidx.wear.compose.material.Chip
 import androidx.wear.compose.material.ChipDefaults
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
+import com.s005.fif.components.BackgroundImage
 import com.s005.fif.utils.ColorCombineTextUtil
 import com.s005.fif.utils.ScreenSize
 import com.s005.fif.utils.ScreenSize.toDpSize
@@ -28,10 +30,17 @@ fun RecipeScreen(
     modifier: Modifier = Modifier,
     navigateToRecipeDetail: () -> Unit
 ) {
-    RecipeBody(
-        modifier = modifier,
-        navigateToRecipeDetail = navigateToRecipeDetail
-    )
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+    ) {
+        BackgroundImage()
+
+        RecipeBody(
+            modifier = modifier,
+            navigateToRecipeDetail = navigateToRecipeDetail
+        )
+    }
 }
 
 @Composable

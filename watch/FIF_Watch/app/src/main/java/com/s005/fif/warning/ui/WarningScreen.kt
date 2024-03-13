@@ -1,9 +1,7 @@
 package com.s005.fif.warning.ui
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -19,15 +17,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
-import androidx.wear.compose.material.Chip
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import com.s005.fif.R
 import com.s005.fif.utils.ColorCombineTextUtil
 import com.s005.fif.utils.ScreenSize
-import com.s005.fif.utils.ScreenSize.screenWidthDp
 import com.s005.fif.utils.ScreenSize.toDpSize
 import com.s005.fif.utils.ScreenSize.toSpSize
 import com.s005.fif.utils.VibrateUtil
@@ -36,6 +31,8 @@ import com.s005.fif.utils.VibrateUtil
 fun WarningScreen(
     modifier: Modifier = Modifier,
 ) {
+    VibrateUtil.vibrateWarning(LocalContext.current)
+
     Column(
         modifier = modifier
             .fillMaxSize()

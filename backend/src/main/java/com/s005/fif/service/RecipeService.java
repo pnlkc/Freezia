@@ -56,9 +56,22 @@ public class RecipeService {
 		String[] ingredientNames = recipe.getIngredientList().split(",");
 		for (String ingredientName : ingredientNames) {
 			Optional<Ingredient> findIngredient = ingredientRepository.findByName(ingredientName);
-			// 식재료 DB에 없는 경우
 			if (findIngredient.isEmpty()) {
-
+				/*
+				식재료 DB에 추가
+				DB에서 unit, imgUrl, seasoningYn 직접 수정 필요함
+				 */
+				ingredientRepository.save(Ingredient.builder()
+					.name(ingredientName)
+					.unit("")
+					.imgUrl("default_image.png")
+					.seasoningYn(true)	// 양념으로 취급
+					.build());
+				seasoningList.add(IngredientDto.builder()
+					.name(ingredientName)
+					.amounts(null)	// TODO : recipe 테이블에 필요 식재료 양 담는 방법?
+					.unit("")
+					.build());
 			}
 			// 식재료 DB에 있는 경우
 			else {

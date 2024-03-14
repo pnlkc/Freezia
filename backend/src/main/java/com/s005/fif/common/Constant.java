@@ -9,6 +9,7 @@ public class Constant {
 	public static final int FCM_TOKEN_LENGTH = 300;
 
 	public static final int MEMBER_NAME_LENGTH = 20;
+	public static final int UNIT_NAME_LENGTH = 5;
 
 	public static final int INGREDIENT_LIST_LENGTH = 200;
 	public static final int PREFER_MENU_LIST_LENGTH = 200;

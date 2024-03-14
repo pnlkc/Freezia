@@ -1,0 +1,83 @@
+.user-health-info-box {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  margin-top: 0.5vw;
+  border-radius: 1vw;
+  background-color: white;
+  padding: 1.5vw;
+}
+
+.user-health-info-profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.user-profile-image-wrapper {
+  margin-top: 1vw;
+  width: 6vw;
+  height: 6vw;
+  border-radius: 3vw;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 3px 8px;
+}
+
+.user-profile-image {
+  width: 6vw;
+  height: 6vw;
+}
+
+.user-health-data-list {
+  margin-left: 2vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-grow: 1;
+}
+
+.user-health-data {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.user-health-data-name {
+  margin-right: 0.5vw;
+}
+
+.user-health-data-value {
+  height: 1.8vw;
+  flex-grow: 1;
+}
+
+.user-health-data-progress {
+  appearance: none;
+  width: 100%;
+}
+
+.user-health-data-progress::-webkit-progress-bar {
+  height: 1.5vw;
+  border: 0.06vw solid black;
+  border-radius: 1vw;
+  background-color: #fcfcfc;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 3px 8px;
+}
+
+.user-health-data-progress::-webkit-progress-value {
+  height: 1.5vw;
+  border-radius: 1vw;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 8px;
+}
+
+.progress-red::-webkit-progress-value {
+  background-color: var(--red);
+}
+
+.progress-blue::-webkit-progress-value {
+  background-color: var(--blue);
+}
+
+.progress-green::-webkit-progress-value {
+  background-color: var(--green);
+}

@@ -1,0 +1,23 @@
+.footer-container {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+}
+
+.footer-icon-box {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  padding: 1vw 3vw;
+}
+
+.footer-icon {
+  height: 0.8vw;
+}
+
+.menu-icon {
+  height: 0.4vw;
+  position: absolute;
+  right: 1vw;
+  bottom: calc(50% - 0.3vw);
+}

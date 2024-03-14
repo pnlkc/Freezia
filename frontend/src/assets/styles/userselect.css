@@ -1,0 +1,41 @@
+.user-select-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1vw;
+}
+
+.profile-list-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 1vw 2vw;
+}
+
+.user-select-title {
+  margin: 2vw 0;
+  font-weight: 700;
+}
+
+.user-profile-box,
+.profile-add-button {
+  width: 26%;
+  margin-bottom: 2vw;
+  cursor: pointer;
+  text-decoration: none;
+  color: black;
+}
+
+.user-profile-image {
+  width: 100%;
+}
+
+.user-profile-name {
+  text-align: center;
+  font-weight: 600;
+  margin-top: -0.5vw;
+}

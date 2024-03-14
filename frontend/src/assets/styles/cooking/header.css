@@ -1,0 +1,32 @@
+.cooking-header {
+  width: 100%;
+  height: 4vw;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 1vw;
+}
+
+.cooking-header-title {
+  color: var(--primary-color);
+  cursor: pointer;
+}
+
+.cooking-header-icon-box {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-left: auto;
+}
+
+.cooking-header-icon {
+  height: 1.2vw;
+  margin: 0 0.4vw;
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+.cooking-header-profile {
+  height: 2.5vw;
+  cursor: pointer;
+}

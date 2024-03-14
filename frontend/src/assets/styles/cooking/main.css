@@ -1,0 +1,11 @@
+.cooking-main-container {
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+}
+
+.cooking-main-content-box {
+  width: 100%;
+  flex-grow: 1;
+  padding: 1.5vw;
+}

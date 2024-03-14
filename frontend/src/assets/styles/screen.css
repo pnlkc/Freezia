@@ -1,0 +1,71 @@
+.screen-frame {
+  position: absolute;
+  width: var(--screen-width);
+  height: var(--screen-height);
+  left: calc(50% - var(--screen-width) / 2);
+  top: 2.2%;
+  background-color: var(--screen-background-color);
+  animation: screen-on 0.5s ease-in-out;
+  opacity: 1;
+  display: flex;
+  flex-direction: column;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.screen-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow: hidden;
+  flex-grow: 1;
+}
+
+.screen-container > div,
+.screen-container > div > div {
+  width: 100%;
+  height: 100%;
+}
+
+.screen-container > div > div {
+  padding: 1vw;
+}
+
+.screen-container > div,
+.screen-container > div > div {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+}
+
+.screen-body {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5vw;
+  flex-grow: 1;
+}
+
+.fade-enter {
+  opacity: 0;
+}
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 500ms;
+}
+.fade-exit {
+  opacity: 1;
+}
+.fade-exit-active {
+  opacity: 0;
+  transition: opacity 500ms;
+}
+
+@keyframes screen-on {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

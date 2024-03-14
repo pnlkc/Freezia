@@ -17,6 +17,7 @@ public enum ExceptionType {
 	USER_NOT_FOUND(404, "해당 유저를 찾을 수 없습니다."), // FIXME: 중복 타입 제거
 	TOKEN_EXPIRED(401, "토큰이 만료되었습니다. 다시 로그인 해주세요."),
 	TOKEN_NOT_VALID(404, "토큰 형식이 유효하지 않습니다."),
+	TOKEN_NOT_EXIST(404, "토큰이 없습니다."),
 
 	// recipe
     RECIPE_NOT_FOUND(404, "레시피를 찾을 수 없습니다."),
@@ -24,7 +25,7 @@ public enum ExceptionType {
 
     // Ingredient
     INGREDIENTS_NOT_FOUND(404, "식재료를 찾을 수 없습니다."),
-    ;
+	;
 
     private final int code;
     private final String msg;

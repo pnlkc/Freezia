@@ -2,6 +2,7 @@ package com.s005.fif.timer.ui
 
 import android.app.Activity
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,12 +25,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.ScalingLazyListState
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
@@ -43,11 +46,12 @@ import com.s005.fif.R
 import com.s005.fif.utils.ScreenSize
 import com.s005.fif.utils.ScreenSize.toDpSize
 import com.s005.fif.utils.ScreenSize.toSpSize
+import com.s005.fif.utils.VibrateUtil
 
 @Composable
 fun TimerListScreen(
     modifier: Modifier = Modifier,
-    navigateToTimerDetail: () -> Unit
+    navigateToTimerDetail: () -> Unit,
 ) {
     val scalingLazyListState = rememberScalingLazyListState()
 
@@ -71,7 +75,7 @@ fun TimerListScreen(
 fun TimerListBody(
     modifier: Modifier = Modifier,
     scalingLazyListState: ScalingLazyListState,
-    navigateToTimerDetail: () -> Unit
+    navigateToTimerDetail: () -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -108,7 +112,7 @@ fun TimerListBody(
 @Composable
 fun TimerListChip(
     modifier: Modifier = Modifier,
-    navigateToTimerDetail: () -> Unit
+    navigateToTimerDetail: () -> Unit,
 ) {
     var isStart by remember {
         mutableStateOf(true)
@@ -124,13 +128,20 @@ fun TimerListChip(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        TimerBtn(
-            isStart = isStart,
-            startBtnClicked = {
-                isStart = !isStart
-            },
-            size = 30
-        )
+        Box(
+            modifier = Modifier
+                .padding(vertical = ScreenSize.screenHeightDp.toDpSize(3))
+                .padding(start = ScreenSize.screenHeightDp.toDpSize(3), end = ScreenSize.screenHeightDp.toDpSize(2))
+        ) {
+            TimerBtn(
+                isStart = isStart,
+                startBtnClicked = {
+                    isStart = !isStart
+                },
+                size = ScreenSize.screenHeightDp.toDpSize(24)
+            )
+        }
+
 
         Column(
             modifier = Modifier
@@ -155,7 +166,7 @@ fun TimerListChip(
                         start = ScreenSize.screenHeightDp.toDpSize(1),
                         bottom = ScreenSize.screenHeightDp.toDpSize(2)
                     ),
-                text ="끓이기",
+                text = "끓이기",
                 fontSize = ScreenSize.screenHeightDp.toSpSize(5),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -180,29 +191,17 @@ fun TimerBtn(
     modifier: Modifier = Modifier,
     isStart: Boolean,
     startBtnClicked: () -> Unit,
-    size: Int = 30
+    size: Dp,
 ) {
-    Box(
+    Image(
         modifier = modifier
-            .clickable { startBtnClicked() }
             .clip(CircleShape)
-    ) {
-        Box(
-            modifier = Modifier
-                .clip(CircleShape)
-                .size(ScreenSize.screenHeightDp.toDpSize(maxOf(size - 6, 0)))
-                .background(if (isStart) Color.White else MaterialTheme.colors.primary)
-                .align(Alignment.Center)
-        )
-
-        Icon(
-            modifier = Modifier
-                .clip(CircleShape)
-                .size(ScreenSize.screenHeightDp.toDpSize(size))
-                .align(Alignment.Center),
-            painter = painterResource(id = if (isStart) R.drawable.pause else R.drawable.play),
-            contentDescription = stringResource(id = R.string.btn_timer_play),
-            tint = if(isStart) MaterialTheme.colors.primary else Color.White,
-        )
-    }
+            .size(size)
+            .clickable { startBtnClicked() }
+            .background(if (isStart) Color.White else MaterialTheme.colors.primary)
+            .padding(size / 10),
+        painter = painterResource(id = if (isStart) R.drawable.pause else R.drawable.play),
+        contentDescription = stringResource(id = R.string.btn_timer_play),
+        colorFilter = ColorFilter.tint(if (isStart) MaterialTheme.colors.primary else Color.White),
+    )
 }

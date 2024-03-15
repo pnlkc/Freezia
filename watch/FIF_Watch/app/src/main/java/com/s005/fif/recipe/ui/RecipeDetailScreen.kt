@@ -54,6 +54,7 @@ import com.s005.fif.utils.ScreenSize
 import com.s005.fif.utils.ScreenSize.toDpSize
 import com.s005.fif.utils.ScreenSize.toSpSize
 import com.s005.fif.utils.TTSUtil
+import com.s005.fif.utils.VibrateUtil
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalGlideComposeApi::class)

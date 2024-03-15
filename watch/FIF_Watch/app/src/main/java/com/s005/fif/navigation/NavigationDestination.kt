@@ -8,5 +8,4 @@ sealed class NavigationDestination(val route: String) {
     data object Warning : NavigationDestination("warning")
     data object TimerList : NavigationDestination("timer_list")
     data object TimerDetail : NavigationDestination("timer_detail")
-    data object TimerDone : NavigationDestination("timer_done")
 }

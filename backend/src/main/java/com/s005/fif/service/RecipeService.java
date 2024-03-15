@@ -10,13 +10,16 @@ import org.springframework.transaction.annotation.Transactional;
 import com.s005.fif.common.exception.CustomException;
 import com.s005.fif.common.exception.ExceptionType;
 import com.s005.fif.dto.response.RecipeResponseDto;
+import com.s005.fif.dto.response.RecipeStepResponseDto;
 import com.s005.fif.dto.response.model.IngredientDto;
 import com.s005.fif.entity.Ingredient;
 import com.s005.fif.entity.Member;
 import com.s005.fif.entity.Recipe;
+import com.s005.fif.entity.RecipeStep;
 import com.s005.fif.repository.IngredientRepository;
 import com.s005.fif.repository.MemberRepository;
 import com.s005.fif.repository.RecipeRepository;
+import com.s005.fif.repository.RecipeStepRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,6 +31,7 @@ public class RecipeService {
 	private final MemberRepository memberRepository;
 	private final RecipeRepository recipeRepository;
 	private final IngredientRepository ingredientRepository;
+	private final RecipeStepRepository recipeStepRepository;
 
 	public Member getMemberIdFromToken(String token) {
 		Integer memberId = 1;	// TODO : 로직 변경하기
@@ -36,7 +40,7 @@ public class RecipeService {
 	}
 
 	/**
-	 * 레시피 세부 정보를 반환
+	 * 레시피 세부 정보를 반환합니다.
 	 * @param token 토큰
 	 * @param recipeId 레시피 ID
 	 * @return 레시피 세부 정보
@@ -115,5 +119,36 @@ public class RecipeService {
 			.recipeTypes(recipe.getRecipeTypes())
 			.serving(recipe.getServing())
 			.build();
+	}
+
+	/**
+	 * 레시피의 모든 단계를 반환합니다.
+	 * @param token 토큰
+	 * @param recipeId 레시피 ID
+	 * @return 레시피 단계로 이루어진 List
+	 */
+	public List<RecipeStepResponseDto> getRecipeSteps(String token, Integer recipeId) {
+		Member member = getMemberIdFromToken(token);
+		Recipe recipe = recipeRepository.findById(recipeId)
+			.orElseThrow(() -> new CustomException(ExceptionType.RECIPE_NOT_FOUND));
+
+		// [예외 처리] 본인의 레시피가 아닐 경우
+		if (!recipe.getMember().getMemberId().equals(member.getMemberId())) {
+			throw new CustomException(ExceptionType.RECIPE_NOT_ACCESSIBLE);
+		}
+
+		List<RecipeStep> recipeStepList = recipeStepRepository.findByRecipeOrderByStepNumberAsc(recipe);
+
+		return recipeStepList.stream()
+			.map(recipeStep -> RecipeStepResponseDto.builder()
+				.recipeStepId(recipeStep.getRecipeStepId())
+				.stepNumber(recipeStep.getStepNumber())
+				.description(recipeStep.getDescription())
+				.descriptionWatch(recipeStep.getType().getTitle())
+				.type(recipeStep.getType().getCode())
+				.tip(recipeStep.getTip())
+				.timer(recipeStep.getTimer())
+				.build())
+			.toList();
 	}
 }

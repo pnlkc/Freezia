@@ -46,8 +46,10 @@ import kotlinx.coroutines.delay
 @Composable
 fun TimerDoneScreen(
     modifier: Modifier = Modifier,
-    navigateUp: () -> Unit,
+    text: String
 ) {
+    val context = LocalContext.current
+
     var alpha by remember {
         mutableFloatStateOf(0f)
     }
@@ -86,14 +88,15 @@ fun TimerDoneScreen(
             indicatorColor = MaterialTheme.colors.primary.copy(alpha = alpha)
         )
 
-        TimerDoneBody()
+        TimerDoneBody(
+            text = text
+        )
 
         SwipeDismissBox(
             modifier = modifier
                 .align(Alignment.CenterStart),
             onDismissed = {
-                VibrateUtil.cancel()
-                navigateUp()
+                (context as? Activity)?.finish()
             }
         )
     }
@@ -102,6 +105,7 @@ fun TimerDoneScreen(
 @Composable
 fun TimerDoneBody(
     modifier: Modifier = Modifier,
+    text: String
 ) {
     val btnSize = ScreenSize.screenHeightDp.toDpSize(22)
 
@@ -132,7 +136,7 @@ fun TimerDoneBody(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = ScreenSize.screenHeightDp.toDpSize(5)),
-                text = ColorCombineTextUtil.makeTimerDoneText("끓이기", LocalContext.current),
+                text = ColorCombineTextUtil.makeTimerDoneText(text, LocalContext.current),
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 fontSize = ScreenSize.screenHeightDp.toSpSize(10),
@@ -171,7 +175,6 @@ fun TimerDoneBtnRow(
         modifier = modifier
             .size(btnSize),
         onClick = {
-            VibrateUtil.cancel()
             (context as? Activity)?.finish()
         }
     ) {

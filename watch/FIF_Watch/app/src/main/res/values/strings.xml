@@ -31,4 +31,6 @@
     <string name="timer_done_icon">타이머 완료 아이콘</string>
     <string name="timer_done_text">%1$s 완료</string>
     <string name="btn_timer_done">타이머 완료 확인 버튼</string>
+    <string name="notification_timer_done_title">타이머 완료</string>
+    <string name="notification_timer_done_content">타이머가 완료되었습니다</string>
 </resources>

@@ -1,5 +1,10 @@
 package com.s005.fif.timer.ui
 
+import android.os.SystemClock
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -40,10 +46,13 @@ import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.SwipeToDismissBox
 import androidx.wear.compose.material.Text
 import com.s005.fif.R
+import com.s005.fif.utils.AlarmUtil
 import com.s005.fif.utils.ScreenSize
 import com.s005.fif.utils.ScreenSize.toDpSize
 import com.s005.fif.utils.ScreenSize.toSpSize
-import com.s005.fif.utils.VibrateUtil
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -51,6 +60,7 @@ import kotlinx.coroutines.launch
 fun TimerDetailScreen(
     modifier: Modifier = Modifier,
     navigateUp: () -> Unit,
+    navigateToRecipeDetail: () -> Unit,
     navigateToTimerDone: () -> Unit,
 ) {
     val maxPages = 20
@@ -68,7 +78,7 @@ fun TimerDetailScreen(
     }
 
     HorizontalPager(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize(),
         state = pagerState
     ) { page ->
@@ -90,6 +100,7 @@ fun TimerDetailScreen(
                 }
             },
             navigateUp = navigateUp,
+            navigateToRecipeDetail = navigateToRecipeDetail,
             navigateToTimerDone = navigateToTimerDone
         )
     }
@@ -103,14 +114,49 @@ fun TimerDetailBody(
     goTimerBack: () -> Unit,
     goTimerForward: () -> Unit,
     navigateUp: () -> Unit,
+    navigateToRecipeDetail: () -> Unit,
     navigateToTimerDone: () -> Unit,
 ) {
+    val id = 1
+    var isStart by remember {
+        mutableStateOf(true)
+    }
+    val initTime = 5
+    var time by remember {
+        mutableIntStateOf(initTime)
+    }
+    val context = LocalContext.current
+
+    LaunchedEffect(isStart) {
+        if (isStart) {
+            AlarmUtil.setAlarm(context, time * 1000L, id)
+
+            while (time > 0) {
+                delay(1000L)
+                time--
+            }
+
+            if (time == 0) {
+                isStart = false
+            }
+        } else {
+            AlarmUtil.cancel(id)
+        }
+    }
+
+    val progressAnimDuration = 1000
+    val progressAnimation by animateFloatAsState(
+        targetValue = (initTime - time).toFloat() / (initTime - 1),
+        animationSpec = tween(durationMillis = progressAnimDuration, easing = LinearEasing),
+        label = "",
+    )
+
     Box(
         modifier = modifier
             .fillMaxSize()
     ) {
         CircularProgressIndicator(
-            progress = 0.4f,
+            progress = progressAnimation,
             modifier = Modifier.fillMaxSize(),
             startAngle = 270f,
             strokeWidth = ScreenSize.screenHeightDp.toDpSize(3),
@@ -123,7 +169,14 @@ fun TimerDetailBody(
             goTimerBack = goTimerBack,
             goTimerForward = goTimerForward,
             navigateUp = navigateUp,
-            navigateToTimerDone = navigateToTimerDone
+            navigateToRecipeDetail = navigateToRecipeDetail,
+            navigateToTimerDone = navigateToTimerDone,
+            time = time,
+            initTime = initTime,
+            isStart = isStart,
+            startBtnClicked = {
+                isStart = !isStart
+            }
         )
 
         SwipeDismissBox(
@@ -157,12 +210,16 @@ fun TimerDetailPage(
     goTimerBack: () -> Unit,
     goTimerForward: () -> Unit,
     navigateUp: () -> Unit,
+    navigateToRecipeDetail: () -> Unit,
     navigateToTimerDone: () -> Unit,
+    time: Int,
+    initTime: Int,
+    isStart: Boolean,
+    startBtnClicked: () -> Unit,
 ) {
     val btnSize = ScreenSize.screenHeightDp.toDpSize(22)
     val arrowBtnSize = ScreenSize.screenHeightDp.toDpSize(10)
     val btnBottomPadding = ScreenSize.screenHeightDp.toDpSize(15)
-    val context = LocalContext.current
 
     Box(
         modifier = modifier
@@ -175,7 +232,6 @@ fun TimerDetailPage(
                 .padding(horizontal = ScreenSize.screenWidthDp.toDpSize(30))
                 .padding(top = ScreenSize.screenWidthDp.toDpSize(10))
                 .clickable {
-                    VibrateUtil.vibrateTimerDone(context)
                     navigateToTimerDone()
                 },
             text = "끓이기",
@@ -215,7 +271,7 @@ fun TimerDetailPage(
                 Text(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    text = "02:10",
+                    text = String.format("%02d:%02d", time / 60, time % 60),
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
                     fontSize = ScreenSize.screenHeightDp.toSpSize(15),
@@ -227,7 +283,7 @@ fun TimerDetailPage(
                 Text(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    text = "06:00",
+                    text = String.format("%02d:%02d", initTime / 60, initTime % 60),
                     textAlign = TextAlign.Center,
                     fontSize = ScreenSize.screenHeightDp.toSpSize(7),
                     color = Color.White,
@@ -257,7 +313,10 @@ fun TimerDetailPage(
                 ),
             btnSize = btnSize,
             btnBottomPadding = btnBottomPadding,
-            navigateUp = navigateUp
+            navigateUp = navigateUp,
+            navigateToRecipeDetail = navigateToRecipeDetail,
+            isStart = isStart,
+            startBtnClicked = startBtnClicked
         )
     }
 }
@@ -268,6 +327,9 @@ fun TimerDetailBtnRow(
     btnBottomPadding: Dp,
     btnSize: Dp,
     navigateUp: () -> Unit,
+    navigateToRecipeDetail: () -> Unit,
+    isStart: Boolean,
+    startBtnClicked: () -> Unit,
 ) {
     Box(
         modifier = modifier
@@ -313,7 +375,7 @@ fun TimerDetailBtnRow(
             Button(
                 modifier = Modifier
                     .size(btnSize),
-                onClick = { }
+                onClick = { navigateToRecipeDetail() }
             ) {
                 Icon(
                     modifier = Modifier
@@ -326,18 +388,13 @@ fun TimerDetailBtnRow(
             }
         }
 
-        Button(
+        TimerBtn(
             modifier = Modifier
                 .padding(bottom = btnBottomPadding)
-                .size(btnSize)
                 .align(Alignment.TopEnd),
-            onClick = { }
-        ) {
-            TimerBtn(
-                isStart = true,
-                startBtnClicked = { },
-                size = 20
-            )
-        }
+            isStart = isStart,
+            startBtnClicked = startBtnClicked,
+            size = btnSize
+        )
     }
 }

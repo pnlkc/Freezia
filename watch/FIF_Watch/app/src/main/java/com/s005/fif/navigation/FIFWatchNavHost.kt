@@ -1,6 +1,7 @@
 package com.s005.fif.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
@@ -9,22 +10,23 @@ import com.s005.fif.navigation.NavigationDestination.Main
 import com.s005.fif.navigation.NavigationDestination.Recipe
 import com.s005.fif.navigation.NavigationDestination.RecipeDetail
 import com.s005.fif.navigation.NavigationDestination.ShoppingList
-import com.s005.fif.navigation.NavigationDestination.Warning
-import com.s005.fif.navigation.NavigationDestination.TimerList
 import com.s005.fif.navigation.NavigationDestination.TimerDetail
-import com.s005.fif.navigation.NavigationDestination.TimerDone
+import com.s005.fif.navigation.NavigationDestination.TimerList
+import com.s005.fif.navigation.NavigationDestination.Warning
 import com.s005.fif.recipe.ui.RecipeDetailScreen
 import com.s005.fif.recipe.ui.RecipeScreen
 import com.s005.fif.shopping_list.ui.ShoppingListScreen
 import com.s005.fif.timer.ui.TimerDetailScreen
-import com.s005.fif.timer.ui.TimerDoneScreen
 import com.s005.fif.timer.ui.TimerListScreen
+import com.s005.fif.utils.AlarmUtil
 import com.s005.fif.warning.ui.WarningScreen
 
 @Composable
 fun FIFWatchNavHost(
     navController: NavHostController
 ) {
+    val context = LocalContext.current
+
     SwipeDismissableNavHost(
         navController = navController,
         startDestination = Main.route,
@@ -101,18 +103,13 @@ fun FIFWatchNavHost(
                 navigateUp = {
                     navController.navigateUp()
                 },
-                navigateToTimerDone = {
-                    navController.navigate(TimerDone.route) {
-                        launchSingleTop = true
-                    }
-                }
-            )
-        }
+                navigateToRecipeDetail = {
 
-        composable(route = TimerDone.route) {
-            TimerDoneScreen(
-                navigateUp = {
-                    navController.navigateUp()
+                },
+                navigateToTimerDone = {
+                    AlarmUtil.setAlarm(context = context, delayMillis = 5000L, 1)
+                    AlarmUtil.setAlarm(context = context, delayMillis = 10000L, 2)
+                    AlarmUtil.setAlarm(context = context, delayMillis = 15000L, 3)
                 }
             )
         }

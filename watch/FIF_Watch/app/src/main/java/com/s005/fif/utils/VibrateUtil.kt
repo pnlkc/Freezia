@@ -15,7 +15,7 @@ object VibrateUtil {
         val vibratorManager =
             context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
         vibrator = vibratorManager.defaultVibrator
-        val pattern = longArrayOf(0, 500, 200, 500, 200, 500)
+        val pattern = longArrayOf(0, 1000, 200, 1000, 200, 1000, 200, 1000)
         val vibrationEffect =
 //                VibrationEffect.createOneShot(1000L, VibrationEffect.DEFAULT_AMPLITUDE)
             VibrationEffect.createWaveform(pattern, -1)
@@ -25,7 +25,7 @@ object VibrateUtil {
     fun vibrateTimerDone(context: Context) {
         val vibratorManager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
         vibrator = vibratorManager.defaultVibrator
-        val pattern = longArrayOf(0, 100, 400, 100, 400, 100, 400)
+        val pattern = longArrayOf(0, 500, 400, 500, 400, 500, 400)
         val vibrationEffect =
             VibrationEffect.createWaveform(pattern, 0)
         vibrator?.vibrate(vibrationEffect)

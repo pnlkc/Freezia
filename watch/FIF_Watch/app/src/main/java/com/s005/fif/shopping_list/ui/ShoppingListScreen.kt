@@ -33,6 +33,7 @@ import com.s005.fif.R
 import com.s005.fif.utils.ScreenSize
 import com.s005.fif.utils.ScreenSize.toDpSize
 import com.s005.fif.utils.ScreenSize.toSpSize
+import com.s005.fif.utils.VibrateUtil
 
 @Composable
 fun ShoppingListScreen(

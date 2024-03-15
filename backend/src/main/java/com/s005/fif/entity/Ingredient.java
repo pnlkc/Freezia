@@ -31,10 +31,6 @@ public class Ingredient {
 	private String name;
 
 	@Column(nullable = false)
-	@Size(max = Constant.UNIT_NAME_LENGTH)
-	private String unit;
-
-	@Column(nullable = false)
 	@Size(max = Constant.COMMON_URL_LENGTH)
 	private String imgUrl;
 

@@ -8,6 +8,6 @@ import lombok.Getter;
 public class IngredientDto {
 	private String name;
 	private String image;
-	private Integer amounts;
+	private String amounts;
 	private String unit;
 }

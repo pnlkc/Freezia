@@ -1,11 +1,9 @@
 package com.s005.fif.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +17,8 @@ import com.s005.fif.entity.Recipe;
 import com.s005.fif.repository.IngredientRepository;
 import com.s005.fif.repository.MemberRepository;
 import com.s005.fif.repository.RecipeRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @Transactional
@@ -53,38 +53,44 @@ public class RecipeService {
 
 		List<IngredientDto> ingredientList = new ArrayList<>();
 		List<IngredientDto> seasoningList = new ArrayList<>();
-		String[] ingredientNames = recipe.getIngredientList().split(",");
-		for (String ingredientName : ingredientNames) {
-			Optional<Ingredient> findIngredient = ingredientRepository.findByName(ingredientName);
-			if (findIngredient.isEmpty()) {
+		String[] ingredients = (recipe.getIngredientList() + "," + recipe.getSeasoningList()).split(",");
+		for (String ingredient : ingredients) {
+			String[] str = ingredient.split(":");
+			String name = str[0];
+			String amounts = str[1];
+			String unit = str[2];
+
+			Optional<Ingredient> findIngredientOpt = ingredientRepository.findByName(name);
+
+			// 식재료 DB에 없는 경우
+			if (findIngredientOpt.isEmpty()) {
 				/*
 				식재료 DB에 추가
-				DB에서 unit, imgUrl, seasoningYn 직접 수정 필요함
+				DB에서 imgUrl, seasoningYn 직접 수정 필요함
 				 */
 				ingredientRepository.save(Ingredient.builder()
-					.name(ingredientName)
-					.unit("")
+					.name(name)
 					.imgUrl("default_image.png")
 					.seasoningYn(true)	// 양념으로 취급
 					.build());
 				seasoningList.add(IngredientDto.builder()
-					.name(ingredientName)
-					.amounts(null)	// TODO : recipe 테이블에 필요 식재료 양 담는 방법?
-					.unit("")
+					.name(name)
+					.amounts(amounts)
+					.unit(unit)
 					.build());
 			}
 			// 식재료 DB에 있는 경우
 			else {
-				Ingredient ingredient = findIngredient.get();
+				Ingredient findIngredient = findIngredientOpt.get();
 				IngredientDto ingredientDto = IngredientDto.builder()
-					.name(ingredient.getName())
-					.image(ingredient.getImgUrl())
-					.amounts(null)	// TODO : recipe 테이블에 필요 식재료 양 담는 방법?
-					.unit(ingredient.getUnit())
+					.name(name)
+					.image(findIngredient.getImgUrl())
+					.amounts(amounts)
+					.unit(unit)
 					.build();
 
 				// 식재료인 경우
-				if (!ingredient.getSeasoningYn()) {
+				if (!findIngredient.getSeasoningYn()) {
 					ingredientList.add(ingredientDto);
 				}
 				// 양념인 경우

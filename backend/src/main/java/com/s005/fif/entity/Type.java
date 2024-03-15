@@ -1,8 +1,13 @@
 package com.s005.fif.entity;
 
+import lombok.Getter;
+
+@Getter
 public enum Type {
 	BOIL("끓이기", 0),
 	ROAST("굽기", 1),
+	PUT("넣기", 2),
+	DONE("완성", 999),
 	;
 
 	private final String title;

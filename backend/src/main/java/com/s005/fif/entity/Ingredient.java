@@ -1,11 +1,11 @@
 package com.s005.fif.entity;
 
+import org.apache.tomcat.util.bcel.Const;
+
 import com.s005.fif.common.Constant;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -29,10 +29,6 @@ public class Ingredient {
 	@Column(nullable = false)
 	@Size(max = Constant.COMMON_TITLE_LENGTH)
 	private String name;
-
-	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
-	private Unit unit;
 
 	@Column(nullable = false)
 	@Size(max = Constant.COMMON_URL_LENGTH)

@@ -4,8 +4,10 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import com.s005.fif.common.Constant;
+import com.s005.fif.entity.converter.TypeConverter;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -46,7 +48,7 @@ public class RecipeStep {
 	@Size(max = Constant.COMMON_CONTENT_LENGTH)
 	private String description;
 
-	@Enumerated(EnumType.STRING)
+	@Convert(converter = TypeConverter.class)
 	@Column(nullable = false)
 	private Type type;
 

@@ -36,4 +36,7 @@ public class Ingredient {
 
 	@Column(nullable = false)
 	private Boolean seasoningYn;
+
+	@Column(nullable = false)
+	private Integer expirationPeriod;
 }

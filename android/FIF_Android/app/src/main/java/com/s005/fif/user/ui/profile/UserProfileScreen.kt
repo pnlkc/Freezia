@@ -128,7 +128,7 @@ fun UserProfileBody(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = 20.dp)
+            .padding(horizontal = 10.dp)
             .padding(bottom = 20.dp),
         verticalArrangement = Arrangement.spacedBy(30.dp)
     ) {

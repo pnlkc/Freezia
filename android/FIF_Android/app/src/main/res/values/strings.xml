@@ -15,11 +15,11 @@
     <string name="text_sleep">수면시간</string>
     <string name="text_blood_oxygen">혈중산소</string>
     <string name="text_like_food">선호 메뉴</string>
-    <string name="text_like_food_setting_hint">선호 메뉴</string>
+    <string name="text_like_food_setting_hint">이러한 종류의 음식을 선호해요</string>
     <string name="text_dislike_ingredient">기피 식재료</string>
-    <string name="text_dislike_ingredient_setting_hint">기피 식재료</string>
+    <string name="text_dislike_ingredient_setting_hint">이러한 재료는 피하고 싶어요</string>
     <string name="text_illness">지병</string>
-    <string name="text_illness_setting_hint">지병</string>
+    <string name="text_illness_setting_hint">이러한 지병을 갖고 있어요</string>
     <string name="text_health_title">안녕하세요 %1$s님</string>
     <string name="text_recipe_preference_title">레시피 선호도</string>
     <string name="text_recipe_preference_setting_title">레시피 선호도 설정</string>

@@ -1,0 +1,42 @@
+<resources>
+    <string name="app_name">FIF_Android</string>
+    <string name="text_select_user">사용자를 선택해주세요</string>
+    <string name="text_add_user">사용자 추가</string>
+    <string name="text_skip_onboarding">건너뛰기</string>
+    <string name="text_like_food_title">선호하는 음식은 무엇인가요?</string>
+    <string name="text_dislike_ingredient_title">기피하는 식재료가 있으신가요?</string>
+    <string name="text_illness_title">가지고 계신 지병이 있으신가요?</string>
+    <string name="text_btn_next">다음</string>
+    <string name="text_btn_save">저장</string>
+    <string name="text_btn_start">시작하기</string>
+    <string name="text_field_hint_dislike_ingredient">식재료명을 입력하세요</string>
+    <string name="text_field_hint_illness">병명을 입력하세요</string>
+    <string name="text_stress">스트레스</string>
+    <string name="text_sleep">수면시간</string>
+    <string name="text_blood_oxygen">혈중산소</string>
+    <string name="text_like_food">선호 메뉴</string>
+    <string name="text_like_food_setting_hint">선호 메뉴</string>
+    <string name="text_dislike_ingredient">기피 식재료</string>
+    <string name="text_dislike_ingredient_setting_hint">기피 식재료</string>
+    <string name="text_illness">지병</string>
+    <string name="text_illness_setting_hint">지병</string>
+    <string name="text_health_title">안녕하세요 %1$s님</string>
+    <string name="text_recipe_preference_title">레시피 선호도</string>
+    <string name="text_recipe_preference_setting_title">레시피 선호도 설정</string>
+    <string name="text_list_title">목록</string>
+    <string name="text_go_to_recipe_history_full">레시피 히스토리로 이동하기</string>
+    <string name="text_go_to_recipe_history">레시피 히스토리</string>
+    <string name="text_go_to_shopping_list_full">쇼핑 리스트로 이동하기</string>
+    <string name="text_go_to_shopping_list">쇼핑 리스트</string>
+
+
+    <string name="description_btn_go_back">뒤로가기 버튼</string>
+    <string name="description_btn_bookmark">북마크 버튼</string>
+    <string name="description_btn_notification">알림 버튼</string>
+    <string name="description_btn_recipe_preference_setting">레시피 선호도 설정 버튼</string>
+    <string name="description_img_profile">프로필 이미지</string>
+    <string name="description_btn_profile_add">프로필 추가 버튼</string>
+    <string name="description_icon_search">검색 아이콘</string>
+    <string name="description_icon_add">추가 아이콘</string>
+    <string name="description_samsung_health">삼성 헬스 로고</string>
+</resources>

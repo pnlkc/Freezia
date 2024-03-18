@@ -20,12 +20,6 @@ class TimerReceiver : BroadcastReceiver() {
         
         val action = intent.action
 
-//        val timerIntent = Intent(context, TimerActivity::class.java).apply {
-//            flags = Intent.FLAG_ACTIVITY_NEW_TASK
-//        }
-
-//        context.startActivity(timerIntent)
-
-        NotificationUtil.showFullScreenNotification(context, "타이머 완료", "타이머가 완료되었습니다")
+        NotificationUtil.showFullScreenNotification(context)
     }
 }

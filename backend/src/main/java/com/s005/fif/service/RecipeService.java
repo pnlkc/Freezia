@@ -127,6 +127,7 @@ public class RecipeService {
 	 * @param recipeId 레시피 ID
 	 * @return 레시피 단계로 이루어진 List
 	 */
+	@Transactional(readOnly = true)
 	public List<RecipeStepResponseDto> getRecipeSteps(String token, Integer recipeId) {
 		Member member = getMemberIdFromToken(token);
 		Recipe recipe = recipeRepository.findById(recipeId)
@@ -150,5 +151,26 @@ public class RecipeService {
 				.timer(recipeStep.getTimer())
 				.build())
 			.toList();
+	}
+
+	/**
+	 * 레시피 저장 여부를 토글합니다.
+	 * @param token 토큰
+	 * @param recipeId 레시피 ID
+	 * @return 완료 메세지
+	 */
+	public String toggleSaveYn(String token, Integer recipeId) {
+		Member member = getMemberIdFromToken(token);
+		Recipe recipe = recipeRepository.findById(recipeId)
+			.orElseThrow(() -> new CustomException(ExceptionType.RECIPE_NOT_FOUND));
+
+		// [예외 처리] 본인의 레시피가 아닐 경우
+		if (!recipe.getMember().getMemberId().equals(member.getMemberId())) {
+			throw new CustomException(ExceptionType.RECIPE_NOT_ACCESSIBLE);
+		}
+
+		recipe.toggleSaveYn();
+
+		return recipe.getSaveYn() ? "레시피가 저장되었습니다." : "레시피가 저장 취소되었습니다.";
 	}
 }

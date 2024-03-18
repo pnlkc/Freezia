@@ -29,19 +29,23 @@ public class FirebaseCloudMessageService {
 
 	private final String API_URL = "https://fcm.googleapis.com/v1/projects/fridgeisfree-6fca3/messages:send";  // 요청을 보낼 엔드포인트
 
-	public void sendMessageTo(FcmSendDto fcmSendDto) throws IOException {
-		String message = makeMessage(fcmSendDto);
-		RestTemplate restTemplate = new RestTemplate();
+	public void sendMessageTo(FcmSendDto fcmSendDto) {
+		try {
+			String message = makeMessage(fcmSendDto);
+			RestTemplate restTemplate = new RestTemplate();
 
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
-		headers.set("Authorization", "Bearer " + getAccessToken());
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			headers.set("Authorization", "Bearer " + getAccessToken());
 
-		HttpEntity entity = new HttpEntity<>(message, headers);
+			HttpEntity entity = new HttpEntity<>(message, headers);
 
-		ResponseEntity response = restTemplate.exchange(API_URL, HttpMethod.POST, entity, String.class);
+			ResponseEntity response = restTemplate.exchange(API_URL, HttpMethod.POST, entity, String.class);
 
-		if(response.getStatusCode() != HttpStatus.OK) {
+			if(response.getStatusCode() != HttpStatus.OK) {
+				throw new CustomException(ExceptionType.FCM_REQUEST_FAILED);
+			}
+		} catch (IOException e) {
 			throw new CustomException(ExceptionType.FCM_REQUEST_FAILED);
 		}
 	}
@@ -70,6 +74,7 @@ public class FirebaseCloudMessageService {
 	 */
 	private String makeMessage(FcmSendDto fcmSendDto) throws JsonProcessingException {
 		ObjectMapper om = new ObjectMapper();
+
 		FcmMessageDto fcmMessageDto = FcmMessageDto.builder()
 			.message(FcmMessageDto.Message.builder()
 				.token(fcmSendDto.getToken())
@@ -78,7 +83,9 @@ public class FirebaseCloudMessageService {
 					.body(fcmSendDto.getBody())
 					.image(null)
 					.build()
-				).build()).validateOnly(false).build();
+				)
+				.data(fcmSendDto.getData())
+				.build()).validateOnly(false).build();
 
 		return om.writeValueAsString(fcmMessageDto);
 	}

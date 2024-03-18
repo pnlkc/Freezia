@@ -5,6 +5,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,5 +35,12 @@ public class FridgeIngredientController {
 		Integer fridgeId = 1;
 		fridgeIngredientService.addIngredients(fridgeId, dto.getName());
 		return new Response(Response.MESSAGE, "입고되었습니다.");
+	}
+
+	@DeleteMapping
+	public Response removeIngredients(@RequestBody FridgeIngredientRequestDto dto) {
+		Integer memberId = 1;
+		fridgeIngredientService.removeIngredients(memberId, dto.getFridgeIngredientId());
+		return new Response(Response.MESSAGE, "출고되었습니다.");
 	}
 }

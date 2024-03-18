@@ -78,7 +78,7 @@ public class FridgeIngredientService {
 		// 식재료 제거
 		FridgeIngredient fridgeIngredient = fridgeIngredientRepository.findById(fridgeIngredientId)
 			.orElseThrow(() -> new CustomException(ExceptionType.FRIDGE_INGREDIENT_NOT_FOUND));
-		// fridgeIngredientRepository.delete(fridgeIngredient);
+		fridgeIngredientRepository.delete(fridgeIngredient);
 
 		// 위험식재료 판단
 		Optional<CautionIngredientRel> cautionIngredient = cautionIngredientRelRepository.findByMemberIdAndIngredientId(
@@ -86,9 +86,9 @@ public class FridgeIngredientService {
 		if(cautionIngredient.isPresent()) {
 			Member member = memberRepository.findById(memberId)
 				.orElseThrow(() -> new CustomException(ExceptionType.MEMBER_NOT_FOUND));
-			// 모바일 앱 푸시
 			Ingredient ingredient = cautionIngredient.get().getIngredient();
-			FcmSendDto fcmSendDto = FcmSendDto.builder()
+			// 모바일 앱 푸시
+			FcmSendDto appSendDto = FcmSendDto.builder()
 				.token(member.getMobileToken())
 				.title("위험 식재료 알림")
 				.body("방금 꺼내신 "+ingredient.getName()+"는 지병에 좋지 않아요.")
@@ -98,7 +98,19 @@ public class FridgeIngredientService {
 					.imgUrl(ingredient.getImgUrl())
 					.build())
 				.build();
-			fcmService.sendMessageTo(fcmSendDto);
+			fcmService.sendMessageTo(appSendDto);
+			// 웹 패널 푸시
+			FcmSendDto webSendDto = FcmSendDto.builder()
+				.token(member.getMobileToken())
+				.title("위험 식재료 알림")
+				.body("방금 꺼내신 "+ingredient.getName()+"는 지병에 좋지 않아요.")
+				.data(CautionIngredientResponseDto.builder()
+					.name(ingredient.getName())
+					.description(cautionIngredient.get().getDescription())
+					.imgUrl(ingredient.getImgUrl())
+					.build())
+				.build();
+			fcmService.sendMessageTo(webSendDto);
 		}
 	}
 }

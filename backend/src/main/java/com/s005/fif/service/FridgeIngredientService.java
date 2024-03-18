@@ -88,7 +88,7 @@ public class FridgeIngredientService {
 				.orElseThrow(() -> new CustomException(ExceptionType.MEMBER_NOT_FOUND));
 			Ingredient ingredient = cautionIngredient.get().getIngredient();
 			// 모바일 앱 푸시
-			FcmSendDto appSendDto = FcmSendDto.builder()
+			FcmSendDto fcmSendDto = FcmSendDto.builder()
 				.token(member.getMobileToken())
 				.title("위험 식재료 알림")
 				.body("방금 꺼내신 "+ingredient.getName()+"는 지병에 좋지 않아요.")
@@ -98,19 +98,10 @@ public class FridgeIngredientService {
 					.imgUrl(ingredient.getImgUrl())
 					.build())
 				.build();
-			fcmService.sendMessageTo(appSendDto);
+			fcmService.sendMessageTo(fcmSendDto);
 			// 웹 패널 푸시
-			FcmSendDto webSendDto = FcmSendDto.builder()
-				.token(member.getMobileToken())
-				.title("위험 식재료 알림")
-				.body("방금 꺼내신 "+ingredient.getName()+"는 지병에 좋지 않아요.")
-				.data(CautionIngredientResponseDto.builder()
-					.name(ingredient.getName())
-					.description(cautionIngredient.get().getDescription())
-					.imgUrl(ingredient.getImgUrl())
-					.build())
-				.build();
-			fcmService.sendMessageTo(webSendDto);
+			fcmSendDto.setToken(fridgeIngredient.getFridge().getFridgeToken());
+			fcmService.sendMessageTo(fcmSendDto);
 		}
 	}
 }

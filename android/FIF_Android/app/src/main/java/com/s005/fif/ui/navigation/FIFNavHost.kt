@@ -2,15 +2,15 @@ package com.s005.fif.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navigation
 import com.s005.fif.main.MainScreen
+import com.s005.fif.shopping_list.ui.ShoppingListScreen
 import com.s005.fif.user.ui.onboarding.UserOnboardingScreen
 import com.s005.fif.user.ui.profile.RecipePreferenceSettingScreen
 import com.s005.fif.user.ui.profile.UserProfileScreen
+import com.s005.fif.user.ui.recipe_history.ui.RecipeHistoryScreen
 import com.s005.fif.user.ui.select.UserSelectScreen
 
 @Composable
@@ -68,6 +68,16 @@ fun FIFNavHost(
                 },
                 navigateUp = {
                     navController.navigateUp()
+                },
+                navigateToSavedRecipe = {
+                    navController.navigate(NavigationDestination.RecipeHistory.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigationToShoppingList = {
+                    navController.navigate(NavigationDestination.ShoppingList.route) {
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -80,6 +90,24 @@ fun FIFNavHost(
                         launchSingleTop = true
                     }
                 },
+                navigateUp = {
+                    navController.navigateUp()
+                }
+            )
+        }
+
+        composable(route = NavigationDestination.RecipeHistory.route) {
+            RecipeHistoryScreen(
+                modifier = modifier,
+                navigateUp = {
+                    navController.navigateUp()
+                }
+            )
+        }
+
+        composable(route = NavigationDestination.ShoppingList.route) {
+            ShoppingListScreen(
+                modifier = modifier,
                 navigateUp = {
                     navController.navigateUp()
                 }

@@ -13,6 +13,9 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -123,7 +126,10 @@ fun LikeFoodCheckBox(
     ) {
         Checkbox(
             checked = checkedState,
-            onCheckedChange = null // null recommended for accessibility with screenreaders
+            onCheckedChange = null, // null recommended for accessibility with screenreaders
+            colors = CheckboxDefaults.colors(
+                uncheckedColor = colorScheme.primary
+            )
         )
 
         Text(

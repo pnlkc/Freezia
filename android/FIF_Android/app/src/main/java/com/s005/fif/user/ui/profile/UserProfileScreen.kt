@@ -45,7 +45,9 @@ import com.s005.fif.utils.AnnotatedStringUtil
 fun UserProfileScreen(
     modifier: Modifier = Modifier,
     navigateToRecipePreferenceSetting: () -> Unit,
-    navigateUp: () -> Unit
+    navigateUp: () -> Unit,
+    navigateToSavedRecipe: () -> Unit,
+    navigationToShoppingList: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -58,7 +60,9 @@ fun UserProfileScreen(
         )
 
         UserProfileBody(
-            navigateToRecipePreferenceSetting = navigateToRecipePreferenceSetting
+            navigateToRecipePreferenceSetting = navigateToRecipePreferenceSetting,
+            navigateToSavedRecipe = navigateToSavedRecipe,
+            navigationToShoppingList = navigationToShoppingList
         )
     }
 }
@@ -123,7 +127,9 @@ fun UserProfileTopBar(
 @Composable
 fun UserProfileBody(
     modifier: Modifier = Modifier,
-    navigateToRecipePreferenceSetting: () -> Unit
+    navigateToRecipePreferenceSetting: () -> Unit,
+    navigateToSavedRecipe: () -> Unit,
+    navigationToShoppingList: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -142,7 +148,9 @@ fun UserProfileBody(
         )
 
         UserProfileListColumn(
-            modifier = Modifier
+            modifier = Modifier,
+            navigateToSavedRecipe = navigateToSavedRecipe,
+            navigationToShoppingList = navigationToShoppingList
         )
     }
 }
@@ -400,6 +408,8 @@ fun UserProfileRecipePreferenceLazyRowItem(
 @Composable
 fun UserProfileListColumn(
     modifier: Modifier = Modifier,
+    navigateToSavedRecipe: () -> Unit,
+    navigationToShoppingList: () -> Unit
 ) {
     Column(
         modifier = modifier,
@@ -412,13 +422,13 @@ fun UserProfileListColumn(
         UserProfileListColumnCard(
             full = stringResource(id = R.string.text_go_to_recipe_history_full),
             spot = stringResource(id = R.string.text_go_to_recipe_history),
-            onClicked = {  }
+            onClicked = { navigateToSavedRecipe() }
         )
 
         UserProfileListColumnCard(
             full = stringResource(id = R.string.text_go_to_shopping_list_full),
             spot = stringResource(id = R.string.text_go_to_shopping_list),
-            onClicked = {  }
+            onClicked = { navigationToShoppingList() }
         )
     }
 }
@@ -458,6 +468,7 @@ fun UserProfileColumnText(
     text: String,
 ) {
     Text(
+        modifier = modifier,
         text = text,
         style = Typography.bodyLarge
     )

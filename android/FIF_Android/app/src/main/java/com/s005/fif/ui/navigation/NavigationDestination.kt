@@ -10,4 +10,8 @@ sealed class NavigationDestination(val route: String) {
     data object UserProfile : NavigationDestination("user_profile")
 
     data object RecipePreferenceSetting : NavigationDestination("recipe_preference_setting")
+
+    data object RecipeHistory : NavigationDestination("recipe_history")
+
+    data object ShoppingList : NavigationDestination("shopping_list")
 }

@@ -80,4 +80,8 @@ public class Recipe {
 	@Column(nullable = false)
 	@ColumnDefault("1")
 	private Integer serving;
+
+	public void saveRecipe() {
+		this.saveYn = true;
+	}
 }

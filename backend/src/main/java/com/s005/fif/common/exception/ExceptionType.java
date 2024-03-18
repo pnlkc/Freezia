@@ -21,6 +21,9 @@ public enum ExceptionType {
 
     // Ingredient
     INGREDIENTS_NOT_FOUND(404, "식재료를 찾을 수 없습니다."),
+
+    // FCM
+    FCM_REQUEST_FAILED(500, "FCM에 메시지 전송을 실패했습니다."),
     ;
 
     private final int code;

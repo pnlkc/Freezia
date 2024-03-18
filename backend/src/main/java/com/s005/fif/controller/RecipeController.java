@@ -32,8 +32,8 @@ public class RecipeController {
     }
 
     @PatchMapping("/{recipeId}/save")
-    public Response saveRecipe(@RequestHeader(value = "Authorization", required = false) String token,
+    public Response toggleSaveYn(@RequestHeader(value = "Authorization", required = false) String token,
         @PathVariable Integer recipeId) {
-        return new Response(Response.MESSAGE, recipeService.saveRecipe(token, recipeId));
+        return new Response(Response.MESSAGE, recipeService.toggleSaveYn(token, recipeId));
     }
 }

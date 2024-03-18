@@ -154,12 +154,12 @@ public class RecipeService {
 	}
 
 	/**
-	 * 레시피를 저장합니다.
+	 * 레시피 저장 여부를 토글합니다.
 	 * @param token 토큰
 	 * @param recipeId 레시피 ID
-	 * @return 저장 완료 메세지
+	 * @return 완료 메세지
 	 */
-	public String saveRecipe(String token, Integer recipeId) {
+	public String toggleSaveYn(String token, Integer recipeId) {
 		Member member = getMemberIdFromToken(token);
 		Recipe recipe = recipeRepository.findById(recipeId)
 			.orElseThrow(() -> new CustomException(ExceptionType.RECIPE_NOT_FOUND));
@@ -169,8 +169,8 @@ public class RecipeService {
 			throw new CustomException(ExceptionType.RECIPE_NOT_ACCESSIBLE);
 		}
 
-		recipe.saveRecipe();
+		recipe.toggleSaveYn();
 
-		return "레시피가 저장되었습니다.";
+		return recipe.getSaveYn() ? "레시피가 저장되었습니다." : "레시피가 저장 취소되었습니다.";
 	}
 }

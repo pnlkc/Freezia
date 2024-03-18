@@ -81,7 +81,7 @@ public class Recipe {
 	@ColumnDefault("1")
 	private Integer serving;
 
-	public void saveRecipe() {
-		this.saveYn = true;
+	public void toggleSaveYn() {
+		this.saveYn = !this.saveYn;
 	}
 }

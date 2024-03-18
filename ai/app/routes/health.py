@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from common import send_request
-import config
+from prompt_config import RECIPE_JSON_FORMAT
 
 health_router = APIRouter()
 
@@ -29,7 +29,7 @@ def stress_recipe(
                     모든 대답은 아래 JSON 형태로 반환해줘.
                     reply는 네가 하는 대답이야. 레시피의 어떤 요소가 스트레스 해소에 적합한지 꼭 명시하도록 해.
                     recipeList는 네가 추천해주는 레시피의 세부 정보를 저 recipeList 안에 있는 JSON 형태로 변환해서 반환해줘.\n
-                    """ + config.RECIPE_JSON_FORMAT            
+                    """ + RECIPE_JSON_FORMAT            
             
             return send_request(instruction)
 
@@ -62,7 +62,7 @@ def blood_oxygen_recipe(
                     모든 대답은 아래 JSON 형태로 반환해줘.
                     reply는 네가 하는 대답이야. 레시피의 어떤 요소가 혈중산소 농도 수치가 낮은 사람에게 적합한지 꼭 명시하도록 해.
                     recipeList는 네가 추천해주는 레시피의 세부 정보를 저 recipeList 안에 있는 JSON 형태로 변환해서 반환해줘.\n
-                    """ + config.RECIPE_JSON_FORMAT            
+                    """ + RECIPE_JSON_FORMAT            
             
             return send_request(instruction)
 
@@ -95,7 +95,7 @@ def sleep_recipe(
                     모든 대답은 아래 JSON 형태로 반환해줘.
                     reply는 네가 하는 대답이야. 레시피의 어떤 요소가 수면 부족에 적합한지 꼭 명시하도록 해.
                     recipeList는 네가 추천해주는 레시피의 세부 정보를 저 recipeList 안에 있는 JSON 형태로 변환해서 반환해줘.\n
-                    """ + config.RECIPE_JSON_FORMAT            
+                    """ + RECIPE_JSON_FORMAT            
             
             return send_request(instruction)
 

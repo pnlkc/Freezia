@@ -3,7 +3,9 @@ from models.threads import ThreadAssistantIdResponse, ThreadAssistantResponse, T
 from models.prompts import PromptRequest
 from routes.health import health_router
 from routes.category import category_router
+from prompt_config import CONVERSATION_JSON_FORMAT
 from common import client
+
 import config
 import uvicorn
 import json
@@ -63,7 +65,7 @@ def get_thread_and_assistant(
                 reply는 네가 하는 대답이야.
                 recommendList는 네가 하는 대답을 보고 사용자가 어떤 질문을 하면 적합할 지 추천해주는 질문이야.
                 recipeList는 네가 추천해주는 레시피의 세부 정보를 저 recipeList 안에 있는 JSON 형태로 변환해서 반환해줘.\n
-                """ + config.CONVERSATION_JSON_FORMAT
+                """ + CONVERSATION_JSON_FORMAT
         
         # Assistant 생성
         assistant = client.beta.assistants.create(

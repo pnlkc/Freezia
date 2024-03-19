@@ -4,8 +4,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -70,7 +70,14 @@ public class MemberController {
 	@PostMapping("/onboarding")
 	public Response postOnboarding(MemberDto memberDto,
 		@RequestBody MemberOnboardingRequestDto memberOnboardingRequestDto) {
-		memberService.setMemberOnboarding(memberDto.getMemberId(), memberOnboardingRequestDto);
+		memberService.setMemberInfo(memberDto.getMemberId(), memberOnboardingRequestDto, true);
+		return new Response();
+	}
+
+	@PutMapping("/preference")
+	public Response putMemberPreference(MemberDto memberDto,
+		@RequestBody MemberOnboardingRequestDto memberOnboardingRequestDto) {
+		memberService.setMemberInfo(memberDto.getMemberId(), memberOnboardingRequestDto, false);
 		return new Response();
 	}
 

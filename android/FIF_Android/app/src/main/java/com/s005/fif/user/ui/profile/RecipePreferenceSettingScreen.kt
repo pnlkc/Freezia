@@ -98,7 +98,8 @@ fun RecipePreferenceSettingColumn(
             modifier = Modifier
                 .fillMaxWidth(),
             colors = CardDefaults.cardColors(containerColor = Color.White),
-            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
+            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+            shape = RoundedCornerShape(20.dp)
         ) {
             Column(
                 modifier = Modifier

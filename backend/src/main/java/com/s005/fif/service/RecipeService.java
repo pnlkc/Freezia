@@ -22,7 +22,6 @@ import com.s005.fif.entity.Recipe;
 import com.s005.fif.entity.RecipeStep;
 import com.s005.fif.repository.CompleteCookRepository;
 import com.s005.fif.repository.IngredientRepository;
-import com.s005.fif.repository.MemberRepository;
 import com.s005.fif.repository.RecipeRepository;
 import com.s005.fif.repository.RecipeStepRepository;
 

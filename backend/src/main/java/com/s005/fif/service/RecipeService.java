@@ -13,6 +13,7 @@ import com.s005.fif.common.exception.ExceptionType;
 import com.s005.fif.dto.request.CompleteCookRequestDto;
 import com.s005.fif.dto.request.model.AddIngredientDto;
 import com.s005.fif.dto.request.model.RemoveIngredientDto;
+import com.s005.fif.dto.response.CompleteCookResponseDto;
 import com.s005.fif.dto.response.RecipeResponseDto;
 import com.s005.fif.dto.response.RecipeStepResponseDto;
 import com.s005.fif.dto.response.model.IngredientDto;
@@ -66,8 +67,8 @@ public class RecipeService {
 			// 식재료 DB에 없는 경우
 			if (findIngredientOpt.isEmpty()) {
 				/*
-				식재료 DB에 추가
-				DB에서 imgUrl, seasoningYn 직접 수정 필요함
+				추가한 식재료 중 DB에 없으면 DB에 추가
+				DB에서 imgUrl, seasoningYn, expirationPeriod 직접 수정 필요함
 				 */
 				ingredientRepository.save(Ingredient.builder()
 					.name(name)
@@ -75,7 +76,7 @@ public class RecipeService {
 					.seasoningYn(true)	// 양념으로 취급
 					.expirationPeriod(Constant.DEFAULT_INGREDIENT_EXPIRATION_PERIOD)
 					.build());
-				seasoningList.add(IngredientDto.builder()
+				seasoningList.add(IngredientDto.builder()	// TODO : ingredientId 추가
 					.name(name)
 					.amounts(amounts)
 					.unit(unit)
@@ -84,7 +85,7 @@ public class RecipeService {
 			// 식재료 DB에 있는 경우
 			else {
 				Ingredient findIngredient = findIngredientOpt.get();
-				IngredientDto ingredientDto = IngredientDto.builder()
+				IngredientDto ingredientDto = IngredientDto.builder()	// TODO : ingredientId 추가
 					.name(name)
 					.image(findIngredient.getImgUrl())
 					.amounts(amounts)
@@ -186,6 +187,20 @@ public class RecipeService {
 			throw new CustomException(ExceptionType.RECIPE_NOT_ACCESSIBLE);
 		}
 
+		/*
+		추가한 식재료 중 DB에 없으면 DB에 추가
+		DB에서 imgUrl, seasoningYn, expirationPeriod 직접 수정 필요함
+		 */
+		for (AddIngredientDto addIngredient : dto.getAddIngredients()) {
+			if (ingredientRepository.existsByName(addIngredient.getName())) continue;
+			ingredientRepository.save(Ingredient.builder()
+				.name(addIngredient.getName())
+				.imgUrl(Constant.DEFAULT_INGREDIENT_IMG_URL)
+				.seasoningYn(true)	// 양념으로 취급
+				.expirationPeriod(Constant.DEFAULT_INGREDIENT_EXPIRATION_PERIOD)
+				.build());
+		}
+
 		// 추가한 식재료 stringify
 		StringBuilder addIngredient = new StringBuilder();
 		for (AddIngredientDto ingredient : dto.getAddIngredients()) {
@@ -220,5 +235,69 @@ public class RecipeService {
 		recipe.completeCook();
 
 		return "요리 기록이 추가되었습니다.";
+	}
+
+	/**
+	 * 요리 기록 리스트를 반환합니다.
+	 * @param memberId 사용자 ID
+	 * @param recipeId 레시피 ID
+	 * @return 레시피에 달린 요리 기록 리스트
+	 */
+	@Transactional(readOnly = true)
+	public List<CompleteCookResponseDto> getCompleteCook(Integer memberId, Integer recipeId) {
+		Recipe recipe = recipeRepository.findById(recipeId)
+			.orElseThrow(() -> new CustomException(ExceptionType.RECIPE_NOT_FOUND));
+
+		// [예외 처리] 본인의 레시피가 아닐 경우
+		if (!recipe.getMember().getMemberId().equals(memberId)) {
+			throw new CustomException(ExceptionType.RECIPE_NOT_ACCESSIBLE);
+		}
+
+		List<CompleteCookResponseDto> completeCookResponseDtoList = new ArrayList<>();
+
+		List<CompleteCook> completeCookList = completeCookRepository.findByRecipe(recipe);
+		for (CompleteCook completeCook : completeCookList) {
+			List<IngredientDto> addIngredients = new ArrayList<>();
+			for (String ingredient : completeCook.getAddIngredient().split(",")) {
+				String[] s = ingredient.split(":");
+				String name = s[0];
+				String amounts = s[1];
+				String unit = s[2];
+
+				Ingredient findIngredient = ingredientRepository.findByName(s[0])
+					.orElseThrow(() -> new CustomException(ExceptionType.INGREDIENTS_NOT_FOUND));
+
+				addIngredients.add(IngredientDto.builder()
+					.ingredientId(findIngredient.getIngredientId())
+					.name(name)
+					.image(findIngredient.getImgUrl())
+					.amounts(amounts)
+					.unit(unit)
+					.build());
+			}
+
+			List<IngredientDto> removeIngredients = new ArrayList<>();
+			for (String ingredient : completeCook.getRemoveIngredient().split(",")) {
+				Ingredient findIngredient = ingredientRepository.findByName(ingredient)
+					.orElseThrow(() -> new CustomException(ExceptionType.INGREDIENTS_NOT_FOUND));
+
+				removeIngredients.add(IngredientDto.builder()
+					.ingredientId(findIngredient.getIngredientId())
+					.name(ingredient)
+					.image(findIngredient.getImgUrl())
+					.amounts(null)
+					.unit(null)
+					.build());
+			}
+
+			completeCookResponseDtoList.add(CompleteCookResponseDto.builder()
+				.addIngredients(addIngredients)
+				.removeIngredients(removeIngredients)
+				.memo(completeCook.getMemo())
+				.completeDate(completeCook.getCompleteDate())
+				.build());
+		}
+
+		return completeCookResponseDtoList;
 	}
 }

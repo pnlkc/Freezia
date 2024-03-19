@@ -108,7 +108,7 @@ fun UserOnboardingProgressBar(
     progress: Int,
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(5.dp),
         horizontalArrangement = Arrangement.spacedBy(3.dp)
@@ -185,7 +185,8 @@ fun UserOnboardingPager(
 ) {
     HorizontalPager(
         state = pagerState,
-        userScrollEnabled = false
+        userScrollEnabled = false,
+        pageSpacing = 20.dp
     ) { page ->
         when (page) {
             0 -> {

@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -76,7 +77,8 @@ fun UserProfileTopBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 10.dp),
+            .padding(vertical = 10.dp)
+            .height(30.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -155,7 +157,6 @@ fun UserProfileBody(
     }
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun UserProfileHealthColumn(
     modifier: Modifier = Modifier,
@@ -168,55 +169,63 @@ fun UserProfileHealthColumn(
             text = stringResource(id = R.string.text_health_title, "김싸피")
         )
 
-        Card(
-            modifier = Modifier
-                .fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
-            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
-        ) {
-            Row(
-                modifier = Modifier
-                    .padding(10.dp),
-                horizontalArrangement = Arrangement.spacedBy(20.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(
-                    modifier = Modifier,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(5.dp)
-                ) {
-                    Image(
-                        modifier = Modifier
-                            .width(100.dp)
-                            .padding(top = 10.dp),
-                        painter = painterResource(id = R.drawable.samsung_health),
-                        contentDescription = stringResource(id = R.string.description_samsung_health)
-                    )
+        HealthCard()
+    }
+}
 
-                    Box(
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun HealthCard(
+    modifier: Modifier = Modifier,
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(10.dp),
+            horizontalArrangement = Arrangement.spacedBy(20.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                modifier = Modifier,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(5.dp)
+            ) {
+                Image(
+                    modifier = Modifier
+                        .width(100.dp)
+                        .padding(top = 10.dp),
+                    painter = painterResource(id = R.drawable.samsung_health),
+                    contentDescription = stringResource(id = R.string.description_samsung_health)
+                )
+
+                Box(
+                    modifier = modifier
+                        .clip(CircleShape)
+                        .size(100.dp)
+                        .padding(horizontal = 10.dp)
+                        .padding(bottom = 10.dp)
+                ) {
+                    GlideImage(
                         modifier = modifier
                             .clip(CircleShape)
-                            .size(100.dp)
-                            .padding(horizontal = 10.dp)
-                            .padding(bottom = 10.dp)
-                    ) {
-                        GlideImage(
-                            modifier = modifier
-                                .clip(CircleShape)
-                                .size(80.dp)
-                                .align(Alignment.BottomCenter),
-                            model = "https://thumbnews.nateimg.co.kr/view610///news.nateimg.co.kr/orgImg/ts/2019/03/08/598316_280802_2053.jpg",
-                            contentDescription = stringResource(id = R.string.description_img_profile),
-                            contentScale = ContentScale.Crop
-                        )
-                    }
+                            .size(80.dp)
+                            .align(Alignment.BottomCenter),
+                        model = "https://thumbnews.nateimg.co.kr/view610///news.nateimg.co.kr/orgImg/ts/2019/03/08/598316_280802_2053.jpg",
+                        contentDescription = stringResource(id = R.string.description_img_profile),
+                        contentScale = ContentScale.Crop
+                    )
                 }
-
-                HealthGraphColumn(
-                    modifier = modifier
-                        .weight(1f)
-                )
             }
+
+            HealthGraphColumn(
+                modifier = modifier
+                    .weight(1f)
+            )
         }
     }
 }
@@ -470,6 +479,7 @@ fun UserProfileColumnText(
     Text(
         modifier = modifier,
         text = text,
-        style = Typography.bodyLarge
+        style = Typography.bodyLarge,
+        fontWeight = FontWeight.Bold
     )
 }

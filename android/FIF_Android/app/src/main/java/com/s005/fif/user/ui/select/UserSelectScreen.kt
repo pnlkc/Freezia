@@ -78,7 +78,7 @@ fun UserSelectBody(
             }
 
             itemsIndexed(
-                items = listOf<String>("김싸피", "이사피", "박싸피"),
+                items = listOf<String>("김싸피", "이싸피", "박싸피"),
                 key = { _, item ->
                     item
                 }

@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.s005.fif.common.Constant;
 import com.s005.fif.common.exception.CustomException;
 import com.s005.fif.common.exception.ExceptionType;
 import com.s005.fif.dto.request.CompleteCookRequestDto;
@@ -80,8 +81,9 @@ public class RecipeService {
 				 */
 				ingredientRepository.save(Ingredient.builder()
 					.name(name)
-					.imgUrl("default_image.png")
+					.imgUrl(Constant.DEFAULT_INGREDIENT_IMG_URL)
 					.seasoningYn(true)	// 양념으로 취급
+					.expirationPeriod(Constant.DEFAULT_INGREDIENT_EXPIRATION_PERIOD)
 					.build());
 				seasoningList.add(IngredientDto.builder()
 					.name(name)

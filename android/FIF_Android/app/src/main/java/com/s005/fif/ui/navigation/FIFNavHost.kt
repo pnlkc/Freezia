@@ -123,7 +123,9 @@ fun FIFNavHost(
         composable(route = NavigationDestination.RecipeList.route) {
             RecipeListScreen(
                 modifier = modifier,
-
+                navigateUp = {
+                    navController.navigateUp()
+                }
             )
         }
     }

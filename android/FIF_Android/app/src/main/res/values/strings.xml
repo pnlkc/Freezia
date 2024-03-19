@@ -34,6 +34,7 @@
     <string name="text_recipe_list">레시피 둘러보기</string>
     <string name="text_recipe_gpt">레시피 생성하기</string>
     <string name="text_go_to_recipe_list">레시피 보러가기</string>
+    <string name="text_no_exist_want_recipe">원하는 레시피가 없나요?</string>
 
     <string name="description_btn_go_back">뒤로가기 버튼</string>
     <string name="description_btn_bookmark">북마크 버튼</string>

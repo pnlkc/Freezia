@@ -242,7 +242,6 @@ fun SavedRecipeTitleItem(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun RecipeHistoryPagerItem(
     modifier: Modifier = Modifier,
@@ -274,7 +273,8 @@ fun RecipeHistoryPagerItem(
             }
         ) { _, item ->
             RecipeHistoryLazyVerticalGridItem(
-                item = item
+                item = item,
+                onClick = {  }
             )
         }
     }
@@ -284,13 +284,15 @@ fun RecipeHistoryPagerItem(
 @Composable
 fun RecipeHistoryLazyVerticalGridItem(
     modifier: Modifier = Modifier,
-    item: RecipeHistoryData
+    item: RecipeHistoryData,
+    onClick: () -> Unit
 ) {
     Box(
         modifier = modifier
             .fillMaxWidth()
             .height((ScreenSizeUtil.screenHeightDp / 5).dp)
             .clip(RoundedCornerShape(10.dp))
+            .clickable { onClick() }
     ) {
         GlideImage(
             modifier = Modifier

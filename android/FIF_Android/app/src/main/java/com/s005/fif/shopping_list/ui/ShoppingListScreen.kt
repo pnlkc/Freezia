@@ -83,7 +83,6 @@ fun ShoppingListBody(
         ) {
             Icon(
                 modifier = Modifier
-                    .clip(CircleShape)
                     .size(25.dp),
                 painter = painterResource(id = R.drawable.shopping_cart),
                 contentDescription = stringResource(id = R.string.description_btn_go_back),

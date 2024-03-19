@@ -14,7 +14,6 @@ public enum ExceptionType {
 
     // member
     MEMBER_NOT_FOUND(404, "사용자를 찾을 수 없습니다."),
-	USER_NOT_FOUND(404, "해당 유저를 찾을 수 없습니다."), // FIXME: 중복 타입 제거
 	TOKEN_EXPIRED(401, "토큰이 만료되었습니다. 다시 로그인 해주세요."),
 	TOKEN_NOT_VALID(404, "토큰 형식이 유효하지 않습니다."),
 	TOKEN_NOT_EXIST(404, "토큰이 없습니다."),

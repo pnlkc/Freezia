@@ -46,7 +46,7 @@ public class MemberService {
 
 		Integer memberId = memberLoginRequestDto.getMemberId();
 		Member member = memberRepository.findById(memberId)
-			.orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
+			.orElseThrow(() -> new CustomException(ExceptionType.MEMBER_NOT_FOUND));
 
 		return jwtTokenProvider.createJwt(MemberDto.builder()
 			.memberId(member.getMemberId())

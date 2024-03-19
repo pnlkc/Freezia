@@ -16,4 +16,6 @@ sealed class NavigationDestination(val route: String) {
     data object ShoppingList : NavigationDestination("shopping_list")
 
     data object RecipeList : NavigationDestination("recipe_list")
+
+    data object RecipeChat : NavigationDestination("recipe_chat")
 }

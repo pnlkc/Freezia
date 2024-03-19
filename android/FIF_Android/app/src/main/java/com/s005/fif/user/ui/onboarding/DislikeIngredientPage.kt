@@ -65,7 +65,7 @@ fun DislikeIngredientBody(
     Column(
         modifier = modifier
             .padding(horizontal = 30.dp)
-            .padding(bottom = 30.dp)
+            .padding(bottom = 20.dp)
     ) {
         UserOnboardingControlBar(
             modifier = Modifier,
@@ -83,7 +83,9 @@ fun DislikeIngredientBody(
             hintText = stringResource(id = R.string.text_field_hint_dislike_ingredient)
         )
 
-        DislikeIngredientSearchResultLazyColumn()
+        DislikeIngredientSearchResultLazyColumn(
+            modifier = modifier.weight(1f)
+        )
 
         HorizontalDivider(
             modifier = Modifier,
@@ -92,10 +94,6 @@ fun DislikeIngredientBody(
         )
 
         DislikeIngredientSelectLazyRow()
-
-        Spacer(
-            modifier = Modifier.weight(1f)
-        )
 
         UserOnboardingBtn(
             modifier = Modifier,

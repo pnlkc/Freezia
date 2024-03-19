@@ -73,7 +73,7 @@ fun IllnessBody(
     Column(
         modifier = modifier
             .padding(horizontal = 30.dp)
-            .padding(bottom = 30.dp)
+            .padding(bottom = 20.dp)
     ) {
         UserOnboardingControlBar(
             modifier = Modifier,
@@ -91,7 +91,10 @@ fun IllnessBody(
             hintText = stringResource(id = R.string.text_field_hint_illness)
         )
 
-        IllnessSearchResultLazyColumn()
+        IllnessSearchResultLazyColumn(
+            modifier = modifier
+                .weight(1f)
+        )
 
         HorizontalDivider(
             modifier = Modifier,
@@ -100,10 +103,6 @@ fun IllnessBody(
         )
 
         IllnessSelectLazyRow()
-
-        Spacer(
-            modifier = Modifier.weight(1f)
-        )
 
         UserOnboardingBtn(
             modifier = Modifier,

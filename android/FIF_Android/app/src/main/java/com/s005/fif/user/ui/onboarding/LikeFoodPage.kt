@@ -55,7 +55,7 @@ fun LikeFoodBody(
     Column(
         modifier = modifier
             .padding(horizontal = 30.dp)
-            .padding(bottom = 30.dp)
+            .padding(bottom = 20.dp)
     ) {
         UserOnboardingControlBar(
             modifier = Modifier,

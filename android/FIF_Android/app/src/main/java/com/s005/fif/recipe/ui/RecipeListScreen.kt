@@ -25,6 +25,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,25 +55,30 @@ import kotlinx.coroutines.delay
 @Composable
 fun RecipeListScreen(
     modifier: Modifier = Modifier,
-    navigateUp: () -> Unit
+    navigateUp: () -> Unit,
+    navigateToRecipeChat: () -> Unit
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 10.dp)
+            .padding(bottom = 20.dp)
             .background(MaterialTheme.colorScheme.background)
     ) {
         UserProfileTopBar(
             navigateUp = { navigateUp() }
         )
 
-        RecipeListBody()
+        RecipeListBody(
+            navigateToRecipeChat = navigateToRecipeChat
+        )
     }
 }
 
 @Composable
 fun RecipeListBody(
     modifier: Modifier = Modifier,
+    navigateToRecipeChat: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -82,7 +88,9 @@ fun RecipeListBody(
     ) {
         RecipeListTagList()
 
-        RecipeListLazyGrid()
+        RecipeListLazyGrid(
+            navigateToRecipeChat = navigateToRecipeChat
+        )
     }
 }
 
@@ -96,11 +104,12 @@ fun RecipeListTagList(
         "중식",
         "양식",
         "일식",
+        "밑반찬",
         "면 요리",
         "국물 요리",
         "볶음 요리",
         "찜 요리",
-        "튀김 요리"
+        "유통기한 임박"
     )
 
     FlowRow(
@@ -154,18 +163,32 @@ fun RecipeListLazyGrid(
         RecipeHistoryData(50, "순대볶음", "https://cdn.mkhealth.co.kr/news/photo/202008/img_MKH200814003_0.jpg"),
         RecipeHistoryData(50, "떡볶이", "https://i.namu.wiki/i/A5AIHovo1xwuEjs7V8-aKpZCSWY2gN3mZEPR9fymaez_J7ufmI9B7YyDBu6kZy9TC9VWJatXVJZbDjcYLO2S8Q.webp"),
         RecipeHistoryData(50, "해물찜", "https://recipe1.ezmember.co.kr/cache/recipe/2016/12/16/99d6cb0cb6c434b562217f407623c8491.jpg"),
-    )
+    ),
+    navigateToRecipeChat: () -> Unit
 ) {
+    var isShow by remember {
+        mutableStateOf(false)
+    }
+
+    // 10초 뒤에 "원하는 레시피가 없나요?" 문구 노출
+    LaunchedEffect(key1 = isShow) {
+        delay(10000L)
+        isShow = true
+    }
+
     LazyVerticalGrid(
         modifier = modifier
             .fillMaxSize()
-            .padding(vertical = 20.dp),
+            .padding(top = 20.dp),
         columns = GridCells.Fixed(count = 2),
         verticalArrangement = Arrangement.spacedBy(15.dp),
         horizontalArrangement = Arrangement.spacedBy(15.dp)
     ) {
         item {
-            RecipeListRecipeGPTBtn()
+            RecipeListRecipeGPTBtn(
+                isShow = isShow,
+                navigateToRecipeChat = navigateToRecipeChat
+            )
         }
 
         itemsIndexed(
@@ -185,24 +208,16 @@ fun RecipeListLazyGrid(
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun RecipeListRecipeGPTBtn(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isShow: Boolean,
+    navigateToRecipeChat: () -> Unit
 ) {
-    var isShow by remember {
-        mutableStateOf(false)
-    }
-
-    // 10초 뒤에 "원하는 레시피가 없나요?" 문구 노출
-    LaunchedEffect(key1 = isShow) {
-        delay(10000L)
-        isShow = true
-    }
-
     Box(
         modifier = modifier
             .fillMaxWidth()
             .height((ScreenSizeUtil.screenHeightDp / 5).dp)
             .clip(RoundedCornerShape(10.dp))
-            .clickable { },
+            .clickable { navigateToRecipeChat() },
     ) {
         GlideImage(
             modifier = Modifier

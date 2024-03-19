@@ -59,12 +59,14 @@ data class MainData(val imgUrl: String, val desc: String)
 fun MainScreen(
     modifier: Modifier = Modifier,
     navigateToUserProfile: () -> Unit,
-    navigateToRecipeList: () -> Unit
+    navigateToRecipeList: () -> Unit,
+    navigateToRecipeChat: () -> Unit
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 10.dp)
+            .padding(bottom = 20.dp)
             .background(colorScheme.background)
     ) {
         MainTopBar()
@@ -72,6 +74,7 @@ fun MainScreen(
         MainBody(
             navigateToUserProfile = navigateToUserProfile,
             navigateToRecipeList = navigateToRecipeList,
+            navigateToRecipeChat = navigateToRecipeChat
         )
     }
 }
@@ -137,12 +140,12 @@ fun MainTopBar(
 fun MainBody(
     modifier: Modifier = Modifier,
     navigateToUserProfile: () -> Unit,
-    navigateToRecipeList: () -> Unit
+    navigateToRecipeList: () -> Unit,
+    navigateToRecipeChat: () -> Unit
 ) {
     Column(
         modifier = modifier
-            .fillMaxSize()
-            .padding(bottom = 20.dp),
+            .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(30.dp)
     ) {
         MainHealthColumn(
@@ -152,7 +155,8 @@ fun MainBody(
         MainRecipeRecommendColumn()
 
         MainRecipeBtnRow(
-            navigateToRecipeList = navigateToRecipeList
+            navigateToRecipeList = navigateToRecipeList,
+            navigateToRecipeChat = navigateToRecipeChat
         )
     }
 }
@@ -319,7 +323,8 @@ fun MainRecipeRecommendCard(
 @Composable
 fun MainRecipeBtnRow(
     modifier: Modifier = Modifier,
-    navigateToRecipeList: () -> Unit
+    navigateToRecipeList: () -> Unit,
+    navigateToRecipeChat: () -> Unit
 ) {
     Row(
         modifier = modifier
@@ -344,7 +349,7 @@ fun MainRecipeBtnRow(
             text = stringResource(id = R.string.text_recipe_gpt),
             contentDescription = stringResource(id = R.string.description_recipe_gpt_icon),
             icon = painterResource(id = R.drawable.neurology),
-            onClick = {  }
+            onClick = { navigateToRecipeChat() }
         )
     }
 }

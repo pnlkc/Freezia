@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -43,10 +43,9 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.s005.fif.R
 import com.s005.fif.ui.theme.Typography
-import com.s005.fif.user.ui.profile.RecipePreferenceSettingRow
-import com.s005.fif.user.ui.profile.UserProfileColumnText
 import com.s005.fif.user.ui.profile.UserProfileTopBar
-import com.s005.fif.user.ui.recipe_history.ui.SavedRecipeBody
+import com.s005.fif.utils.ScreenSizeUtil
+import com.s005.fif.utils.ScreenSizeUtil.toDpSize
 
 @Composable
 fun ShoppingListScreen(
@@ -57,6 +56,7 @@ fun ShoppingListScreen(
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 10.dp)
+            .padding(bottom = 20.dp)
             .background(MaterialTheme.colorScheme.background)
     ) {
         UserProfileTopBar(
@@ -103,75 +103,74 @@ fun ShoppingListBody(
             elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
             shape = RoundedCornerShape(20.dp)
         ) {
-            Column(
+            LazyColumn(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxSize()
                     .padding(20.dp),
-                verticalArrangement = Arrangement.spacedBy(25.dp)
+                verticalArrangement = Arrangement.spacedBy(25.dp),
             ) {
-                CheckedItem(
-                    modifier = Modifier
-                )
+                val list1 = listOf("당근", "대파", "토마토", "양파", "양배추", "당근1", "대파1", "토마토1", "양파1", "양배추1","당근2", "대파2", "토마토2", "양파2", "양배추2")
+                
+                item {
+                    UncheckedItem(
+                        cnt = list1.size
+                    )
+                }
 
-                HorizontalDivider(
-                    modifier = Modifier,
-                    thickness = 1.dp,
-                    color = colorScheme.onSecondary.copy(alpha = 0.1f)
-                )
+                itemsIndexed(
+                    items = list1,
+                    key = { _, item ->
+                        item
+                    }
+                ) { _, item ->
+                    ShoppingListLazyColumnItem(
+                        item = item,
+                        isDone = false
+                    )
+                }
 
-                UncheckedItem(
-                    modifier = Modifier
-                )
+                item {
+                    HorizontalDivider(
+                        modifier = Modifier,
+                        thickness = 1.dp,
+                        color = colorScheme.onSecondary.copy(alpha = 0.1f)
+                    )
+                }
+
+                item {
+                    CheckedItemTitle()
+                }
+
+                val list2 = listOf("당근3", "대파3", "토마토3", "양파3", "양배추3","당근4", "대파4", "토마토4", "양파4", "양배추4")
+
+                itemsIndexed(
+                    items = list2,
+                    key = { _, item ->
+                        item
+                    }
+                ) { _, item ->
+                    ShoppingListLazyColumnItem(
+                        item = item,
+                        isDone = true
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-fun CheckedItem(
+fun CheckedItemTitle(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = "5개의 아이템",
-            style = Typography.titleSmall,
-            fontWeight = FontWeight.Bold
-        )
-
-        Icon(
-            modifier = Modifier
-                .clip(CircleShape)
-                .size(25.dp)
-                .clickable { },
-            painter = painterResource(id = R.drawable.edit),
-            contentDescription = stringResource(id = R.string.description_shopping_list_icon),
-            tint = Color.Black
-        )
-    }
-
-    ShoppingListLazyColumn(
-        list = listOf("당근", "대파", "토마토", "양파", "양배추"),
-        isDone = false
-    )
-}
-
-@Composable
-fun UncheckedItem(
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            text = "체크된 아이템",
+            text = stringResource(id = R.string.text_checked_item),
             style = Typography.titleSmall,
             fontWeight = FontWeight.Bold
         )
@@ -188,17 +187,41 @@ fun UncheckedItem(
                     .clip(RoundedCornerShape(20.dp))
                     .background(colorScheme.primary)
                     .padding(vertical = 5.dp, horizontal = 10.dp),
-                text = "지우기",
+                text = stringResource(id = R.string.text_delete_shopping_lisst),
                 style = Typography.bodyMedium,
                 color = Color.White
             )
         }
     }
+}
 
-    ShoppingListLazyColumn(
-        list = listOf("파프리카", "피망"),
-        isDone = true
-    )
+@Composable
+fun UncheckedItem(
+    modifier: Modifier = Modifier,
+    cnt: Int
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = stringResource(id = R.string.text_unchecked_item, cnt),
+            style = Typography.titleSmall,
+            fontWeight = FontWeight.Bold
+        )
+
+        Icon(
+            modifier = Modifier
+                .clip(CircleShape)
+                .size(25.dp)
+                .clickable { },
+            painter = painterResource(id = R.drawable.edit),
+            contentDescription = stringResource(id = R.string.description_shopping_list_icon),
+            tint = Color.Black
+        )
+    }
 }
 
 @Composable

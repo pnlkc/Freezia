@@ -9,13 +9,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.s005.fif.common.exception.CustomException;
 import com.s005.fif.common.exception.ExceptionType;
+import com.s005.fif.dto.request.CompleteCookRequestDto;
+import com.s005.fif.dto.request.model.AddIngredientDto;
+import com.s005.fif.dto.request.model.RemoveIngredientDto;
 import com.s005.fif.dto.response.RecipeResponseDto;
 import com.s005.fif.dto.response.RecipeStepResponseDto;
 import com.s005.fif.dto.response.model.IngredientDto;
+import com.s005.fif.entity.CompleteCook;
 import com.s005.fif.entity.Ingredient;
 import com.s005.fif.entity.Member;
 import com.s005.fif.entity.Recipe;
 import com.s005.fif.entity.RecipeStep;
+import com.s005.fif.repository.CompleteCookRepository;
 import com.s005.fif.repository.IngredientRepository;
 import com.s005.fif.repository.MemberRepository;
 import com.s005.fif.repository.RecipeRepository;
@@ -32,6 +37,7 @@ public class RecipeService {
 	private final RecipeRepository recipeRepository;
 	private final IngredientRepository ingredientRepository;
 	private final RecipeStepRepository recipeStepRepository;
+	private final CompleteCookRepository completeCookRepository;
 
 	public Member getMemberIdFromToken(String token) {
 		Integer memberId = 1;	// TODO : 로직 변경하기
@@ -172,5 +178,58 @@ public class RecipeService {
 		recipe.toggleSaveYn();
 
 		return recipe.getSaveYn() ? "레시피가 저장되었습니다." : "레시피가 저장 취소되었습니다.";
+	}
+
+	/**
+	 * 요리 기록을 추가합니다.
+	 * @param token 토큰
+	 * @param recipeId 레시피 ID
+	 * @param dto dto
+	 * @return 완료 메세지
+	 */
+	public String completeCook(String token, Integer recipeId, CompleteCookRequestDto dto) {
+		Member member = getMemberIdFromToken(token);
+		Recipe recipe = recipeRepository.findById(recipeId)
+			.orElseThrow(() -> new CustomException(ExceptionType.RECIPE_NOT_FOUND));
+
+		// [예외 처리] 본인의 레시피가 아닐 경우
+		if (!recipe.getMember().getMemberId().equals(member.getMemberId())) {
+			throw new CustomException(ExceptionType.RECIPE_NOT_ACCESSIBLE);
+		}
+
+		// 추가한 식재료 stringify
+		StringBuilder addIngredient = new StringBuilder();
+		for (AddIngredientDto ingredient : dto.getAddIngredients()) {
+			addIngredient.append(ingredient.getName())
+				.append(":")
+				.append(ingredient.getAmounts())
+				.append(":")
+				.append(ingredient.getUnit())
+				.append(",");
+		}
+		if (!addIngredient.isEmpty()) {
+			addIngredient.deleteCharAt(addIngredient.length() - 1);
+		}
+
+		// 제외한 식재료 stringify
+		StringBuilder removeIngredient = new StringBuilder();
+		for (RemoveIngredientDto ingredient : dto.getRemoveIngredients()) {
+			removeIngredient.append(ingredient.getName())
+				.append(",");
+		}
+		if (!removeIngredient.isEmpty()) {
+			removeIngredient.deleteCharAt(removeIngredient.length() - 1);
+		}
+
+		completeCookRepository.save(CompleteCook.builder()
+			.recipe(recipe)
+			.addIngredient(addIngredient.toString())
+			.removeIngredient(removeIngredient.toString())
+			.memo(dto.getMemo())
+			.build());
+
+		recipe.completeCook();
+
+		return "요리 기록이 추가되었습니다.";
 	}
 }

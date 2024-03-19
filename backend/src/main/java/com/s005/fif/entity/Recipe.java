@@ -84,4 +84,8 @@ public class Recipe {
 	public void toggleSaveYn() {
 		this.saveYn = !this.saveYn;
 	}
+
+	public void completeCook() {
+		this.completeYn = true;
+	}
 }

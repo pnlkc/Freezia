@@ -18,8 +18,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.s005.fif.common.exception.CustomException;
 import com.s005.fif.common.exception.ExceptionType;
-import com.s005.fif.dto.FcmMessageDto;
-import com.s005.fif.dto.FcmSendDto;
+import com.s005.fif.dto.fcm.FcmMessageDto;
+import com.s005.fif.dto.fcm.FcmSendDto;
 
 import lombok.RequiredArgsConstructor;
 

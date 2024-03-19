@@ -1,4 +1,4 @@
-package com.s005.fif.dto;
+package com.s005.fif.dto.fcm;
 
 import lombok.AccessLevel;
 import lombok.Builder;

@@ -4,15 +4,13 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import javax.swing.text.html.Option;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.s005.fif.common.exception.CustomException;
 import com.s005.fif.common.exception.ExceptionType;
-import com.s005.fif.dto.FcmSendDto;
+import com.s005.fif.dto.fcm.FcmSendDto;
 import com.s005.fif.dto.response.CautionIngredientResponseDto;
 import com.s005.fif.dto.response.FridgeIngredientResponseDto;
 import com.s005.fif.entity.CautionIngredientRel;
@@ -87,9 +85,7 @@ public class FridgeIngredientService {
 			Member member = memberRepository.findById(memberId)
 				.orElseThrow(() -> new CustomException(ExceptionType.MEMBER_NOT_FOUND));
 			Ingredient ingredient = cautionIngredient.get().getIngredient();
-			// 모바일 앱 푸시
 			FcmSendDto fcmSendDto = FcmSendDto.builder()
-				.token(member.getMobileToken())
 				.title("위험 식재료 알림")
 				.body("방금 꺼내신 "+ingredient.getName()+"는 지병에 좋지 않아요.")
 				.data(CautionIngredientResponseDto.builder()
@@ -98,6 +94,9 @@ public class FridgeIngredientService {
 					.imgUrl(ingredient.getImgUrl())
 					.build())
 				.build();
+
+			// 워치 푸시
+			fcmSendDto.setToken(member.getWatchToken());
 			fcmService.sendMessageTo(fcmSendDto);
 			// 웹 패널 푸시
 			fcmSendDto.setToken(fridgeIngredient.getFridge().getFridgeToken());

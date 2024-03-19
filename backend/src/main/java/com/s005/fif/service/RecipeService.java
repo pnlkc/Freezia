@@ -13,6 +13,7 @@ import com.s005.fif.common.exception.ExceptionType;
 import com.s005.fif.dto.request.CompleteCookRequestDto;
 import com.s005.fif.dto.request.model.AddIngredientDto;
 import com.s005.fif.dto.request.model.RemoveIngredientDto;
+import com.s005.fif.dto.response.CompleteCookResponseDto;
 import com.s005.fif.dto.response.RecipeResponseDto;
 import com.s005.fif.dto.response.RecipeStepResponseDto;
 import com.s005.fif.dto.response.model.IngredientDto;
@@ -66,8 +67,8 @@ public class RecipeService {
 			// 식재료 DB에 없는 경우
 			if (findIngredientOpt.isEmpty()) {
 				/*
-				식재료 DB에 추가
-				DB에서 imgUrl, seasoningYn 직접 수정 필요함
+				추가한 식재료 중 DB에 없으면 DB에 추가
+				DB에서 imgUrl, seasoningYn, expirationPeriod 직접 수정 필요함
 				 */
 				ingredientRepository.save(Ingredient.builder()
 					.name(name)
@@ -186,6 +187,20 @@ public class RecipeService {
 			throw new CustomException(ExceptionType.RECIPE_NOT_ACCESSIBLE);
 		}
 
+		/*
+		추가한 식재료 중 DB에 없으면 DB에 추가
+		DB에서 imgUrl, seasoningYn, expirationPeriod 직접 수정 필요함
+		 */
+		for (AddIngredientDto addIngredient : dto.getAddIngredients()) {
+			if (ingredientRepository.existsByName(addIngredient.getName())) continue;
+			ingredientRepository.save(Ingredient.builder()
+				.name(addIngredient.getName())
+				.imgUrl(Constant.DEFAULT_INGREDIENT_IMG_URL)
+				.seasoningYn(true)	// 양념으로 취급
+				.expirationPeriod(Constant.DEFAULT_INGREDIENT_EXPIRATION_PERIOD)
+				.build());
+		}
+
 		// 추가한 식재료 stringify
 		StringBuilder addIngredient = new StringBuilder();
 		for (AddIngredientDto ingredient : dto.getAddIngredients()) {
@@ -220,5 +235,10 @@ public class RecipeService {
 		recipe.completeCook();
 
 		return "요리 기록이 추가되었습니다.";
+	}
+
+	@Transactional(readOnly = true)
+	public List<CompleteCookResponseDto> getCompleteCook(Integer memberId, Integer recipeId) {
+		return null;
 	}
 }

@@ -77,4 +77,9 @@ public class Member {
 	@JoinColumn(name = "fridge_id", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Fridge fridge;
+
+	public void updateOnboarding(String preferMenu) {
+		this.preferMenu = preferMenu;
+		this.onboardYn = true;
+	}
 }

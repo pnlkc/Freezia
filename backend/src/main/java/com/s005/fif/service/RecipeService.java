@@ -15,14 +15,17 @@ import com.s005.fif.dto.request.model.AddIngredientDto;
 import com.s005.fif.dto.request.model.RemoveIngredientDto;
 import com.s005.fif.dto.response.CompleteCookResponseDto;
 import com.s005.fif.dto.response.RecipeResponseDto;
+import com.s005.fif.dto.response.RecipeSimpleResponseDto;
 import com.s005.fif.dto.response.RecipeStepResponseDto;
 import com.s005.fif.dto.response.model.IngredientDto;
 import com.s005.fif.entity.CompleteCook;
 import com.s005.fif.entity.Ingredient;
+import com.s005.fif.entity.Member;
 import com.s005.fif.entity.Recipe;
 import com.s005.fif.entity.RecipeStep;
 import com.s005.fif.repository.CompleteCookRepository;
 import com.s005.fif.repository.IngredientRepository;
+import com.s005.fif.repository.MemberRepository;
 import com.s005.fif.repository.RecipeRepository;
 import com.s005.fif.repository.RecipeStepRepository;
 
@@ -37,6 +40,67 @@ public class RecipeService {
 	private final IngredientRepository ingredientRepository;
 	private final RecipeStepRepository recipeStepRepository;
 	private final CompleteCookRepository completeCookRepository;
+	private final MemberRepository memberRepository;
+
+	/**
+	 * 레시피 목록을 반환합니다.
+	 * @param memberId 사용자 ID
+	 * @return 레시피 전체 목록
+	 */
+	public List<RecipeResponseDto> getRecipes(Integer memberId) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new CustomException(ExceptionType.MEMBER_NOT_FOUND));
+
+		List<Recipe> recipes = recipeRepository.findAllByMember(member);
+
+		return recipes.stream().map((recipe) ->
+			getRecipe(memberId, recipe.getRecipeId())
+		).toList();
+	}
+
+	/**
+	 * 사용자가 저장한 레시피 목록을 반환합니다.
+	 * @param memberId 사용자 ID
+	 * @return 사용자가 저장한 레시피 전체 목록
+	 */
+	public List<RecipeSimpleResponseDto> getSavedRecipes(Integer memberId) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new CustomException(ExceptionType.MEMBER_NOT_FOUND));
+
+		List<Recipe> recipes = recipeRepository.findAllByMemberAndSaveYn(member, true);
+
+		return recipes.stream().map((recipe) ->
+			RecipeSimpleResponseDto.builder()
+				.recipeId(recipe.getRecipeId())
+				.name(recipe.getName())
+				.imgUrl(recipe.getImgUrl())
+				.cookTime(recipe.getCookTime())
+				.saveYn(recipe.getSaveYn())
+				.build()
+		).toList();
+	}
+
+	/**
+	 * 사용자가 저장한 레시피 목록을 반환합니다.
+	 * @param memberId 사용자 ID
+	 * @return 사용자가 저장한 레시피 전체 목록
+	 */
+	public List<RecipeSimpleResponseDto> getCompletedRecipes(Integer memberId) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new CustomException(ExceptionType.MEMBER_NOT_FOUND));
+
+		List<Recipe> recipes = recipeRepository.findAllByMemberAndCompleteYn(member, true);
+
+		return recipes.stream().map((recipe) ->
+			RecipeSimpleResponseDto.builder()
+				.recipeId(recipe.getRecipeId())
+				.name(recipe.getName())
+				.imgUrl(recipe.getImgUrl())
+				.cookTime(recipe.getCookTime())
+				.saveYn(recipe.getSaveYn())
+				.build()
+		).toList();
+	}
 
 	/**
 	 * 레시피 세부 정보를 반환합니다.

@@ -42,4 +42,9 @@ public class RecipeController {
     public Response completeCook(MemberDto memberDto, @PathVariable Integer recipeId, @RequestBody @Valid CompleteCookRequestDto dto) {
         return new Response(Response.MESSAGE, recipeService.completeCook(memberDto.getMemberId(), recipeId, dto));
     }
+
+    @GetMapping("/{recipeId}/complete")
+    public Response getCompleteCook(MemberDto memberDto, @PathVariable Integer recipeId) {
+        return new Response("completeCooks", recipeService.getCompleteCook(memberDto.getMemberId(), recipeId));
+    }
 }

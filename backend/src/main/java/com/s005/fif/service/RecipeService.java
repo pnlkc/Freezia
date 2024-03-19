@@ -76,7 +76,7 @@ public class RecipeService {
 					.seasoningYn(true)	// 양념으로 취급
 					.expirationPeriod(Constant.DEFAULT_INGREDIENT_EXPIRATION_PERIOD)
 					.build());
-				seasoningList.add(IngredientDto.builder()
+				seasoningList.add(IngredientDto.builder()	// TODO : ingredientId 추가
 					.name(name)
 					.amounts(amounts)
 					.unit(unit)
@@ -85,7 +85,7 @@ public class RecipeService {
 			// 식재료 DB에 있는 경우
 			else {
 				Ingredient findIngredient = findIngredientOpt.get();
-				IngredientDto ingredientDto = IngredientDto.builder()
+				IngredientDto ingredientDto = IngredientDto.builder()	// TODO : ingredientId 추가
 					.name(name)
 					.image(findIngredient.getImgUrl())
 					.amounts(amounts)
@@ -237,8 +237,67 @@ public class RecipeService {
 		return "요리 기록이 추가되었습니다.";
 	}
 
+	/**
+	 * 요리 기록 리스트를 반환합니다.
+	 * @param memberId 사용자 ID
+	 * @param recipeId 레시피 ID
+	 * @return 레시피에 달린 요리 기록 리스트
+	 */
 	@Transactional(readOnly = true)
 	public List<CompleteCookResponseDto> getCompleteCook(Integer memberId, Integer recipeId) {
-		return null;
+		Recipe recipe = recipeRepository.findById(recipeId)
+			.orElseThrow(() -> new CustomException(ExceptionType.RECIPE_NOT_FOUND));
+
+		// [예외 처리] 본인의 레시피가 아닐 경우
+		if (!recipe.getMember().getMemberId().equals(memberId)) {
+			throw new CustomException(ExceptionType.RECIPE_NOT_ACCESSIBLE);
+		}
+
+		List<CompleteCookResponseDto> completeCookResponseDtoList = new ArrayList<>();
+
+		List<CompleteCook> completeCookList = completeCookRepository.findByRecipe(recipe);
+		for (CompleteCook completeCook : completeCookList) {
+			List<IngredientDto> addIngredients = new ArrayList<>();
+			for (String ingredient : completeCook.getAddIngredient().split(",")) {
+				String[] s = ingredient.split(":");
+				String name = s[0];
+				String amounts = s[1];
+				String unit = s[2];
+
+				Ingredient findIngredient = ingredientRepository.findByName(s[0])
+					.orElseThrow(() -> new CustomException(ExceptionType.INGREDIENTS_NOT_FOUND));
+
+				addIngredients.add(IngredientDto.builder()
+					.ingredientId(findIngredient.getIngredientId())
+					.name(name)
+					.image(findIngredient.getImgUrl())
+					.amounts(amounts)
+					.unit(unit)
+					.build());
+			}
+
+			List<IngredientDto> removeIngredients = new ArrayList<>();
+			for (String ingredient : completeCook.getRemoveIngredient().split(",")) {
+				Ingredient findIngredient = ingredientRepository.findByName(ingredient)
+					.orElseThrow(() -> new CustomException(ExceptionType.INGREDIENTS_NOT_FOUND));
+
+				removeIngredients.add(IngredientDto.builder()
+					.ingredientId(findIngredient.getIngredientId())
+					.name(ingredient)
+					.image(findIngredient.getImgUrl())
+					.amounts(null)
+					.unit(null)
+					.build());
+			}
+
+			completeCookResponseDtoList.add(CompleteCookResponseDto.builder()
+				.addIngredients(addIngredients)
+				.removeIngredients(removeIngredients)
+				.memo(completeCook.getMemo())
+				.completeDate(completeCook.getCompleteDate())
+				.build());
+		}
+
+		return completeCookResponseDtoList;
 	}
 }

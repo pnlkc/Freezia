@@ -75,26 +75,51 @@ fun IllnessBody(
             .padding(horizontal = 30.dp)
             .padding(bottom = 20.dp)
     ) {
-        UserOnboardingControlBar(
-            modifier = Modifier,
-            goPrevPage = goPrevPage,
-            goNextPage = goNextPage
-        )
+        LazyColumn(
+            modifier = Modifier
+                .weight(1f),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            item {
+                UserOnboardingControlBar(
+                    modifier = Modifier,
+                    goPrevPage = goPrevPage,
+                    goNextPage = goNextPage
+                )
+            }
 
-        UserOnboardingPageTitle(
-            titleText = stringResource(id = R.string.text_illness_title)
-        )
+            item {
+                UserOnboardingPageTitle(
+                    titleText = stringResource(id = R.string.text_illness_title)
+                )
+            }
 
-        UserProfileTextField(
-            content = "",
-            setContent = { },
-            hintText = stringResource(id = R.string.text_field_hint_illness)
-        )
+            item {
+                UserProfileTextField(
+                    content = "",
+                    setContent = { },
+                    hintText = stringResource(id = R.string.text_field_hint_illness)
+                )
+            }
 
-        IllnessSearchResultLazyColumn(
-            modifier = modifier
-                .weight(1f)
-        )
+            itemsIndexed(
+                items = listOf<String>(
+                    "고혈압",
+                    "저혈압",
+                ),
+                key = { _, item ->
+                    item
+                }
+            ) { _, item ->
+                IllnessSearchResultItem(
+                    item = item
+                )
+            }
+
+            item {
+                Spacer(modifier = Modifier.size(20.dp))
+            }
+        }
 
         HorizontalDivider(
             modifier = Modifier,
@@ -109,31 +134,6 @@ fun IllnessBody(
             onClick = { goNextPage() },
             text = stringResource(id = R.string.text_btn_start)
         )
-    }
-}
-
-@Composable
-fun IllnessSearchResultLazyColumn(
-    modifier: Modifier = Modifier,
-) {
-    LazyColumn(
-        modifier = modifier
-            .padding(vertical = 20.dp),
-        verticalArrangement = Arrangement.spacedBy(15.dp)
-    ) {
-        itemsIndexed(
-            items = listOf<String>(
-                "고혈압",
-                "저혈압",
-            ),
-            key = { _, item ->
-                item
-            }
-        ) { _, item ->
-            IllnessSearchResultItem(
-                item = item
-            )
-        }
     }
 }
 
@@ -209,7 +209,7 @@ fun IllnessSelectItem(
             .padding(3.dp)
             .clickable { onClick() },
         shape = RoundedCornerShape(50.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background)
     ) {
         Row(
@@ -228,7 +228,7 @@ fun IllnessSelectItem(
                 modifier = modifier
                     .size(20.dp),
                 painter = painterResource(id = R.drawable.close),
-                contentDescription = "",
+                contentDescription = stringResource(id = R.string.description_icon_remove),
                 colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSecondary),
                 contentScale = ContentScale.Fit
             )
@@ -257,7 +257,7 @@ fun UserProfileTextField(
         onValueChange = { text.value = it },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 50.dp)
+            .padding(top = 30.dp)
             .background(Color.Transparent)
             .border(2.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(30.dp)),
         interactionSource = interactionSource,

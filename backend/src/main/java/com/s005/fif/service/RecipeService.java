@@ -14,6 +14,7 @@ import com.s005.fif.dto.request.CompleteCookRequestDto;
 import com.s005.fif.dto.request.model.AddIngredientDto;
 import com.s005.fif.dto.request.model.RemoveIngredientDto;
 import com.s005.fif.dto.response.RecipeResponseDto;
+import com.s005.fif.dto.response.RecipeSimpleResponseDto;
 import com.s005.fif.dto.response.RecipeStepResponseDto;
 import com.s005.fif.dto.response.model.IngredientDto;
 import com.s005.fif.entity.CompleteCook;
@@ -43,7 +44,7 @@ public class RecipeService {
 	/**
 	 * 레시피 목록을 반환합니다.
 	 * @param memberId 사용자 ID
-	 * @return 레시피 정보 목록
+	 * @return 레시피 전체 목록
 	 */
 	public List<RecipeResponseDto> getRecipes(Integer memberId) {
 		Member member = memberRepository.findById(memberId)
@@ -53,6 +54,27 @@ public class RecipeService {
 
 		return recipes.stream().map((recipe) ->
 			getRecipe(memberId, recipe.getRecipeId())
+		).toList();
+	}
+
+	/**
+	 * 사용자가 저장한 레시피 목록을 반환합니다.
+	 * @param memberId 사용자 ID
+	 * @return 사용자가 저장한 레시피 전체 목록
+	 */
+	public List<RecipeSimpleResponseDto> getSavedRecipes(Integer memberId) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new CustomException(ExceptionType.MEMBER_NOT_FOUND));
+
+		List<Recipe> recipes = recipeRepository.findAllByMemberAndSaveYn(member, true);
+
+		return recipes.stream().map((recipe) ->
+			RecipeSimpleResponseDto.builder()
+				.name(recipe.getName())
+				.imgUrl(recipe.getImgUrl())
+				.cookTime(recipe.getCookTime())
+				.saveYn(recipe.getSaveYn())
+				.build()
 		).toList();
 	}
 

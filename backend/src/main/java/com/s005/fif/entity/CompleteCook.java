@@ -2,10 +2,14 @@ package com.s005.fif.entity;
 
 import java.time.LocalDate;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import com.s005.fif.common.Constant;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,6 +28,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class CompleteCook {
 
 	@Id
@@ -35,6 +40,7 @@ public class CompleteCook {
 	private Recipe recipe;
 
 	@Column(nullable = false)
+	@CreatedDate
 	private LocalDate completeDate;
 
 	@Size(max = Constant.INGREDIENT_LIST_LENGTH)

@@ -9,4 +9,5 @@ import com.s005.fif.entity.MemberDiseaseRel;
 
 public interface MemberDiseaseRepository extends JpaRepository<MemberDiseaseRel, Integer> {
 	List<MemberDiseaseRel> findAllByMember(Member member);
+	void deleteAllByMember(Member member);
 }

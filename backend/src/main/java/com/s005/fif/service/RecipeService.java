@@ -63,6 +63,7 @@ public class RecipeService {
 			String unit = str[2];
 
 			Optional<Ingredient> findIngredientOpt = ingredientRepository.findByName(name);
+			Ingredient findIngredient;
 
 			// 식재료 DB에 없는 경우
 			if (findIngredientOpt.isEmpty()) {
@@ -73,33 +74,32 @@ public class RecipeService {
 				ingredientRepository.save(Ingredient.builder()
 					.name(name)
 					.imgUrl(Constant.DEFAULT_INGREDIENT_IMG_URL)
-					.seasoningYn(true)	// 양념으로 취급
+					.seasoningYn(true)    // 양념으로 취급
 					.expirationPeriod(Constant.DEFAULT_INGREDIENT_EXPIRATION_PERIOD)
 					.build());
-				seasoningList.add(IngredientDto.builder()	// TODO : ingredientId 추가
-					.name(name)
-					.amounts(amounts)
-					.unit(unit)
-					.build());
-			}
-			// 식재료 DB에 있는 경우
-			else {
-				Ingredient findIngredient = findIngredientOpt.get();
-				IngredientDto ingredientDto = IngredientDto.builder()	// TODO : ingredientId 추가
-					.name(name)
-					.image(findIngredient.getImgUrl())
-					.amounts(amounts)
-					.unit(unit)
-					.build();
 
-				// 식재료인 경우
-				if (!findIngredient.getSeasoningYn()) {
-					ingredientList.add(ingredientDto);
-				}
-				// 양념인 경우
-				else {
-					seasoningList.add(ingredientDto);
-				}
+				findIngredient = ingredientRepository.findByName(name)
+					.orElseThrow(() -> new CustomException(ExceptionType.INGREDIENTS_NOT_FOUND));
+			}
+			else {
+				findIngredient = findIngredientOpt.get();	
+			}
+
+			IngredientDto ingredientDto = IngredientDto.builder()
+				.ingredientId(findIngredient.getIngredientId())
+				.name(name)
+				.image(findIngredient.getImgUrl())
+				.amounts(amounts)
+				.unit(unit)
+				.build();
+
+			// 식재료인 경우
+			if (!findIngredient.getSeasoningYn()) {
+				ingredientList.add(ingredientDto);
+			}
+			// 양념인 경우
+			else {
+				seasoningList.add(ingredientDto);
 			}
 		}
 

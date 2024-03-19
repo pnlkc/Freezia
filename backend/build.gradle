@@ -34,12 +34,25 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	runtimeOnly 'com.mysql:mysql-connector-j' // mysql 여기 있습니다
+	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 	// Validation
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// FCM
+	implementation 'com.google.firebase:firebase-admin:9.2.0'
+	implementation 'com.google.auth:google-auth-library-oauth2-http:1.23.0'
+
+	// jackson databind
+	implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.1'
+
+	// JWT
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.5'
+
 }
 
 tasks.named('test') {

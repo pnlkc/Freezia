@@ -79,6 +79,27 @@ public class RecipeService {
 	}
 
 	/**
+	 * 사용자가 저장한 레시피 목록을 반환합니다.
+	 * @param memberId 사용자 ID
+	 * @return 사용자가 저장한 레시피 전체 목록
+	 */
+	public List<RecipeSimpleResponseDto> getCompletedRecipes(Integer memberId) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new CustomException(ExceptionType.MEMBER_NOT_FOUND));
+
+		List<Recipe> recipes = recipeRepository.findAllByMemberAndCompleteYn(member, true);
+
+		return recipes.stream().map((recipe) ->
+			RecipeSimpleResponseDto.builder()
+				.name(recipe.getName())
+				.imgUrl(recipe.getImgUrl())
+				.cookTime(recipe.getCookTime())
+				.saveYn(recipe.getSaveYn())
+				.build()
+		).toList();
+	}
+
+	/**
 	 * 레시피 세부 정보를 반환합니다.
 	 * @param memberId 사용자 ID
 	 * @param recipeId 레시피 ID

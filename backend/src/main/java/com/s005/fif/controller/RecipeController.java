@@ -33,6 +33,11 @@ public class RecipeController {
         return new Response("recipes", recipeService.getSavedRecipes(memberDto.getMemberId()));
     }
 
+    @GetMapping("/history/complete")
+    public Response getCompletedRecipes(MemberDto memberDto) {
+        return new Response("recipes", recipeService.getCompletedRecipes(memberDto.getMemberId()));
+    }
+
     @GetMapping("/{recipeId}")
     public Response getRecipe(MemberDto memberDto, @PathVariable Integer recipeId) {
         return new Response("recipeInfo", recipeService.getRecipe(memberDto.getMemberId(), recipeId));

@@ -9,4 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface RecipeRepository extends JpaRepository<Recipe, Integer> {
 	List<Recipe> findAllByMember(Member member);
 	List<Recipe> findAllByMemberAndSaveYn(Member member, boolean saveYn);
+	List<Recipe> findAllByMemberAndCompleteYn(Member member, boolean completeYn);
 }

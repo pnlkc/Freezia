@@ -44,6 +44,8 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.tooling.preview.devices.WearDevices
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import com.s005.fif.ui.theme.FIF_WatchTheme
 import com.s005.fif.ui.FIFWatchApp
 import com.s005.fif.utils.AlarmUtil.alarmManager
@@ -68,6 +70,8 @@ class MainActivity : ComponentActivity() {
         setTheme(android.R.style.Theme_DeviceDefault)
 
         getScreenSize(resources.displayMetrics)
+
+        getFCMToken()
 
         setContent {
             FIF_WatchTheme {
@@ -108,6 +112,19 @@ class MainActivity : ComponentActivity() {
         screenWidthDp = displayMetrics.widthPixels / displayMetrics.density
     }
 
+
+    private fun getFCMToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.d("로그", "FCMUtil - getFCMToken() 호출됨 / 토큰 가져오기 실패")
+                return@OnCompleteListener
+            }
+
+            val token = task.result
+
+            Log.d("로그", "FCMUtil - getFCMToken() 호출됨 / 토큰 가져오기 성공 ${token}")
+        })
+    }
 
     override fun onDestroy() {
         super.onDestroy()

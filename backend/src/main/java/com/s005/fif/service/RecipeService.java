@@ -70,6 +70,7 @@ public class RecipeService {
 
 		return recipes.stream().map((recipe) ->
 			RecipeSimpleResponseDto.builder()
+				.recipeId(recipe.getRecipeId())
 				.name(recipe.getName())
 				.imgUrl(recipe.getImgUrl())
 				.cookTime(recipe.getCookTime())
@@ -91,6 +92,7 @@ public class RecipeService {
 
 		return recipes.stream().map((recipe) ->
 			RecipeSimpleResponseDto.builder()
+				.recipeId(recipe.getRecipeId())
 				.name(recipe.getName())
 				.imgUrl(recipe.getImgUrl())
 				.cookTime(recipe.getCookTime())

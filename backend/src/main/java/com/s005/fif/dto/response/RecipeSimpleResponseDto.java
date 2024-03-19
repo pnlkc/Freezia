@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class RecipeSimpleResponseDto {
+	private Integer recipeId;
 	private String name;
 	private Integer cookTime;
 	private String imgUrl;

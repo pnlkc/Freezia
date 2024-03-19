@@ -20,6 +20,7 @@ def category_recipe_list(
                     {recipe_types}의 정의는 다음과 같아.
                     {recipe_types}:
                     {define[recipe_types]}            
+                정의에 적합한 레시피를 추천하도록 해.
                 """
 
             instruction = f"""
@@ -37,11 +38,9 @@ def category_recipe_list(
                     {answer[recipe_types]}
 
                 """    
-            
-            print(instruction)
 
-            recipe_candidates =  send_request(instruction)
-            print(recipe_candidates)
+            recipe_candidates =  send_request(instruction, "레시피 리스트를 지정된 JSON 형태로 제공해줘.")
+            
             result = {
                 "recipeList" : []
             }
@@ -81,7 +80,7 @@ def category_recipe(
                     recipeList는 네가 추천해주는 레시피의 세부 정보를 저 recipeList 안에 있는 JSON 형태로 변환해서 반환해줘. 
                     """ + RECIPE_JSON_FORMAT            
             
-            return send_request(instruction)
+            return send_request(instruction, "레시피를 지정된 JSON 형태로 추천해줘.")
 
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))

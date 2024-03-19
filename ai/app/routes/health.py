@@ -31,7 +31,7 @@ def stress_recipe(
                     recipeList는 네가 추천해주는 레시피의 세부 정보를 저 recipeList 안에 있는 JSON 형태로 변환해서 반환해줘.\n
                     """ + RECIPE_JSON_FORMAT            
             
-            return send_request(instruction)
+            return send_request(instruction, "지정된 JSON 형태로 레시피 추천해줘.")
 
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
@@ -64,7 +64,7 @@ def blood_oxygen_recipe(
                     recipeList는 네가 추천해주는 레시피의 세부 정보를 저 recipeList 안에 있는 JSON 형태로 변환해서 반환해줘.\n
                     """ + RECIPE_JSON_FORMAT            
             
-            return send_request(instruction)
+            return send_request(instruction, "지정된 JSON 형태로 레시피 추천해줘.")
 
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
@@ -97,7 +97,7 @@ def sleep_recipe(
                     recipeList는 네가 추천해주는 레시피의 세부 정보를 저 recipeList 안에 있는 JSON 형태로 변환해서 반환해줘.\n
                     """ + RECIPE_JSON_FORMAT            
             
-            return send_request(instruction)
+            return send_request(instruction, "지정된 JSON 형태로 레시피 추천해줘.")
 
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))

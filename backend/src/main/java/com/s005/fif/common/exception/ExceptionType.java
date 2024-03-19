@@ -27,6 +27,9 @@ public enum ExceptionType {
 
     // FCM
     FCM_REQUEST_FAILED(500, "FCM에 메시지 전송을 실패했습니다."),
+
+    // 장치 연결
+    DEVICE_CONNECTION_FAILED(500, "연결된 장치가 존재하지 않습니다."),
     ;
 
     private final int code;

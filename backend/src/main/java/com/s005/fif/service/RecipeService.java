@@ -18,7 +18,6 @@ import com.s005.fif.dto.response.RecipeStepResponseDto;
 import com.s005.fif.dto.response.model.IngredientDto;
 import com.s005.fif.entity.CompleteCook;
 import com.s005.fif.entity.Ingredient;
-import com.s005.fif.entity.Member;
 import com.s005.fif.entity.Recipe;
 import com.s005.fif.entity.RecipeStep;
 import com.s005.fif.repository.CompleteCookRepository;
@@ -34,31 +33,23 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RecipeService {
 
-	private final MemberRepository memberRepository;
 	private final RecipeRepository recipeRepository;
 	private final IngredientRepository ingredientRepository;
 	private final RecipeStepRepository recipeStepRepository;
 	private final CompleteCookRepository completeCookRepository;
 
-	public Member getMemberIdFromToken(String token) {
-		Integer memberId = 1;	// TODO : 로직 변경하기
-		return memberRepository.findById(memberId)
-			.orElseThrow(() -> new CustomException(ExceptionType.MEMBER_NOT_FOUND));
-	}
-
 	/**
 	 * 레시피 세부 정보를 반환합니다.
-	 * @param token 토큰
+	 * @param memberId 사용자 ID
 	 * @param recipeId 레시피 ID
 	 * @return 레시피 세부 정보
 	 */
-	public RecipeResponseDto getRecipe(String token, Integer recipeId) {
-		Member member = getMemberIdFromToken(token);
+	public RecipeResponseDto getRecipe(Integer memberId, Integer recipeId) {
 		Recipe recipe = recipeRepository.findById(recipeId)
 			.orElseThrow(() -> new CustomException(ExceptionType.RECIPE_NOT_FOUND));
 
 		// [예외 처리] 본인의 레시피가 아닐 경우
-		if (!recipe.getMember().getMemberId().equals(member.getMemberId())) {
+		if (!recipe.getMember().getMemberId().equals(memberId)) {
 			throw new CustomException(ExceptionType.RECIPE_NOT_ACCESSIBLE);
 		}
 
@@ -131,18 +122,17 @@ public class RecipeService {
 
 	/**
 	 * 레시피의 모든 단계를 반환합니다.
-	 * @param token 토큰
+	 * @param memberId 사용자 ID
 	 * @param recipeId 레시피 ID
 	 * @return 레시피 단계로 이루어진 List
 	 */
 	@Transactional(readOnly = true)
-	public List<RecipeStepResponseDto> getRecipeSteps(String token, Integer recipeId) {
-		Member member = getMemberIdFromToken(token);
+	public List<RecipeStepResponseDto> getRecipeSteps(Integer memberId, Integer recipeId) {
 		Recipe recipe = recipeRepository.findById(recipeId)
 			.orElseThrow(() -> new CustomException(ExceptionType.RECIPE_NOT_FOUND));
 
 		// [예외 처리] 본인의 레시피가 아닐 경우
-		if (!recipe.getMember().getMemberId().equals(member.getMemberId())) {
+		if (!recipe.getMember().getMemberId().equals(memberId)) {
 			throw new CustomException(ExceptionType.RECIPE_NOT_ACCESSIBLE);
 		}
 
@@ -163,17 +153,16 @@ public class RecipeService {
 
 	/**
 	 * 레시피 저장 여부를 토글합니다.
-	 * @param token 토큰
+	 * @param memberId 사용자 ID
 	 * @param recipeId 레시피 ID
 	 * @return 완료 메세지
 	 */
-	public String toggleSaveYn(String token, Integer recipeId) {
-		Member member = getMemberIdFromToken(token);
+	public String toggleSaveYn(Integer memberId, Integer recipeId) {
 		Recipe recipe = recipeRepository.findById(recipeId)
 			.orElseThrow(() -> new CustomException(ExceptionType.RECIPE_NOT_FOUND));
 
 		// [예외 처리] 본인의 레시피가 아닐 경우
-		if (!recipe.getMember().getMemberId().equals(member.getMemberId())) {
+		if (!recipe.getMember().getMemberId().equals(memberId)) {
 			throw new CustomException(ExceptionType.RECIPE_NOT_ACCESSIBLE);
 		}
 
@@ -184,18 +173,17 @@ public class RecipeService {
 
 	/**
 	 * 요리 기록을 추가합니다.
-	 * @param token 토큰
+	 * @param memberId 사용자 ID
 	 * @param recipeId 레시피 ID
 	 * @param dto dto
 	 * @return 완료 메세지
 	 */
-	public String completeCook(String token, Integer recipeId, CompleteCookRequestDto dto) {
-		Member member = getMemberIdFromToken(token);
+	public String completeCook(Integer memberId, Integer recipeId, CompleteCookRequestDto dto) {
 		Recipe recipe = recipeRepository.findById(recipeId)
 			.orElseThrow(() -> new CustomException(ExceptionType.RECIPE_NOT_FOUND));
 
 		// [예외 처리] 본인의 레시피가 아닐 경우
-		if (!recipe.getMember().getMemberId().equals(member.getMemberId())) {
+		if (!recipe.getMember().getMemberId().equals(memberId)) {
 			throw new CustomException(ExceptionType.RECIPE_NOT_ACCESSIBLE);
 		}
 

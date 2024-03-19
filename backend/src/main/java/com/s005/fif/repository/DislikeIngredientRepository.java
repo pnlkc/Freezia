@@ -9,4 +9,5 @@ import com.s005.fif.entity.Member;
 
 public interface DislikeIngredientRepository extends JpaRepository<DislikeIngredient, Integer> {
 	List<DislikeIngredient> findAllByMember(Member member);
+	void deleteAllByMember(Member member);
 }

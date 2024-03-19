@@ -14,6 +14,7 @@ import com.s005.fif.common.auth.jwt.Jwt;
 import com.s005.fif.common.auth.jwt.JwtTokenProvider;
 import com.s005.fif.common.response.Response;
 import com.s005.fif.dto.request.MemberLoginRequestDto;
+import com.s005.fif.dto.request.MemberOnboardingRequestDto;
 import com.s005.fif.dto.response.MemberDetailResponseDto;
 import com.s005.fif.service.MemberService;
 
@@ -55,22 +56,22 @@ public class MemberController {
 			.body(new Response());
 	}
 
-	@GetMapping("/token")
-	public Response testArgsResolver(MemberDto memberDto) {
-		return new Response("memberDto", memberDto);
-	}
-
 	@GetMapping
 	public Response getMembers() {
 		return new Response("memberList", memberService.getMemeberList());
 	}
 
 	@GetMapping("/info")
-	public Response getMemberDetail(@RequestHeader(value = "Authorization", required = false) String token) {
-		// TODO: 사용자 정보 조회
-		Integer memberId = 1;
-		MemberDetailResponseDto memberDetail = memberService.getMemberDetail(memberId);
+	public Response getMemberDetail(MemberDto memberDto) {
+		MemberDetailResponseDto memberDetail = memberService.getMemberDetail(memberDto.getMemberId());
 		return new Response("member", memberDetail);
+	}
+
+	@PostMapping("/onboarding")
+	public Response postOnboarding(MemberDto memberDto,
+		@RequestBody MemberOnboardingRequestDto memberOnboardingRequestDto) {
+		memberService.setMemberOnboarding(memberDto.getMemberId(), memberOnboardingRequestDto);
+		return new Response();
 	}
 
 }

@@ -23,6 +23,11 @@ public class RecipeController {
 
     private final RecipeService recipeService;
 
+    @GetMapping
+    public Response getRecipes(MemberDto memberDto) {
+        return new Response("recipes", recipeService.getRecipes(memberDto.getMemberId()));
+    }
+
     @GetMapping("/{recipeId}")
     public Response getRecipe(MemberDto memberDto, @PathVariable Integer recipeId) {
         return new Response("recipeInfo", recipeService.getRecipe(memberDto.getMemberId(), recipeId));

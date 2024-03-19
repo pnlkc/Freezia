@@ -18,10 +18,12 @@ import com.s005.fif.dto.response.RecipeStepResponseDto;
 import com.s005.fif.dto.response.model.IngredientDto;
 import com.s005.fif.entity.CompleteCook;
 import com.s005.fif.entity.Ingredient;
+import com.s005.fif.entity.Member;
 import com.s005.fif.entity.Recipe;
 import com.s005.fif.entity.RecipeStep;
 import com.s005.fif.repository.CompleteCookRepository;
 import com.s005.fif.repository.IngredientRepository;
+import com.s005.fif.repository.MemberRepository;
 import com.s005.fif.repository.RecipeRepository;
 import com.s005.fif.repository.RecipeStepRepository;
 
@@ -36,6 +38,23 @@ public class RecipeService {
 	private final IngredientRepository ingredientRepository;
 	private final RecipeStepRepository recipeStepRepository;
 	private final CompleteCookRepository completeCookRepository;
+	private final MemberRepository memberRepository;
+
+	/**
+	 * 레시피 목록을 반환합니다.
+	 * @param memberId 사용자 ID
+	 * @return 레시피 정보 목록
+	 */
+	public List<RecipeResponseDto> getRecipes(Integer memberId) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new CustomException(ExceptionType.MEMBER_NOT_FOUND));
+
+		List<Recipe> recipes = recipeRepository.findAllByMember(member);
+
+		return recipes.stream().map((recipe) ->
+			getRecipe(memberId, recipe.getRecipeId())
+		).toList();
+	}
 
 	/**
 	 * 레시피 세부 정보를 반환합니다.
@@ -72,7 +91,7 @@ public class RecipeService {
 				ingredientRepository.save(Ingredient.builder()
 					.name(name)
 					.imgUrl(Constant.DEFAULT_INGREDIENT_IMG_URL)
-					.seasoningYn(true)	// 양념으로 취급
+					.seasoningYn(true)    // 양념으로 취급
 					.expirationPeriod(Constant.DEFAULT_INGREDIENT_EXPIRATION_PERIOD)
 					.build());
 				seasoningList.add(IngredientDto.builder()

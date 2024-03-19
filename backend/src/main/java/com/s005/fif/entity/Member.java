@@ -82,4 +82,8 @@ public class Member {
 		this.preferMenu = preferMenu;
 		this.onboardYn = true;
 	}
+
+	public void updatePreference(String preferMenu) {
+		this.preferMenu = preferMenu;
+	}
 }

@@ -28,6 +28,9 @@ public enum ExceptionType {
 
     // Disease
     DISEASES_NOT_FOUND(404, "지병을 찾을 수 없습니다."),
+
+	// ShoppingList
+	SHOPPING_LIST_EXIST(409, "이미 쇼핑리스트에 등록되어 있습니다."),
     ;
 
     private final int code;

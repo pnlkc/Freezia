@@ -71,4 +71,14 @@ public class ShoppingListService {
 		return check;
 	}
 
+	public void deleteShoppingList(Integer memberId, Integer shoppingListId) {
+		Member member = findMember(memberId);
+		ShoppingList shoppingList = findShoppingList(shoppingListId);
+
+		if (!shoppingList.getMember().getMemberId().equals(member.getMemberId()))
+			throw new CustomException(ExceptionType.SHOPPING_LIST_UNAUTHORIZED);
+
+		shoppingListRepository.delete(shoppingList);
+	}
+
 }

@@ -1,6 +1,8 @@
 package com.s005.fif.entity;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
@@ -82,6 +84,9 @@ public class Recipe {
 
 	@Column(nullable = false)
 	private Integer recommendType;
+
+	@Size(max = Constant.COMMON_CONTENT_LENGTH)
+	private String recommendDesc;
 
 	@Column(nullable = false)
 	@Size(max = Constant.RECIPE_TYPE_LIST_LENGTH)

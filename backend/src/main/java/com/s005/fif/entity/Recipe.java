@@ -99,7 +99,7 @@ public class Recipe {
 		this.completeYn = true;
 	}
 
-	public void setSaveYnFalse() {
-		this.saveYn = false;
+	public void setCompleteYnFalse() {
+		this.completeYn = false;
 	}
 }

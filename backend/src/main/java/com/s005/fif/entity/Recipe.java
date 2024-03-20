@@ -1,6 +1,8 @@
 package com.s005.fif.entity;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
@@ -83,6 +85,9 @@ public class Recipe {
 	@Column(nullable = false)
 	private Integer recommendType;
 
+	@Size(max = Constant.COMMON_CONTENT_LENGTH)
+	private String recommendDesc;
+
 	@Column(nullable = false)
 	@Size(max = Constant.RECIPE_TYPE_LIST_LENGTH)
 	private String recipeTypes;
@@ -102,4 +107,16 @@ public class Recipe {
 	public void setCompleteYnFalse() {
 		this.completeYn = false;
 	}
+
+	private List<String[]> parseIngredients(String ingredientList) {
+		return Arrays.stream(ingredientList.split(",")).map((ingredient) -> ingredient.split(":")).toList();
+	}
+	public List<String[]> getParsedIngredientList() {
+		return parseIngredients(this.ingredientList);
+	}
+
+	public List<String[]> getParsedSeasoningList() {
+		return parseIngredients(this.seasoningList);
+	}
+
 }

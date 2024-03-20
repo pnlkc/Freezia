@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, APIRouter
 from models.threads import ThreadAssistantIdResponse, ThreadAssistantResponse, ThreadRequest, ThreadAssistantIdRequest
 from models.prompts import PromptRequest
 from routes.health import health_router

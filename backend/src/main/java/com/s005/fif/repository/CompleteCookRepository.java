@@ -9,4 +9,5 @@ import com.s005.fif.entity.Recipe;
 
 public interface CompleteCookRepository extends JpaRepository<CompleteCook, Integer> {
 	List<CompleteCook> findByRecipe(Recipe recipe);
+	boolean existsByRecipe(Recipe recipe);
 }

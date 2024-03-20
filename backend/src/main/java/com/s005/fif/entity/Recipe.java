@@ -5,11 +5,15 @@ import java.time.LocalDate;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.s005.fif.common.Constant;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,6 +32,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class Recipe {
 
 	@Id
@@ -44,7 +49,12 @@ public class Recipe {
 	private String name;
 
 	@Column(nullable = false)
+	@CreatedDate
 	private LocalDate createDate;
+
+	@Column(nullable = false)
+	@LastModifiedDate
+	private LocalDate updateDate;
 
 	@Column(nullable = false)
 	private Integer cookTime;
@@ -87,5 +97,9 @@ public class Recipe {
 
 	public void completeCook() {
 		this.completeYn = true;
+	}
+
+	public void setCompleteYnFalse() {
+		this.completeYn = false;
 	}
 }

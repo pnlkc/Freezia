@@ -5,5 +5,7 @@ import lombok.Getter;
 @Getter
 public class FridgeIngredientRequestDto {
 
+	private Integer fridgeIngredientId;
+
 	private String name;
 }

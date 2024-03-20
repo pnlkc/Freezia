@@ -26,6 +26,15 @@ public enum ExceptionType {
     // Ingredient
     INGREDIENTS_NOT_FOUND(404, "식재료를 찾을 수 없습니다."),
 
+    // Fridge Ingredient
+    FRIDGE_INGREDIENT_NOT_FOUND(404, "냉장고 속 식재료를 찾을 수 없습니다."),
+
+    // FCM
+    FCM_REQUEST_FAILED(500, "FCM에 메시지 전송을 실패했습니다."),
+
+    // 장치 연결
+    DEVICE_CONNECTION_FAILED(500, "연결된 장치가 존재하지 않습니다."),
+
     // Disease
     DISEASES_NOT_FOUND(404, "지병을 찾을 수 없습니다."),
 

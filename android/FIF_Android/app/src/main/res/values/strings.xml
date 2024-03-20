@@ -30,6 +30,15 @@
     <string name="text_go_to_shopping_list">쇼핑 리스트</string>
     <string name="text_saved_recipe">저장한 레시피</string>
     <string name="text_completed_food">완료한 요리</string>
+    <string name="text_recipe_recommend_title">당신을 위한 레시피</string>
+    <string name="text_recipe_list">레시피 둘러보기</string>
+    <string name="text_recipe_gpt">레시피 생성하기</string>
+    <string name="text_go_to_recipe_list">레시피 보러가기</string>
+    <string name="text_no_exist_want_recipe">원하는 레시피가 없나요?</string>
+    <string name="text_unchecked_item">%1$s개의 아이템</string>
+    <string name="text_checked_item">체크된 아이템</string>
+    <string name="text_delete_shopping_lisst">지우기</string>
+    <string name="text_chat_send">채팅 내용을 입력하세요</string>
 
     <string name="description_btn_go_back">뒤로가기 버튼</string>
     <string name="description_btn_bookmark">북마크 버튼</string>
@@ -39,6 +48,8 @@
     <string name="description_btn_profile_add">프로필 추가 버튼</string>
     <string name="description_icon_search">검색 아이콘</string>
     <string name="description_icon_add">추가 아이콘</string>
+    <string name="description_icon_remove">삭제 아이콘</string>
+    <string name="description_icon_send">채팅 전송 아이콘</string>
     <string name="description_samsung_health">삼성 헬스 로고</string>
     <string name="description_saved_recipe_icon">저장된 레시피 아이콘</string>
     <string name="description_complete_food_icon">완료한 요리 아이콘</string>
@@ -46,4 +57,6 @@
     <string name="description_shopping_list_icon">쇼핑 리스트 수정 아이콘</string>
     <string name="description_recipe_img">레시피 이미지</string>
     <string name="description_ingredient_img">식재료 이미지</string>
+    <string name="description_recipe_list_icon">레시피 둘러보기 아이콘</string>
+    <string name="description_recipe_gpt_icon">레시피 생성하기 아이콘</string>
 </resources>

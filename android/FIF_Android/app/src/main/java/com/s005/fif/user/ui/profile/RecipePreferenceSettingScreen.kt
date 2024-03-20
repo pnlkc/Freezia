@@ -3,19 +3,23 @@ package com.s005.fif.user.ui.profile
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,6 +31,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -72,7 +77,11 @@ fun RecipePreferenceSettingBody(
             .padding(bottom = 20.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        RecipePreferenceSettingColumn()
+        RecipePreferenceSettingColumn(
+            modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+        )
 
         UserOnboardingBtn(
             modifier = Modifier,
@@ -87,7 +96,8 @@ fun RecipePreferenceSettingColumn(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier,
+        modifier = modifier
+            .padding(bottom = 20.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         UserProfileColumnText(
@@ -151,8 +161,9 @@ fun RecipePreferenceSettingRow(
     ) {
         RecipePreferenceSettingTextField(
             content = "",
-            setContent = { },
-            hintText = hintText
+            setContent = {  },
+            hintText = hintText,
+            onClick = {  }
         )
 
         LazyRow(
@@ -166,7 +177,8 @@ fun RecipePreferenceSettingRow(
                 }
             ) { _, item ->
                 RecipePreferenceSettingLazyRowItem(
-                    item = item
+                    item = item,
+                    onClick = {  }
                 )
             }
         }
@@ -177,16 +189,36 @@ fun RecipePreferenceSettingRow(
 fun RecipePreferenceSettingLazyRowItem(
     modifier: Modifier = Modifier,
     item: String,
+    onClick: () -> Unit
 ) {
-    Text(
+    Row(
         modifier = modifier
             .clip(RoundedCornerShape(50.dp))
-            .background(MaterialTheme.colorScheme.primary)
+            .background(colorScheme.primary)
+            .clickable { onClick() }
             .padding(vertical = 5.dp, horizontal = 10.dp),
-        text = item,
-        style = Typography.bodyMedium,
-        color = MaterialTheme.colorScheme.onPrimary
-    )
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(3.dp)
+    ) {
+        Text(
+            modifier = modifier
+                .clip(RoundedCornerShape(50.dp))
+                .background(MaterialTheme.colorScheme.primary),
+            text = item,
+            style = Typography.bodyMedium,
+            color = colorScheme.onPrimary
+        )
+
+        Image(
+            modifier = modifier
+                .size(15.dp)
+                .clip(CircleShape),
+            painter = painterResource(id = R.drawable.close),
+            contentDescription = stringResource(id = R.string.description_icon_remove),
+            colorFilter = ColorFilter.tint(Color.White),
+            contentScale = ContentScale.Fit
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -196,6 +228,7 @@ fun RecipePreferenceSettingTextField(
     content: String,
     setContent: (String) -> Unit,
     hintText: String,
+    onClick: () -> Unit
 ) {
     // TODO. 진짜 텍스트로 변경 필요
     val text = remember {
@@ -230,7 +263,8 @@ fun RecipePreferenceSettingTextField(
                     modifier = modifier
                         .size(20.dp)
                         .clip(CircleShape)
-                        .background(colorScheme.primary),
+                        .background(colorScheme.primary)
+                        .clickable { onClick() },
                     painter = painterResource(id = R.drawable.add),
                     contentDescription = stringResource(id = R.string.description_icon_add),
                     colorFilter = ColorFilter.tint(colorScheme.onPrimary),

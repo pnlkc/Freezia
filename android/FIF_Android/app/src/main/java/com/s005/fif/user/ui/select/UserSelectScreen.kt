@@ -57,7 +57,7 @@ fun UserSelectBody(
         Text(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 40.dp),
+                .padding(top = 40.dp, bottom = 20.dp),
             text = stringResource(id = R.string.text_select_user),
             textAlign = TextAlign.Center,
             style = Typography.titleLarge,
@@ -78,7 +78,7 @@ fun UserSelectBody(
             }
 
             itemsIndexed(
-                items = listOf<String>("김싸피", "이사피", "박싸피"),
+                items = listOf<String>("김싸피", "이싸피", "박싸피"),
                 key = { _, item ->
                     item
                 }

@@ -5,7 +5,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.s005.fif.main.MainScreen
+import com.s005.fif.main.ui.MainScreen
+import com.s005.fif.recipe.ui.RecipeChatScreen
+import com.s005.fif.recipe.ui.RecipeListScreen
 import com.s005.fif.shopping_list.ui.ShoppingListScreen
 import com.s005.fif.user.ui.onboarding.UserOnboardingScreen
 import com.s005.fif.user.ui.profile.RecipePreferenceSettingScreen
@@ -27,6 +29,16 @@ fun FIFNavHost(
             MainScreen(
                 navigateToUserProfile = {
                     navController.navigate(NavigationDestination.UserProfile.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToRecipeList = {
+                    navController.navigate(NavigationDestination.RecipeList.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToRecipeChat = {
+                    navController.navigate(NavigationDestination.RecipeChat.route) {
                         launchSingleTop = true
                     }
                 }
@@ -107,6 +119,29 @@ fun FIFNavHost(
 
         composable(route = NavigationDestination.ShoppingList.route) {
             ShoppingListScreen(
+                modifier = modifier,
+                navigateUp = {
+                    navController.navigateUp()
+                }
+            )
+        }
+
+        composable(route = NavigationDestination.RecipeList.route) {
+            RecipeListScreen(
+                modifier = modifier,
+                navigateUp = {
+                    navController.navigateUp()
+                },
+                navigateToRecipeChat = {
+                    navController.navigate(NavigationDestination.RecipeChat.route) {
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        composable(route = NavigationDestination.RecipeChat.route) {
+            RecipeChatScreen(
                 modifier = modifier,
                 navigateUp = {
                     navController.navigateUp()

@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
@@ -33,12 +34,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -108,7 +111,7 @@ fun UserOnboardingProgressBar(
     progress: Int,
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(5.dp),
         horizontalArrangement = Arrangement.spacedBy(3.dp)
@@ -143,13 +146,14 @@ fun UserOnboardingControlBar(
     goNextPage: () -> Unit,
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 50.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Icon(
             modifier = Modifier
+                .clip(CircleShape)
                 .size(25.dp)
                 .clickable { goPrevPage() },
             painter = painterResource(id = R.drawable.back),
@@ -158,16 +162,17 @@ fun UserOnboardingControlBar(
 
         Text(
             modifier = Modifier
+                .clip(RoundedCornerShape(30.dp))
                 .border(
                     width = 1.dp,
                     color = colorScheme.onSecondary,
                     shape = RoundedCornerShape(30.dp)
                 )
+                .clickable { goNextPage() }
                 .padding(
                     vertical = 5.dp,
                     horizontal = 10.dp
-                )
-                .clickable { goNextPage() },
+                ),
             text = stringResource(id = R.string.text_skip_onboarding),
             style = Typography.bodySmall,
             color = colorScheme.onSecondary
@@ -185,7 +190,8 @@ fun UserOnboardingPager(
 ) {
     HorizontalPager(
         state = pagerState,
-        userScrollEnabled = false
+        userScrollEnabled = false,
+        pageSpacing = 20.dp
     ) { page ->
         when (page) {
             0 -> {
@@ -222,7 +228,8 @@ fun UserOnboardingPageTitle(
             .fillMaxWidth(),
         text = titleText,
         style = Typography.titleMedium,
-        textAlign = TextAlign.Center
+        textAlign = TextAlign.Center,
+        fontWeight = FontWeight.Bold
     )
 }
 

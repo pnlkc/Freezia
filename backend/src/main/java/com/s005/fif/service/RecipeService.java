@@ -355,6 +355,7 @@ public class RecipeService {
 			}
 
 			completeCookResponseDtoList.add(CompleteCookResponseDto.builder()
+				.completeCookId(completeCook.getCompleteCookId())
 				.addIngredients(addIngredients)
 				.removeIngredients(removeIngredients)
 				.memo(completeCook.getMemo())

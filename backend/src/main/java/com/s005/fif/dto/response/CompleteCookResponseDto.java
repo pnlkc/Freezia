@@ -12,6 +12,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class CompleteCookResponseDto {
+	private Integer completeCookId;
 	private List<IngredientDto> addIngredients;
 	private List<IngredientDto> removeIngredients;
 	private String memo;

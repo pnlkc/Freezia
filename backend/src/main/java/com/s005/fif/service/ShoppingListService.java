@@ -29,6 +29,11 @@ public class ShoppingListService {
 			.orElseThrow(() -> new CustomException(ExceptionType.MEMBER_NOT_FOUND));
 	}
 
+	private ShoppingList findShoppingList(Integer shoppingListId) {
+		return shoppingListRepository.findById(shoppingListId)
+			.orElseThrow(() -> new CustomException(ExceptionType.SHOPPING_LIST_NOT_FOUND));
+	}
+
 	public List<ShoppingListResponseDto> getShoppingList(Integer memberId) {
 		Member member = findMember(memberId);
 
@@ -52,6 +57,28 @@ public class ShoppingListService {
 			.build();
 
 		shoppingListRepository.save(shoppingList);
+	}
+
+	public Boolean checkShoppingList(Integer memberId, Integer shoppingListId) {
+		Member member = findMember(memberId);
+		ShoppingList shoppingList = findShoppingList(shoppingListId);
+
+		if (!shoppingList.getMember().getMemberId().equals(member.getMemberId()))
+			throw new CustomException(ExceptionType.SHOPPING_LIST_UNAUTHORIZED);
+
+		Boolean check = shoppingList.check();
+		shoppingListRepository.saveAndFlush(shoppingList);
+		return check;
+	}
+
+	public void deleteShoppingList(Integer memberId, Integer shoppingListId) {
+		Member member = findMember(memberId);
+		ShoppingList shoppingList = findShoppingList(shoppingListId);
+
+		if (!shoppingList.getMember().getMemberId().equals(member.getMemberId()))
+			throw new CustomException(ExceptionType.SHOPPING_LIST_UNAUTHORIZED);
+
+		shoppingListRepository.delete(shoppingList);
 	}
 
 }

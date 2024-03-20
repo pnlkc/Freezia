@@ -43,4 +43,8 @@ public class ShoppingList {
 	@Column(nullable = false)
 	@ColumnDefault("false")
 	private Boolean checkYn;
+
+	public Boolean check() {
+		return this.checkYn = !this.checkYn;
+	}
 }

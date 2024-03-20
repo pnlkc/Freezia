@@ -2,7 +2,10 @@ package com.s005.fif.controller;
 
 import java.util.List;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +35,18 @@ public class ShoppingListController {
 	@PostMapping
 	public Response postShoppingList(MemberDto member, @RequestBody ShoppingListRequestDto shoppingListRequestDto) {
 		shoppingListService.addShoppingList(member.getMemberId(), shoppingListRequestDto);
+		return new Response();
+	}
+
+	@PatchMapping("/{shoppingListId}")
+	public Response checkShoppingList(MemberDto memberDto, @PathVariable Integer shoppingListId) {
+		Boolean checkYn = shoppingListService.checkShoppingList(memberDto.getMemberId(), shoppingListId);
+		return new Response("checkYn", checkYn);
+	}
+
+	@DeleteMapping("/{shoppingListId}")
+	public Response deleteShoppingList(MemberDto memberDto, @PathVariable Integer shoppingListId) {
+		shoppingListService.deleteShoppingList(memberDto.getMemberId(), shoppingListId);
 		return new Response();
 	}
 }

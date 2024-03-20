@@ -143,9 +143,11 @@ fun IllnessSearchResultItem(
     item: String
 ) {
     Row(
-        modifier = modifier,
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable {  },
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(5.dp)
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Box(
             modifier = modifier
@@ -206,14 +208,15 @@ fun IllnessSelectItem(
 ) {
     Card(
         modifier = modifier
-            .padding(3.dp)
-            .clickable { onClick() },
+            .clip(RoundedCornerShape(50.dp))
+            .padding(2.dp),
         shape = RoundedCornerShape(50.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onPrimary)
     ) {
         Row(
             modifier = modifier
+                .clickable { onClick() }
                 .padding(vertical = 5.dp, horizontal = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(5.dp)

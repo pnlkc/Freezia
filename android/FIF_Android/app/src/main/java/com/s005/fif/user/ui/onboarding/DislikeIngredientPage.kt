@@ -137,9 +137,11 @@ fun DislikeIngredientSearchResultItem(
     item: String
 ) {
     Row(
-        modifier = modifier,
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable {  },
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(5.dp)
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Box(
             modifier = modifier
@@ -152,7 +154,7 @@ fun DislikeIngredientSearchResultItem(
                     .size(20.dp)
                     .align(Alignment.Center),
                 painter = painterResource(id = R.drawable.add),
-                contentDescription = "",
+                contentDescription = stringResource(id = R.string.description_icon_add),
                 colorFilter = ColorFilter.tint(Color.Black),
                 contentScale = ContentScale.Fit
             )
@@ -163,7 +165,7 @@ fun DislikeIngredientSearchResultItem(
                 .clip(CircleShape)
                 .size(30.dp),
             model = "https://ouch-cdn2.icons8.com/-huiQFwzs0evgWutGwwsvzKk6k5OwM21IwK9pLPTF7s/rs:fit:368:412/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9wbmcvMTky/L2I4YzI0NmMzLTA3/ZmEtNDFiOC1iMDM1/LTUyNDgyMmMxOTg4/OC5wbmc.png",
-            contentDescription = "",
+            contentDescription = stringResource(id = R.string.description_ingredient_img),
         )
 
         Text(
@@ -211,14 +213,15 @@ fun DislikeIngredientSelectItem(
 ) {
     Card(
         modifier = modifier
-            .padding(3.dp)
-            .clickable { onClick() },
+            .clip(RoundedCornerShape(50.dp))
+            .padding(2.dp),
         shape = RoundedCornerShape(50.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(containerColor = colorScheme.background)
+        colors = CardDefaults.cardColors(containerColor = colorScheme.onPrimary)
     ) {
         Row(
             modifier = modifier
+                .clickable { onClick() }
                 .padding(vertical = 5.dp, horizontal = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(5.dp)
@@ -241,7 +244,7 @@ fun DislikeIngredientSelectItem(
                 modifier = modifier
                     .size(20.dp),
                 painter = painterResource(id = R.drawable.close),
-                contentDescription = "",
+                contentDescription = stringResource(id = R.string.description_icon_remove),
                 colorFilter = ColorFilter.tint(colorScheme.onSecondary),
                 contentScale = ContentScale.Fit
             )

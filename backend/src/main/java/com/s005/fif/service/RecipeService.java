@@ -365,4 +365,25 @@ public class RecipeService {
 
 		return completeCookResponseDtoList;
 	}
+
+	public String deleteCompleteCook(Integer memberId, Integer completeCookId) {
+		CompleteCook completeCook = completeCookRepository.findById(completeCookId)
+			.orElseThrow(() -> new CustomException(ExceptionType.COMPLETE_COOK_NOT_FOUND));
+
+		Recipe recipe = completeCook.getRecipe();
+
+		// [예외 처리] 본인의 레시피가 아닐 경우
+		if (!recipe.getMember().getMemberId().equals(memberId)) {
+			throw new CustomException(ExceptionType.RECIPE_NOT_ACCESSIBLE);
+		}
+
+		completeCookRepository.deleteById(completeCookId);
+
+		// 레시피에 딸린 요리 기록이 없을 경우 레시피의 saveYn을 false로 업데이트
+		if (!completeCookRepository.existsByRecipe(recipe)) {
+			recipe.setSaveYnFalse();
+		}
+
+		return "요리 기록이 삭제되었습니다.";
+	}
 }

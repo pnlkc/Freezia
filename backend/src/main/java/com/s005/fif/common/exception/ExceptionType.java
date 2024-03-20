@@ -31,6 +31,9 @@ public enum ExceptionType {
 
 	// ShoppingList
 	SHOPPING_LIST_EXIST(409, "이미 쇼핑리스트에 등록되어 있습니다."),
+
+	// CompleteCook
+	COMPLETE_COOK_NOT_FOUND(404, "요리 기록을 찾을 수 없습니다."),
     ;
 
     private final int code;

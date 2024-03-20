@@ -98,4 +98,8 @@ public class Recipe {
 	public void completeCook() {
 		this.completeYn = true;
 	}
+
+	public void setSaveYnFalse() {
+		this.saveYn = false;
+	}
 }

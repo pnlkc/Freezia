@@ -13,8 +13,8 @@ import time
 
 
 app = FastAPI()
-app.include_router(health_router,  prefix="/health")
-app.include_router(category_router,  prefix="/category")
+app.include_router(health_router,  prefix="/api/ai/health")
+app.include_router(category_router,  prefix="/api/ai/category")
 
 # FastAPI에서는 dependency를 사용하여 반복적인 로직을 중앙에서 처리할 수 있음
 # Access Token을 확인하는 dependency를 생성

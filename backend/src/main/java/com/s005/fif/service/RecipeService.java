@@ -26,6 +26,7 @@ import com.s005.fif.entity.RecipeStep;
 import com.s005.fif.repository.CompleteCookRepository;
 import com.s005.fif.repository.IngredientRepository;
 import com.s005.fif.repository.MemberRepository;
+import com.s005.fif.repository.RecipeRecommendationResponseDto;
 import com.s005.fif.repository.RecipeRepository;
 import com.s005.fif.repository.RecipeStepRepository;
 
@@ -103,6 +104,76 @@ public class RecipeService {
 	}
 
 	/**
+	 * 사용자가 저장한 레시피 목록을 반환합니다.
+	 * @param memberId 사용자 ID
+	 * @return 사용자가 저장한 레시피 전체 목록
+	 */
+	public List<RecipeRecommendationResponseDto> getRecommendationRecipes(Integer memberId) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new CustomException(ExceptionType.MEMBER_NOT_FOUND));
+
+		ArrayList<Recipe> recipes = new ArrayList<>();
+
+		// 1 ~ 4번에 해당하는 추천 유형만 조회
+		for (int i = 1; i <= 4; i++) {
+			List<Recipe> recipe =
+				recipeRepository.findByMemberAndRecommendTypeOrderByCreateDateDesc(member, i);
+			if (recipe.isEmpty()) {
+				// TODO: 해당 추천 유형이 없다면 새로 레시피를 생성하는 요청 필요
+				// gptService.makeRecommendationRecipe(member, i);
+				continue;
+			}
+			recipes.add(recipe.get(0));
+		}
+
+		return recipes.stream().map((r) ->
+			RecipeRecommendationResponseDto.fromEntity(r,
+				findIngredientDTOs(r.getParsedIngredientList()),
+				findIngredientDTOs(r.getParsedSeasoningList())
+			)
+		).toList();
+	}
+
+	private List<IngredientDto> findIngredientDTOs(List<String[]> ingredients) {
+		return ingredients.stream().map((ingredient) -> {
+			String name = ingredient[0];
+			String amounts = ingredient[1];
+			String unit = ingredient[2];
+
+			Optional<Ingredient> findIngredientOpt = ingredientRepository.findByName(name);
+			Ingredient findIngredient;
+
+			// 식재료 DB에 없는 경우
+			if (findIngredientOpt.isEmpty()) {
+				/*
+				추가한 식재료 중 DB에 없으면 DB에 추가
+				DB에서 imgUrl, seasoningYn, expirationPeriod 직접 수정 필요함
+				 */
+
+				Ingredient newIngredient = Ingredient.builder()
+					.name(name)
+					.imgUrl(Constant.DEFAULT_INGREDIENT_IMG_URL)
+					.seasoningYn(true)    // 양념으로 취급
+					.expirationPeriod(Constant.DEFAULT_INGREDIENT_EXPIRATION_PERIOD)
+					.build();
+
+				ingredientRepository.save(newIngredient);
+				findIngredient = newIngredient;
+			} else {
+				findIngredient = findIngredientOpt.get();
+			}
+
+			return IngredientDto.builder()
+				.ingredientId(findIngredient.getIngredientId())
+				.name(name)
+				.image(findIngredient.getImgUrl())
+				.amounts(amounts)
+				.unit(unit)
+				.build();
+		}).toList();
+	}
+
+	/**
 	 * 레시피 세부 정보를 반환합니다.
 	 * @param memberId 사용자 ID
 	 * @param recipeId 레시피 ID
@@ -146,7 +217,7 @@ public class RecipeService {
 					.orElseThrow(() -> new CustomException(ExceptionType.INGREDIENTS_NOT_FOUND));
 			}
 			else {
-				findIngredient = findIngredientOpt.get();	
+				findIngredient = findIngredientOpt.get();
 			}
 
 			IngredientDto ingredientDto = IngredientDto.builder()

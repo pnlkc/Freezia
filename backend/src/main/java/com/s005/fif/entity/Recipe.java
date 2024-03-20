@@ -107,4 +107,16 @@ public class Recipe {
 	public void setCompleteYnFalse() {
 		this.completeYn = false;
 	}
+
+	private List<String[]> parseIngredients(String ingredientList) {
+		return Arrays.stream(ingredientList.split(",")).map((ingredient) -> ingredient.split(":")).toList();
+	}
+	public List<String[]> getParsedIngredientList() {
+		return parseIngredients(this.ingredientList);
+	}
+
+	public List<String[]> getParsedSeasoningList() {
+		return parseIngredients(this.seasoningList);
+	}
+
 }

@@ -3,6 +3,8 @@ package com.s005.fif.controller;
 import com.s005.fif.common.response.Response;
 import com.s005.fif.dto.request.GeneAIPromptRequestDto;
 import com.s005.fif.service.GeneAIService;
+
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,12 +21,14 @@ public class GeneAIController {
     private final GeneAIService geneAIService;
 
     @GetMapping("/websocket")
+    @Operation(summary = "테스트용")
     public Response getThreadAndAssistant() {
         geneAIService.get();
         return new Response("fridgeIngredients", 1);
     }
 
     @GetMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @Operation(summary = "대화형 레시피 추천")
     public Flux<String> streamDataFromAI(GeneAIPromptRequestDto geneAIPromptRequestDto) {
 
         // FastAPI에서 SSE 스트림을 받는 로직

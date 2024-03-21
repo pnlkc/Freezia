@@ -8,6 +8,7 @@
     <string name="text_illness_title">가지고 계신 지병이 있으신가요?</string>
     <string name="text_btn_next">다음</string>
     <string name="text_btn_save">저장</string>
+    <string name="text_btn_complete">완료</string>
     <string name="text_btn_start">시작하기</string>
     <string name="text_field_hint_dislike_ingredient">식재료명을 입력하세요</string>
     <string name="text_field_hint_illness">병명을 입력하세요</string>
@@ -49,6 +50,12 @@
     <string name="text_serving_size">제공량</string>
     <string name="text_add_ingredient">추가한 재료</string>
     <string name="text_remove_ingredient">제거한 재료</string>
+    <string name="text_record_recipe">요리 기록하기</string>
+    <string name="text_go_to_recipe_list_2">레시피 목록으로 이동</string>
+    <string name="text_complete_recipe_title">요리가 완성되었습니다</string>
+    <string name="text_add_ingredient_btn">재료 추가하기</string>
+    <string name="text_add_ingredient_title">재료를 추가해주세요</string>
+    <string name="text_remove_ingredient_title">삭제할 재료를 선택해 주세요</string>
 
     <string name="description_btn_go_back">뒤로가기 버튼</string>
     <string name="description_btn_bookmark">북마크 버튼</string>
@@ -73,4 +80,5 @@
     <string name="description_serving_size_increase_btn">인원 수 증가 버튼</string>
     <string name="description_add_ingredient">추가한 재료 아이콘</string>
     <string name="description_remove_ingredient">제거한 재료 아이콘</string>
+    <string name="description_btn_tts">TTS 버튼 이미지</string>
 </resources>

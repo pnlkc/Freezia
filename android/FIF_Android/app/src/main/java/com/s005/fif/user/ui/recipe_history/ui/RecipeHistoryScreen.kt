@@ -63,7 +63,8 @@ data class RecipeHistoryData(val time: Int, val name: String, val imgUrl: String
 @Composable
 fun RecipeHistoryScreen(
     modifier: Modifier = Modifier,
-    navigateUp: () -> Unit
+    navigateUp: () -> Unit,
+    mode: RecipeHistoryType
 ) {
     Column(
         modifier = modifier
@@ -75,7 +76,9 @@ fun RecipeHistoryScreen(
             navigateUp = navigateUp
         )
 
-        SavedRecipeBody()
+        SavedRecipeBody(
+            mode = mode,
+        )
     }
 }
 
@@ -83,9 +86,14 @@ fun RecipeHistoryScreen(
 @Composable
 fun SavedRecipeBody(
     modifier: Modifier = Modifier,
+    mode: RecipeHistoryType
 ) {
-    var selected by remember { mutableStateOf(SavedHistory) }
-    val pagerState = rememberPagerState(pageCount = { 2 })
+    var selected by remember { mutableStateOf(mode) }
+    val pagerState = rememberPagerState(
+        pageCount = { 2 },
+        initialPage = if (mode == SavedHistory) 0 else 1
+    )
+
     val coroutineScope = rememberCoroutineScope()
 
     val list1 = listOf(

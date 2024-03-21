@@ -73,6 +73,7 @@ enum class RecipeDetailType {
 fun RecipeDetailScreen(
     modifier: Modifier = Modifier,
     navigateUp: () -> Unit,
+    navigateToRecipeStep: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -95,6 +96,15 @@ fun RecipeDetailScreen(
             RecipeDetailBody(
                 modifier = Modifier,
                 navigateUp = navigateUp,
+                navigateToRecipeStep = navigateToRecipeStep
+            )
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(20.dp)
+                    .background(colorScheme.background)
+                    .align(Alignment.BottomCenter)
             )
         }
     }
@@ -154,6 +164,7 @@ fun RecipeDetailTopBar(
 fun RecipeDetailBody(
     modifier: Modifier = Modifier,
     navigateUp: () -> Unit,
+    navigateToRecipeStep: () -> Unit
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState()
     var isExpanded by remember {
@@ -191,8 +202,8 @@ fun RecipeDetailBody(
         sheetContent = {
             RecipeDetailBottomSheetColumn(
                 modifier = Modifier
-                    .height((heightDp - statusBarHeightDp - 45).dp)
-                    .padding(bottom = if (isExpanded) 0.dp else (heightDp.toDpSize(30) - statusBarHeightDp.dp))
+                    .height((heightDp - statusBarHeightDp - 45).dp),
+                navigateToRecipeStep = navigateToRecipeStep
             )
         },
         sheetDragHandle = {
@@ -273,6 +284,7 @@ fun RecipeDetailFoodTag(
 @Composable
 fun RecipeDetailBottomSheetColumn(
     modifier: Modifier = Modifier,
+    navigateToRecipeStep: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -280,10 +292,13 @@ fun RecipeDetailBottomSheetColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(30.dp)
     ) {
-        RecipeDetailInfoRow()
+        RecipeDetailInfoRow(
+            time = "10",
+            calorie = "400"
+        )
 
         RecipeDetailBtn(
-            onClick = { }
+            navigateToRecipeStep = navigateToRecipeStep
         )
 
         RecipeDetailPager()
@@ -293,6 +308,8 @@ fun RecipeDetailBottomSheetColumn(
 @Composable
 fun RecipeDetailInfoRow(
     modifier: Modifier = Modifier,
+    time: String,
+    calorie: String
 ) {
     Row(
         modifier = modifier
@@ -303,7 +320,7 @@ fun RecipeDetailInfoRow(
             modifier = Modifier
                 .weight(1f),
             title = stringResource(id = R.string.text_cook_time),
-            body = "10m",
+            body = time + "m",
         )
 
         VerticalDivider(
@@ -317,7 +334,7 @@ fun RecipeDetailInfoRow(
             modifier = Modifier
                 .weight(1f),
             title = stringResource(id = R.string.text_calorie),
-            body = "400kcal"
+            body = calorie + "kcal"
         )
     }
 }
@@ -351,7 +368,7 @@ fun RecipeDetailInfoItemColumn(
 @Composable
 fun RecipeDetailBtn(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit,
+    navigateToRecipeStep: () -> Unit,
 ) {
     Text(
         modifier = modifier
@@ -359,7 +376,7 @@ fun RecipeDetailBtn(
             .padding(horizontal = widthDp.toDpSize(20))
             .clip(RoundedCornerShape(50.dp))
             .background(colorScheme.onSecondary.copy(alpha = 0.2f))
-            .clickable { onClick() }
+            .clickable { navigateToRecipeStep() }
             .padding(vertical = 10.dp),
         text = stringResource(id = R.string.text_go_to_recipe_step),
         style = Typography.bodySmall,

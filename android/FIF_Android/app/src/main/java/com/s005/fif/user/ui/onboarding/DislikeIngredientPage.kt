@@ -141,37 +141,37 @@ fun DislikeIngredientSearchResultItem(
             .fillMaxWidth()
             .clickable {  },
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Box(
-            modifier = modifier
-                .clip(CircleShape)
-                .size(20.dp)
-                .border(1.dp, Color.Black, CircleShape)
+        Row(
+            modifier = Modifier,
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            Image(
+            GlideImage(
                 modifier = modifier
-                    .size(20.dp)
-                    .align(Alignment.Center),
-                painter = painterResource(id = R.drawable.add),
-                contentDescription = stringResource(id = R.string.description_icon_add),
-                colorFilter = ColorFilter.tint(Color.Black),
-                contentScale = ContentScale.Fit
+                    .clip(CircleShape)
+                    .size(30.dp),
+                model = "https://ouch-cdn2.icons8.com/-huiQFwzs0evgWutGwwsvzKk6k5OwM21IwK9pLPTF7s/rs:fit:368:412/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9wbmcvMTky/L2I4YzI0NmMzLTA3/ZmEtNDFiOC1iMDM1/LTUyNDgyMmMxOTg4/OC5wbmc.png",
+                contentDescription = stringResource(id = R.string.description_ingredient_img),
+            )
+
+            Text(
+                text = item,
+                style = Typography.bodyMedium,
+                color = Color.Black.copy(alpha = 0.5f)
             )
         }
 
-        GlideImage(
+        Image(
             modifier = modifier
                 .clip(CircleShape)
-                .size(30.dp),
-            model = "https://ouch-cdn2.icons8.com/-huiQFwzs0evgWutGwwsvzKk6k5OwM21IwK9pLPTF7s/rs:fit:368:412/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9wbmcvMTky/L2I4YzI0NmMzLTA3/ZmEtNDFiOC1iMDM1/LTUyNDgyMmMxOTg4/OC5wbmc.png",
-            contentDescription = stringResource(id = R.string.description_ingredient_img),
-        )
-
-        Text(
-            text = item,
-            style = Typography.bodyMedium,
-            color = Color.Black.copy(alpha = 0.5f)
+                .border(1.dp, Color.Black, CircleShape)
+                .size(20.dp),
+            painter = painterResource(id = R.drawable.add),
+            contentDescription = stringResource(id = R.string.description_icon_add),
+            colorFilter = ColorFilter.tint(Color.Black),
+            contentScale = ContentScale.Fit
         )
     }
 }

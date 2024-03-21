@@ -3,6 +3,7 @@ package com.s005.fif.recipe.ui.detail
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
@@ -76,7 +77,8 @@ fun MyFoodHistoryItem(
     ) {
         Column(
             modifier = Modifier
-                .padding(20.dp),
+                .padding(horizontal = 20.dp)
+                .padding(top = 20.dp, bottom = 30.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             Text(
@@ -113,7 +115,7 @@ fun MyFoodHistoryItem(
                     text = stringResource(id = R.string.text_remove_ingredient),
                     img = painterResource(id = R.drawable.remove_circle),
                     desc = stringResource(id = R.string.description_remove_ingredient),
-                    list = listOf("오이", "가지")
+                    list = listOf("오이", "아스파라거스")
                 )
             }
         }
@@ -134,7 +136,8 @@ fun MyFoodHistoryIngredientList(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
-            modifier = Modifier,
+            modifier = Modifier
+                .padding(bottom = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(5.dp)
         ) {
@@ -169,34 +172,23 @@ fun MyFoodHistoryIngredientItem(
     item: String,
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        Row(
-            modifier = Modifier,
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            GlideImage(
-                modifier = modifier
-                    .clip(CircleShape)
-                    .size(30.dp),
-                model = "https://ouch-cdn2.icons8.com/-huiQFwzs0evgWutGwwsvzKk6k5OwM21IwK9pLPTF7s/rs:fit:368:412/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9wbmcvMTky/L2I4YzI0NmMzLTA3/ZmEtNDFiOC1iMDM1/LTUyNDgyMmMxOTg4/OC5wbmc.png",
-                contentDescription = stringResource(id = R.string.description_ingredient_img),
-            )
-
-            Text(
-                text = item,
-                style = Typography.bodyMedium,
-                maxLines = 1
-            )
-        }
+        GlideImage(
+            modifier = Modifier
+                .clip(CircleShape)
+                .size(30.dp),
+            model = "https://ouch-cdn2.icons8.com/-huiQFwzs0evgWutGwwsvzKk6k5OwM21IwK9pLPTF7s/rs:fit:368:412/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9wbmcvMTky/L2I4YzI0NmMzLTA3/ZmEtNDFiOC1iMDM1/LTUyNDgyMmMxOTg4/OC5wbmc.png",
+            contentDescription = stringResource(id = R.string.description_ingredient_img),
+        )
 
         Text(
-            text = "2개",
+            text = item,
             style = Typography.bodyMedium,
+            maxLines = 1
         )
     }
 }

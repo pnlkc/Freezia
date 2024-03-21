@@ -147,29 +147,23 @@ fun IllnessSearchResultItem(
             .fillMaxWidth()
             .clickable {  },
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Box(
-            modifier = modifier
-                .clip(CircleShape)
-                .size(20.dp)
-                .border(1.dp, Color.Black, CircleShape)
-        ) {
-            Image(
-                modifier = modifier
-                    .size(20.dp)
-                    .align(Alignment.Center),
-                painter = painterResource(id = R.drawable.add),
-                contentDescription = "",
-                colorFilter = ColorFilter.tint(Color.Black),
-                contentScale = ContentScale.Fit
-            )
-        }
-
         Text(
             text = item,
             style = Typography.bodyMedium,
             color = Color.Black.copy(alpha = 0.5f)
+        )
+
+        Image(
+            modifier = modifier
+                .clip(CircleShape)
+                .border(1.dp, Color.Black, CircleShape)
+                .size(20.dp),
+            painter = painterResource(id = R.drawable.add),
+            contentDescription = "",
+            colorFilter = ColorFilter.tint(Color.Black),
+            contentScale = ContentScale.Fit
         )
     }
 }
@@ -261,8 +255,9 @@ fun UserProfileTextField(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 30.dp)
+            .clip(RoundedCornerShape(50.dp))
             .background(Color.Transparent)
-            .border(2.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(30.dp)),
+            .border(2.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(50.dp)),
         interactionSource = interactionSource,
         enabled = true,
         textStyle = Typography.bodyMedium,

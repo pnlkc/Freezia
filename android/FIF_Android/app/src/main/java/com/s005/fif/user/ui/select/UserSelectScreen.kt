@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -68,7 +69,7 @@ fun UserSelectBody(
         LazyVerticalGrid(
             modifier = Modifier
                 .padding(horizontal = 10.dp),
-            columns = GridCells.Adaptive(minSize = ScreenSizeUtil.screenWidthDp.toDpSize(30)),
+            columns = GridCells.Adaptive(minSize = ScreenSizeUtil.widthDp.toDpSize(30)),
             verticalArrangement = Arrangement.spacedBy(30.dp)
         ) {
             item {
@@ -105,12 +106,12 @@ fun UserAddItem(
         Box(
             modifier = modifier
                 .clip(CircleShape)
-                .size((ScreenSizeUtil.screenWidthDp / 3 - 40).dp)
+                .size((ScreenSizeUtil.widthDp / 3 - 40).dp)
                 .border(5.dp, colorScheme.primary, CircleShape)
         ) {
             Image(
                 modifier = modifier
-                    .size((ScreenSizeUtil.screenWidthDp / 3 - 60).dp)
+                    .size((ScreenSizeUtil.widthDp / 3 - 60).dp)
                     .align(Alignment.Center),
                 painter = painterResource(id = R.drawable.add),
                 contentDescription = stringResource(id = R.string.description_btn_profile_add),
@@ -135,6 +136,7 @@ fun UserSelectItem(
 ) {
     Column(
         modifier = modifier
+            .clip(RoundedCornerShape(20.dp))
             .clickable { navigateToUserOnboarding() },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -142,7 +144,7 @@ fun UserSelectItem(
         GlideImage(
             modifier = modifier
                 .clip(CircleShape)
-                .size((ScreenSizeUtil.screenWidthDp / 3 - 40).dp),
+                .size((ScreenSizeUtil.widthDp / 3 - 40).dp),
             model = "https://img.danawa.com/prod_img/500000/207/533/img/18533207_1.jpg?_v=20221226163359",
             contentDescription = stringResource(id = R.string.description_img_profile),
             contentScale = ContentScale.Crop

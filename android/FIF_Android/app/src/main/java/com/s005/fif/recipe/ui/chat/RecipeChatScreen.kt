@@ -1,4 +1,4 @@
-package com.s005.fif.recipe.ui
+package com.s005.fif.recipe.ui.chat
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -60,9 +59,7 @@ fun RecipeChatScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-//            .padding(horizontal = 10.dp)
-//            .padding(bottom = 10.dp)
-            .background(MaterialTheme.colorScheme.background)
+            .background(colorScheme.background)
     ) {
         RecipeChatTopBar(
             modifier = modifier
@@ -220,7 +217,7 @@ fun MyChat(
     ) {
         Text(
             modifier = Modifier
-                .widthIn(max = ScreenSizeUtil.screenWidthDp.toDpSize(70))
+                .widthIn(max = ScreenSizeUtil.widthDp.toDpSize(70))
                 .align(Alignment.CenterEnd)
                 .clip(
                     RoundedCornerShape(
@@ -255,7 +252,7 @@ fun GPTChat(
         ) {
             Text(
                 modifier = Modifier
-                    .widthIn(max = ScreenSizeUtil.screenWidthDp.toDpSize(70))
+                    .widthIn(max = ScreenSizeUtil.widthDp.toDpSize(70))
                     .align(Alignment.CenterStart)
                     .clip(
                         RoundedCornerShape(
@@ -307,7 +304,7 @@ fun GPTRecipeLazyRow(
         ) { _, item ->
             RecipeHistoryLazyVerticalGridItem(
                 modifier = modifier
-                    .widthIn(max = ScreenSizeUtil.screenWidthDp.toDpSize(35)),
+                    .widthIn(max = ScreenSizeUtil.widthDp.toDpSize(35)),
                 item = item,
                 onClick = {  }
             )

@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -20,18 +19,15 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
@@ -41,17 +37,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.s005.fif.R
 import com.s005.fif.ui.theme.Typography
 import com.s005.fif.user.ui.profile.HealthCard
-import com.s005.fif.user.ui.profile.UserProfileBody
 import com.s005.fif.user.ui.profile.UserProfileColumnText
-import com.s005.fif.user.ui.profile.UserProfileTopBar
 
 data class MainData(val imgUrl: String, val desc: String)
 
@@ -60,7 +52,8 @@ fun MainScreen(
     modifier: Modifier = Modifier,
     navigateToUserProfile: () -> Unit,
     navigateToRecipeList: () -> Unit,
-    navigateToRecipeChat: () -> Unit
+    navigateToRecipeChat: () -> Unit,
+    navigateToRecipeDetail: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -74,7 +67,8 @@ fun MainScreen(
         MainBody(
             navigateToUserProfile = navigateToUserProfile,
             navigateToRecipeList = navigateToRecipeList,
-            navigateToRecipeChat = navigateToRecipeChat
+            navigateToRecipeChat = navigateToRecipeChat,
+            navigateToRecipeDetail = navigateToRecipeDetail
         )
     }
 }
@@ -141,7 +135,8 @@ fun MainBody(
     modifier: Modifier = Modifier,
     navigateToUserProfile: () -> Unit,
     navigateToRecipeList: () -> Unit,
-    navigateToRecipeChat: () -> Unit
+    navigateToRecipeChat: () -> Unit,
+    navigateToRecipeDetail: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -152,7 +147,9 @@ fun MainBody(
             navigateToUserProfile = navigateToUserProfile
         )
 
-        MainRecipeRecommendColumn()
+        MainRecipeRecommendColumn(
+            navigateToRecipeDetail = navigateToRecipeDetail
+        )
 
         MainRecipeBtnRow(
             navigateToRecipeList = navigateToRecipeList,
@@ -197,6 +194,7 @@ fun MainHealthColumn(
 @Composable
 fun MainRecipeRecommendColumn(
     modifier: Modifier = Modifier,
+    navigateToRecipeDetail: () -> Unit
 ) {
     Column(
         modifier = modifier,
@@ -208,7 +206,9 @@ fun MainRecipeRecommendColumn(
             text = stringResource(id = R.string.text_recipe_recommend_title)
         )
 
-        MainRecipeRecommendPager()
+        MainRecipeRecommendPager(
+            navigateToRecipeDetail = navigateToRecipeDetail
+        )
     }
 }
 
@@ -216,6 +216,7 @@ fun MainRecipeRecommendColumn(
 @Composable
 fun MainRecipeRecommendPager(
     modifier: Modifier = Modifier,
+    navigateToRecipeDetail: () -> Unit
 ) {
     // TODO. 실제 리스트로 변경 필요
     val list = listOf(
@@ -239,7 +240,8 @@ fun MainRecipeRecommendPager(
             pageSpacing = 20.dp
         ) { page ->
             MainRecipeRecommendCard(
-                item = list[page]
+                item = list[page],
+                navigateToRecipeDetail = navigateToRecipeDetail
             )
         }
 
@@ -270,7 +272,8 @@ fun MainRecipeRecommendPager(
 @Composable
 fun MainRecipeRecommendCard(
     modifier: Modifier = Modifier,
-    item: MainData
+    item: MainData,
+    navigateToRecipeDetail: () -> Unit
 ) {
     Card(
         modifier = modifier
@@ -308,7 +311,7 @@ fun MainRecipeRecommendCard(
                 Text(
                     modifier = modifier
                         .clip(RoundedCornerShape(50.dp))
-                        .clickable { }
+                        .clickable { navigateToRecipeDetail() }
                         .background(colorScheme.primary)
                         .padding(vertical = 5.dp, horizontal = 10.dp),
                     text = stringResource(id = R.string.text_go_to_recipe_list),

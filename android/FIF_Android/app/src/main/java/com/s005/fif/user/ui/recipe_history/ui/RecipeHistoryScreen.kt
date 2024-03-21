@@ -48,8 +48,8 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.s005.fif.R
 import com.s005.fif.ui.theme.Typography
 import com.s005.fif.user.ui.profile.UserProfileTopBar
-import com.s005.fif.user.ui.recipe_history.ui.RecipeHistoryType.SavedHistory
 import com.s005.fif.user.ui.recipe_history.ui.RecipeHistoryType.CompletedFood
+import com.s005.fif.user.ui.recipe_history.ui.RecipeHistoryType.SavedHistory
 import com.s005.fif.utils.ScreenSizeUtil
 import kotlinx.coroutines.launch
 
@@ -63,7 +63,8 @@ data class RecipeHistoryData(val time: Int, val name: String, val imgUrl: String
 @Composable
 fun RecipeHistoryScreen(
     modifier: Modifier = Modifier,
-    navigateUp: () -> Unit
+    navigateUp: () -> Unit,
+    mode: RecipeHistoryType
 ) {
     Column(
         modifier = modifier
@@ -75,7 +76,9 @@ fun RecipeHistoryScreen(
             navigateUp = navigateUp
         )
 
-        SavedRecipeBody()
+        SavedRecipeBody(
+            mode = mode,
+        )
     }
 }
 
@@ -83,9 +86,14 @@ fun RecipeHistoryScreen(
 @Composable
 fun SavedRecipeBody(
     modifier: Modifier = Modifier,
+    mode: RecipeHistoryType
 ) {
-    var selected by remember { mutableStateOf(SavedHistory) }
-    val pagerState = rememberPagerState(pageCount = { 2 })
+    var selected by remember { mutableStateOf(mode) }
+    val pagerState = rememberPagerState(
+        pageCount = { 2 },
+        initialPage = if (mode == SavedHistory) 0 else 1
+    )
+
     val coroutineScope = rememberCoroutineScope()
 
     val list1 = listOf(
@@ -126,19 +134,18 @@ fun SavedRecipeBody(
     ) {
         SavedRecipeTitleRow(
             selected = selected,
-            onClick = {
-                if (selected == SavedHistory) {
-                    selected = CompletedFood
+            savedRecipeClicked = {
+                selected = SavedHistory
 
-                    coroutineScope.launch {
-                        pagerState.animateScrollToPage(1)
-                    }
-                } else {
-                    selected = SavedHistory
+                coroutineScope.launch {
+                    pagerState.animateScrollToPage(0)
+                }
+            },
+            completedFoodClicked = {
+                selected = CompletedFood
 
-                    coroutineScope.launch {
-                        pagerState.animateScrollToPage(0)
-                    }
+                coroutineScope.launch {
+                    pagerState.animateScrollToPage(1)
                 }
             }
         )
@@ -172,10 +179,11 @@ fun SavedRecipeBody(
 fun SavedRecipeTitleRow(
     modifier: Modifier = Modifier,
     selected: RecipeHistoryType,
-    onClick: () -> Unit
+    savedRecipeClicked: () -> Unit,
+    completedFoodClicked: () -> Unit
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp))
     ) {
@@ -187,7 +195,7 @@ fun SavedRecipeTitleRow(
             iconColor = if (selected == SavedHistory) Color.White else colorScheme.primary,
             textColor = if (selected == SavedHistory) Color.White else Color.Black,
             backgroundColor = if (selected == SavedHistory) colorScheme.primary else Color.White,
-            onClick = onClick
+            onClick = savedRecipeClicked
         )
 
         SavedRecipeTitleItem(
@@ -198,7 +206,7 @@ fun SavedRecipeTitleRow(
             iconColor = if (selected == SavedHistory) colorScheme.primary else Color.White,
             textColor = if (selected == SavedHistory) Color.Black else Color.White,
             backgroundColor = if (selected == SavedHistory) Color.White else colorScheme.primary,
-            onClick = onClick
+            onClick = completedFoodClicked
         )
     }
 }
@@ -290,7 +298,7 @@ fun RecipeHistoryLazyVerticalGridItem(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height((ScreenSizeUtil.screenHeightDp / 5).dp)
+            .height((ScreenSizeUtil.heightDp / 5).dp)
             .clip(RoundedCornerShape(10.dp))
             .clickable { onClick() }
     ) {

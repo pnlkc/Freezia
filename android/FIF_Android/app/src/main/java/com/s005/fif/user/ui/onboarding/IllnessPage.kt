@@ -143,31 +143,27 @@ fun IllnessSearchResultItem(
     item: String
 ) {
     Row(
-        modifier = modifier,
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable {  },
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(5.dp)
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Box(
-            modifier = modifier
-                .clip(CircleShape)
-                .size(20.dp)
-                .border(1.dp, Color.Black, CircleShape)
-        ) {
-            Image(
-                modifier = modifier
-                    .size(20.dp)
-                    .align(Alignment.Center),
-                painter = painterResource(id = R.drawable.add),
-                contentDescription = "",
-                colorFilter = ColorFilter.tint(Color.Black),
-                contentScale = ContentScale.Fit
-            )
-        }
-
         Text(
             text = item,
             style = Typography.bodyMedium,
             color = Color.Black.copy(alpha = 0.5f)
+        )
+
+        Image(
+            modifier = modifier
+                .clip(CircleShape)
+                .border(1.dp, Color.Black, CircleShape)
+                .size(20.dp),
+            painter = painterResource(id = R.drawable.add),
+            contentDescription = "",
+            colorFilter = ColorFilter.tint(Color.Black),
+            contentScale = ContentScale.Fit
         )
     }
 }
@@ -206,14 +202,15 @@ fun IllnessSelectItem(
 ) {
     Card(
         modifier = modifier
-            .padding(3.dp)
-            .clickable { onClick() },
+            .clip(RoundedCornerShape(50.dp))
+            .padding(2.dp),
         shape = RoundedCornerShape(50.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onPrimary)
     ) {
         Row(
             modifier = modifier
+                .clickable { onClick() }
                 .padding(vertical = 5.dp, horizontal = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(5.dp)
@@ -258,8 +255,9 @@ fun UserProfileTextField(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 30.dp)
+            .clip(RoundedCornerShape(50.dp))
             .background(Color.Transparent)
-            .border(2.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(30.dp)),
+            .border(2.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(50.dp)),
         interactionSource = interactionSource,
         enabled = true,
         textStyle = Typography.bodyMedium,

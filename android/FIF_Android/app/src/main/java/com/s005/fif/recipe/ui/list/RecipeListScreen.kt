@@ -1,4 +1,4 @@
-package com.s005.fif.recipe.ui
+package com.s005.fif.recipe.ui.list
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -25,7 +25,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -56,7 +55,8 @@ import kotlinx.coroutines.delay
 fun RecipeListScreen(
     modifier: Modifier = Modifier,
     navigateUp: () -> Unit,
-    navigateToRecipeChat: () -> Unit
+    navigateToRecipeChat: () -> Unit,
+    navigateToRecipeDetail: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -70,7 +70,8 @@ fun RecipeListScreen(
         )
 
         RecipeListBody(
-            navigateToRecipeChat = navigateToRecipeChat
+            navigateToRecipeChat = navigateToRecipeChat,
+            navigateToRecipeDetail = navigateToRecipeDetail
         )
     }
 }
@@ -78,7 +79,8 @@ fun RecipeListScreen(
 @Composable
 fun RecipeListBody(
     modifier: Modifier = Modifier,
-    navigateToRecipeChat: () -> Unit
+    navigateToRecipeChat: () -> Unit,
+    navigateToRecipeDetail: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -89,7 +91,8 @@ fun RecipeListBody(
         RecipeListTagList()
 
         RecipeListLazyGrid(
-            navigateToRecipeChat = navigateToRecipeChat
+            navigateToRecipeChat = navigateToRecipeChat,
+            navigateToRecipeDetail = navigateToRecipeDetail
         )
     }
 }
@@ -164,7 +167,8 @@ fun RecipeListLazyGrid(
         RecipeHistoryData(50, "떡볶이", "https://i.namu.wiki/i/A5AIHovo1xwuEjs7V8-aKpZCSWY2gN3mZEPR9fymaez_J7ufmI9B7YyDBu6kZy9TC9VWJatXVJZbDjcYLO2S8Q.webp"),
         RecipeHistoryData(50, "해물찜", "https://recipe1.ezmember.co.kr/cache/recipe/2016/12/16/99d6cb0cb6c434b562217f407623c8491.jpg"),
     ),
-    navigateToRecipeChat: () -> Unit
+    navigateToRecipeChat: () -> Unit,
+    navigateToRecipeDetail: () -> Unit
 ) {
     var isShow by remember {
         mutableStateOf(false)
@@ -199,7 +203,7 @@ fun RecipeListLazyGrid(
         ) { _, item ->
             RecipeHistoryLazyVerticalGridItem(
                 item = item,
-                onClick = {  }
+                onClick = { navigateToRecipeDetail() }
             )
         }
     }
@@ -215,7 +219,7 @@ fun RecipeListRecipeGPTBtn(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height((ScreenSizeUtil.screenHeightDp / 5).dp)
+            .height((ScreenSizeUtil.heightDp / 5).dp)
             .clip(RoundedCornerShape(10.dp))
             .clickable { navigateToRecipeChat() },
     ) {

@@ -11,13 +11,13 @@ import com.s005.fif.common.Constant;
 import com.s005.fif.common.exception.CustomException;
 import com.s005.fif.common.exception.ExceptionType;
 import com.s005.fif.dto.request.CompleteCookRequestDto;
-import com.s005.fif.dto.request.model.AddIngredientDto;
-import com.s005.fif.dto.request.model.RemoveIngredientDto;
+import com.s005.fif.dto.request.model.IngredientNameDto;
 import com.s005.fif.dto.response.CompleteCookResponseDto;
 import com.s005.fif.dto.response.RecipeResponseDto;
 import com.s005.fif.dto.response.RecipeSimpleResponseDto;
 import com.s005.fif.dto.response.RecipeStepResponseDto;
 import com.s005.fif.dto.response.model.IngredientDto;
+import com.s005.fif.dto.response.model.IngredientSimpleDto;
 import com.s005.fif.entity.CompleteCook;
 import com.s005.fif.entity.Ingredient;
 import com.s005.fif.entity.Member;
@@ -326,7 +326,7 @@ public class RecipeService {
 		추가한 식재료 중 DB에 없으면 DB에 추가
 		DB에서 imgUrl, seasoningYn, expirationPeriod 직접 수정 필요함
 		 */
-		for (AddIngredientDto addIngredient : dto.getAddIngredients()) {
+		for (IngredientNameDto addIngredient : dto.getAddIngredients()) {
 			if (ingredientRepository.existsByName(addIngredient.getName())) continue;
 			ingredientRepository.save(Ingredient.builder()
 				.name(addIngredient.getName())
@@ -338,13 +338,8 @@ public class RecipeService {
 
 		// 추가한 식재료 stringify
 		StringBuilder addIngredient = new StringBuilder();
-		for (AddIngredientDto ingredient : dto.getAddIngredients()) {
-			addIngredient.append(ingredient.getName())
-				.append(":")
-				.append(ingredient.getAmounts())
-				.append(":")
-				.append(ingredient.getUnit())
-				.append(",");
+		for (IngredientNameDto ingredient : dto.getAddIngredients()) {
+			addIngredient.append(ingredient.getName()).append(",");
 		}
 		if (!addIngredient.isEmpty()) {
 			addIngredient.deleteCharAt(addIngredient.length() - 1);
@@ -352,9 +347,8 @@ public class RecipeService {
 
 		// 제외한 식재료 stringify
 		StringBuilder removeIngredient = new StringBuilder();
-		for (RemoveIngredientDto ingredient : dto.getRemoveIngredients()) {
-			removeIngredient.append(ingredient.getName())
-				.append(",");
+		for (IngredientNameDto ingredient : dto.getRemoveIngredients()) {
+			removeIngredient.append(ingredient.getName()).append(",");
 		}
 		if (!removeIngredient.isEmpty()) {
 			removeIngredient.deleteCharAt(removeIngredient.length() - 1);
@@ -392,36 +386,27 @@ public class RecipeService {
 
 		List<CompleteCook> completeCookList = completeCookRepository.findByRecipe(recipe);
 		for (CompleteCook completeCook : completeCookList) {
-			List<IngredientDto> addIngredients = new ArrayList<>();
+			List<IngredientSimpleDto> addIngredients = new ArrayList<>();
 			for (String ingredient : completeCook.getAddIngredient().split(",")) {
-				String[] s = ingredient.split(":");
-				String name = s[0];
-				String amounts = s[1];
-				String unit = s[2];
-
-				Ingredient findIngredient = ingredientRepository.findByName(s[0])
+				Ingredient findIngredient = ingredientRepository.findByName(ingredient)
 					.orElseThrow(() -> new CustomException(ExceptionType.INGREDIENTS_NOT_FOUND));
 
-				addIngredients.add(IngredientDto.builder()
+				addIngredients.add(IngredientSimpleDto.builder()
 					.ingredientId(findIngredient.getIngredientId())
-					.name(name)
+					.name(ingredient)
 					.image(findIngredient.getImgUrl())
-					.amounts(amounts)
-					.unit(unit)
 					.build());
 			}
 
-			List<IngredientDto> removeIngredients = new ArrayList<>();
+			List<IngredientSimpleDto> removeIngredients = new ArrayList<>();
 			for (String ingredient : completeCook.getRemoveIngredient().split(",")) {
 				Ingredient findIngredient = ingredientRepository.findByName(ingredient)
 					.orElseThrow(() -> new CustomException(ExceptionType.INGREDIENTS_NOT_FOUND));
 
-				removeIngredients.add(IngredientDto.builder()
+				removeIngredients.add(IngredientSimpleDto.builder()
 					.ingredientId(findIngredient.getIngredientId())
 					.name(ingredient)
 					.image(findIngredient.getImgUrl())
-					.amounts(null)
-					.unit(null)
 					.build());
 			}
 

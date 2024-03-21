@@ -52,7 +52,7 @@ public class GeneAIService {
         WebClient webClient =
                 WebClient
                         .builder()
-                        .baseUrl("http://localhost:8000")
+                        .baseUrl("http://localhost:8000/api/ai")
                         .build();
 
         // api 요청
@@ -83,7 +83,7 @@ public class GeneAIService {
         WebClient webClient =
                 WebClient
                         .builder()
-                        .baseUrl("http://localhost:8000")
+                        .baseUrl("http://localhost:8000/api/ai")
                         .build();
 
         // api 요청

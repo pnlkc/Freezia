@@ -1,6 +1,9 @@
 package com.s005.fif.recipe.ui.step
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -150,6 +153,11 @@ fun RecipeStepBody(
     var progress by remember {
         mutableFloatStateOf(0f)
     }
+    val progressAnimDuration = 1000
+    val progressAnimation by animateFloatAsState(
+        targetValue = progress,
+        animationSpec = tween(durationMillis = progressAnimDuration, easing = FastOutSlowInEasing),
+    )
 
     val pageModifier = { page: Int ->
         Modifier
@@ -191,7 +199,7 @@ fun RecipeStepBody(
             RecipeStepProgressBar(
                 modifier = Modifier
                     .padding(horizontal = 20.dp),
-                progress = progress,
+                progress = progressAnimation,
                 page = pagerState.currentPage + 1,
                 maxPage = pagerState.pageCount - 1
             )
@@ -223,7 +231,6 @@ fun RecipeStepBody(
                     modifier = pageModifier(page),
                     navigateToRecipeList = navigateToRecipeList,
                     navigateToRecipeComplete = navigateToRecipeComplete
-
                 )
             }
         }
@@ -378,6 +385,15 @@ fun RecipeCompletePage(
                         painter = painterResource(id = R.drawable.bookmark),
                         contentDescription = stringResource(id = R.string.description_btn_bookmark),
                         colorFilter = ColorFilter.tint(colorScheme.primary)
+                    )
+
+                    Text(
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(bottom = 20.dp),
+                        text = "스팸 마요 김치 덮밥",
+                        style = Typography.bodyLarge,
+                        color = Color.White,
                     )
                 }
                 

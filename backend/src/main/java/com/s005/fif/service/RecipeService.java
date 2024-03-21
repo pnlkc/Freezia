@@ -17,6 +17,7 @@ import com.s005.fif.dto.response.RecipeResponseDto;
 import com.s005.fif.dto.response.RecipeSimpleResponseDto;
 import com.s005.fif.dto.response.RecipeStepResponseDto;
 import com.s005.fif.dto.response.model.IngredientDto;
+import com.s005.fif.dto.response.model.IngredientSimpleDto;
 import com.s005.fif.entity.CompleteCook;
 import com.s005.fif.entity.Ingredient;
 import com.s005.fif.entity.Member;
@@ -385,36 +386,27 @@ public class RecipeService {
 
 		List<CompleteCook> completeCookList = completeCookRepository.findByRecipe(recipe);
 		for (CompleteCook completeCook : completeCookList) {
-			List<IngredientDto> addIngredients = new ArrayList<>();
+			List<IngredientSimpleDto> addIngredients = new ArrayList<>();
 			for (String ingredient : completeCook.getAddIngredient().split(",")) {
-				String[] s = ingredient.split(":");
-				String name = s[0];
-				String amounts = s[1];
-				String unit = s[2];
-
-				Ingredient findIngredient = ingredientRepository.findByName(s[0])
+				Ingredient findIngredient = ingredientRepository.findByName(ingredient)
 					.orElseThrow(() -> new CustomException(ExceptionType.INGREDIENTS_NOT_FOUND));
 
-				addIngredients.add(IngredientDto.builder()
+				addIngredients.add(IngredientSimpleDto.builder()
 					.ingredientId(findIngredient.getIngredientId())
-					.name(name)
+					.name(ingredient)
 					.image(findIngredient.getImgUrl())
-					.amounts(amounts)
-					.unit(unit)
 					.build());
 			}
 
-			List<IngredientDto> removeIngredients = new ArrayList<>();
+			List<IngredientSimpleDto> removeIngredients = new ArrayList<>();
 			for (String ingredient : completeCook.getRemoveIngredient().split(",")) {
 				Ingredient findIngredient = ingredientRepository.findByName(ingredient)
 					.orElseThrow(() -> new CustomException(ExceptionType.INGREDIENTS_NOT_FOUND));
 
-				removeIngredients.add(IngredientDto.builder()
+				removeIngredients.add(IngredientSimpleDto.builder()
 					.ingredientId(findIngredient.getIngredientId())
 					.name(ingredient)
 					.image(findIngredient.getImgUrl())
-					.amounts(null)
-					.unit(null)
 					.build());
 			}
 

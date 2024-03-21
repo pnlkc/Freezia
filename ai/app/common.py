@@ -25,7 +25,7 @@ def send_request(instruction, content):
     # run을 실행해야 create했던 message들이 API를 통해 chat gpt에게 질문
     run = client.beta.threads.runs.create(
     thread_id=thread.id,
-    assistant_id=assistant.id,
+    assistant_id=assistant.id
     )
 
     # 2초 마다 한번씩 API 응답이 return 되었는지 확인

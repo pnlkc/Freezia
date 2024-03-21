@@ -18,6 +18,7 @@ import com.s005.fif.dto.request.MemberOnboardingRequestDto;
 import com.s005.fif.dto.response.MemberDetailResponseDto;
 import com.s005.fif.service.MemberService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -33,6 +34,7 @@ public class MemberController {
 	 * 액세스 토큰은 "Authorization" 헤더로 전송
 	 * */
 	@PostMapping
+	@Operation(summary = "로그인")
 	public ResponseEntity<Response> login(@RequestBody MemberLoginRequestDto memberLoginRequestDto) {
 		Jwt jwt = memberService.login(memberLoginRequestDto);
 
@@ -57,17 +59,20 @@ public class MemberController {
 	}
 
 	@GetMapping
+	@Operation(summary = "사용자 목록 조회")
 	public Response getMembers() {
 		return new Response("memberList", memberService.getMemeberList());
 	}
 
 	@GetMapping("/info")
+	@Operation(summary = "사용자 정보 상세 조회")
 	public Response getMemberDetail(MemberDto memberDto) {
 		MemberDetailResponseDto memberDetail = memberService.getMemberDetail(memberDto.getMemberId());
 		return new Response("member", memberDetail);
 	}
 
 	@PostMapping("/onboarding")
+	@Operation(summary = "온보딩 데이터 저장")
 	public Response postOnboarding(MemberDto memberDto,
 		@RequestBody MemberOnboardingRequestDto memberOnboardingRequestDto) {
 		memberService.setMemberInfo(memberDto.getMemberId(), memberOnboardingRequestDto, true);
@@ -75,6 +80,7 @@ public class MemberController {
 	}
 
 	@PutMapping("/preference")
+	@Operation(summary = "사용자 온보딩 정보 수정")
 	public Response putMemberPreference(MemberDto memberDto,
 		@RequestBody MemberOnboardingRequestDto memberOnboardingRequestDto) {
 		memberService.setMemberInfo(memberDto.getMemberId(), memberOnboardingRequestDto, false);

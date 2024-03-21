@@ -13,3 +13,9 @@ JWT_SECRET_KEY: FridgeIsFreeIsFridgeFridgeIsFreeIsFridgeFridgeIsFreeIsFridgeSecr
 ACCESS_TOKEN_EXPIRE_TIME_MILLI_SEC: 86400000 # 1일
 REFRESH_TOKEN_EXPIRE_TIME_MILLI_SEC: 86400000 # 1일
 REFRESH_TOKEN_NAME: refreshToken
+
+
+# Swagger
+springdoc:
+  swagger-ui:
+    path: /api/swagger-ui

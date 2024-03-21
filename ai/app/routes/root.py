@@ -3,6 +3,7 @@ from models.threads import ThreadAssistantIdResponse, ThreadAssistantResponse, T
 from models.prompts import PromptRequest
 from routes.health import health_router
 from routes.category import category_router
+from routes.image import image_router
 from prompt_config import CONVERSATION_JSON_FORMAT
 from common import client
 
@@ -15,6 +16,7 @@ root_router = APIRouter()
 
 root_router.include_router(health_router,  prefix="/health")
 root_router.include_router(category_router,  prefix="/category")
+root_router.include_router(image_router, prefix="/image")
 
 # FastAPI에서는 dependency를 사용하여 반복적인 로직을 중앙에서 처리할 수 있음
 # Access Token을 확인하는 dependency를 생성

@@ -1,17 +1,34 @@
 package com.s005.fif.service;
 
+import com.s005.fif.dto.request.GeneAICategoryListRequestDto;
+import com.s005.fif.dto.request.GeneAIHealthRequestDto;
 import com.s005.fif.dto.request.GeneAIPromptRequestDto;
+import com.s005.fif.common.types.HealthRecipeType;
+import com.s005.fif.dto.response.GeneAIResponseRecipeDto;
+import com.s005.fif.dto.response.RecipeResponseDto;
+
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.http.codec.ServerSentEvent;
 import reactor.core.publisher.Flux;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Service
 @Slf4j
 public class GeneAIService {
+
+    @Value("${AI_SERVER_HOST}")
+    private String HOST_PATH;
+
+    private final RestClient restClient = RestClient.create();
 
     public void get() {
         String ingredients = "생선, 베이컨, 토마토, 계란, 대파, 김치, 마늘, 돼지고기, 목살, 삼겹살, 마라, 짜장, 배추, 무, 멸치";
@@ -107,4 +124,15 @@ public class GeneAIService {
         );
         return eventStream;
     }
+
+    public GeneAIResponseRecipeDto makeHealthRecipes(HealthRecipeType healthRecipeType, GeneAIHealthRequestDto healthRequestDto) {
+        String uri = HOST_PATH + "/api/ai/health/" + healthRecipeType.getPath();
+
+		return restClient.get()
+			.uri(uri)
+			.accept(MediaType.APPLICATION_JSON)
+			.retrieve()
+			.body(GeneAIResponseRecipeDto.class);
+    }
+
 }

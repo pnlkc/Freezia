@@ -26,6 +26,7 @@ def send_request(instruction, content):
     run = client.beta.threads.runs.create(
     thread_id=thread.id,
     assistant_id=assistant.id,
+    stream=True
     )
 
     # 2초 마다 한번씩 API 응답이 return 되었는지 확인

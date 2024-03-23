@@ -5,12 +5,15 @@ from routes.health import health_router
 from routes.category import category_router
 from prompt_config import CONVERSATION_JSON_FORMAT
 from common import client
+from typing_extensions import override
+from openai import AssistantEventHandler, AsyncAssistantEventHandler
 import asyncio
 
 root_router = APIRouter()
 
 root_router.include_router(health_router,  prefix="/health")
 root_router.include_router(category_router,  prefix="/category")
+
 
 # FastAPI에서는 dependency를 사용하여 반복적인 로직을 중앙에서 처리할 수 있음
 # Access Token을 확인하는 dependency를 생성
@@ -107,15 +110,32 @@ async def get_recipe_stream(ingredients, diseases, dislikeIngredients, prompt):
                 recipeList는 네가 추천해주는 레시피의 세부 정보를 저 recipeList 안에 있는 JSON 형태로 변환해서 반환해줘.\n
                 """ + CONVERSATION_JSON_FORMAT
 
-    completion = client.chat.completions.create(
-        model="gpt-4-turbo-preview",
-        messages=[
-            {"role": "system", "content": instruction},
-            {"role": "user", "content": prompt}
-        ],
-        stream=True
+    assistant = client.beta.assistants.create(
+            name="S005 Manager",
+            instructions=instruction,
+            tools=[{"type": "code_interpreter"}],
+            model="gpt-4-turbo-preview"
+        )
+
+    # Thread 생성
+    thread = client.beta.threads.create()
+
+    client.beta.threads.messages.create(
+        thread_id=thread.id,
+        role="user",
+        content=prompt
     )
 
-    for chunk in completion:
-        yield chunk.choices[0].delta.content
-        await asyncio.sleep(0.1)
+    stream = client.beta.threads.runs.create(
+        thread_id=thread.id,
+        assistant_id=assistant.id,
+        stream=True)
+    
+    for event in stream:
+        # 이벤트 데이터가 "thread.message.delta"인 경우에 대해서만 처리
+        if event.data.object == "thread.message.delta":
+            for content in event.data.delta.content:
+                # text인 경우에만 클라이언트에 전송
+                if content.type == 'text':
+                    yield content.text.value
+                    await asyncio.sleep(0.1)

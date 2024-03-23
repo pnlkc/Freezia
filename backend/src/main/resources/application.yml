@@ -19,3 +19,7 @@ REFRESH_TOKEN_NAME: refreshToken
 springdoc:
   swagger-ui:
     path: /api/swagger-ui
+    persist-authorization: true
+  api-docs:
+    path: /api/api-docs
+  

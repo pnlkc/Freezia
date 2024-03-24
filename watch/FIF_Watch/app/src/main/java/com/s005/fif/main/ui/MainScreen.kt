@@ -1,8 +1,5 @@
 package com.s005.fif.main.ui
 
-import android.app.Activity
-import android.widget.Toast
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,14 +14,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.MaterialTheme
@@ -32,42 +28,24 @@ import androidx.wear.compose.material.Text
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.s005.fif.R
-import com.s005.fif.ui.theme.FIF_WatchTheme
 import com.s005.fif.utils.ScreenSize
 import com.s005.fif.utils.ScreenSize.toDpSize
 import com.s005.fif.utils.ScreenSize.toSpSize
-import com.s005.fif.utils.VibrateUtil
 
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
+    viewModel: MainViewModel = hiltViewModel(),
     navigateToShoppingList: () -> Unit,
-    navigateToRecipe: () -> Unit,
+    navigateToRecipeDetail: () -> Unit,
     navigateToTimerList: () -> Unit,
-    navigateToWarning: () -> Unit
-) {
-    MainBody(
-        modifier = modifier,
-        navigateToShoppingList = navigateToShoppingList,
-        navigateToRecipe = navigateToRecipe,
-        navigateToTimerList = navigateToTimerList,
-        navigateToWarning = navigateToWarning
-    )
-}
-
-@Composable
-fun MainBody(
-    modifier: Modifier = Modifier,
-    navigateToShoppingList: () -> Unit,
-    navigateToRecipe: () -> Unit,
-    navigateToTimerList: () -> Unit,
-    navigateToWarning: () -> Unit
+    navigateToWarning: () -> Unit,
 ) {
     val btnSize = ScreenSize.screenHeightDp.toDpSize(22)
     val btnBottomPadding = ScreenSize.screenHeightDp.toDpSize(10)
     val btnSpaceBy = ScreenSize.screenWidthDp.toDpSize(2)
 
-    // TODO. 실제 데이터로 변경 필요
+    // TODO. 레시피가 선택되었는지 확인 필요
     var isRecipeSelected = true
 
     MainBody(
@@ -77,9 +55,10 @@ fun MainBody(
         btnSpaceBy = btnSpaceBy,
         isRecipeSelected = isRecipeSelected,
         navigateToShoppingList = navigateToShoppingList,
-        navigateToRecipe = navigateToRecipe,
+        navigateToRecipe = navigateToRecipeDetail,
         navigateToTimerList = navigateToTimerList,
-        navigateToWarning = navigateToWarning
+        navigateToWarning = navigateToWarning,
+        mainUiState = { viewModel.mainUiState }
     )
 }
 
@@ -93,7 +72,8 @@ fun MainBody(
     navigateToShoppingList: () -> Unit,
     navigateToRecipe: () -> Unit,
     navigateToTimerList: () -> Unit,
-    navigateToWarning: () -> Unit
+    navigateToWarning: () -> Unit,
+    mainUiState: () -> MainUiState
 ) {
     Box(
         modifier = modifier
@@ -108,7 +88,8 @@ fun MainBody(
         ) {
             ProfileColumn(
                 modifier = modifier
-                    .clickable { navigateToWarning() }
+                    .clickable { navigateToWarning() },
+                userName = mainUiState().member?.name ?: "이름 없음"
             )
 
             Text(
@@ -141,6 +122,7 @@ fun MainBody(
 @Composable
 fun ProfileColumn(
     modifier: Modifier = Modifier,
+    userName: String
 ) {
     Column(
         modifier = modifier,
@@ -151,7 +133,7 @@ fun ProfileColumn(
         Text(
             modifier = Modifier
                 .fillMaxWidth(),
-            text = "OOO님",
+            text = stringResource(id = R.string.text_user_name, userName),
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             fontSize = ScreenSize.screenHeightDp.toSpSize(7.5f),

@@ -7,14 +7,14 @@ import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import com.s005.fif.main.ui.MainScreen
 import com.s005.fif.navigation.NavigationDestination.Main
-import com.s005.fif.navigation.NavigationDestination.Recipe
 import com.s005.fif.navigation.NavigationDestination.RecipeDetail
+import com.s005.fif.navigation.NavigationDestination.RecipeStep
 import com.s005.fif.navigation.NavigationDestination.ShoppingList
 import com.s005.fif.navigation.NavigationDestination.TimerDetail
 import com.s005.fif.navigation.NavigationDestination.TimerList
 import com.s005.fif.navigation.NavigationDestination.Warning
-import com.s005.fif.recipe.ui.RecipeDetailScreen
-import com.s005.fif.recipe.ui.RecipeScreen
+import com.s005.fif.recipe.ui.step.RecipeStepScreen
+import com.s005.fif.recipe.ui.detail.RecipeDetailScreen
 import com.s005.fif.shopping_list.ui.ShoppingListScreen
 import com.s005.fif.timer.ui.TimerDetailScreen
 import com.s005.fif.timer.ui.TimerListScreen
@@ -38,8 +38,8 @@ fun FIFWatchNavHost(
                         launchSingleTop = true
                     }
                 },
-                navigateToRecipe = {
-                    navController.navigate(Recipe.route) {
+                navigateToRecipeDetail = {
+                    navController.navigate(RecipeDetail.route) {
                         launchSingleTop = true
                     }
                 },
@@ -64,18 +64,18 @@ fun FIFWatchNavHost(
             )
         }
 
-        composable(route = Recipe.route) {
-            RecipeScreen(
-                navigateToRecipeDetail = {
-                    navController.navigate(RecipeDetail.route) {
+        composable(route = RecipeDetail.route) {
+            RecipeDetailScreen(
+                navigateToRecipeStep = {
+                    navController.navigate(RecipeStep.route) {
                         launchSingleTop = true
                     }
                 }
             )
         }
 
-        composable(route = RecipeDetail.route) {
-            RecipeDetailScreen(
+        composable(route = RecipeStep.route) {
+            RecipeStepScreen(
                 navigateToMain = {
                     navController.popBackStack(route = Main.route, inclusive = false)
                 }

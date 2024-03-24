@@ -1,6 +1,5 @@
-package com.s005.fif.recipe.ui
+package com.s005.fif.recipe.ui.step
 
-import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
@@ -27,10 +26,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -46,7 +42,6 @@ import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.PageIndicatorState
 import androidx.wear.compose.material.Text
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
 import com.s005.fif.R
 import com.s005.fif.components.BackgroundImage
 import com.s005.fif.utils.DummyImageUtil
@@ -54,12 +49,11 @@ import com.s005.fif.utils.ScreenSize
 import com.s005.fif.utils.ScreenSize.toDpSize
 import com.s005.fif.utils.ScreenSize.toSpSize
 import com.s005.fif.utils.TTSUtil
-import com.s005.fif.utils.VibrateUtil
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalGlideComposeApi::class)
 @Composable
-fun RecipeDetailScreen(
+fun RecipeStepScreen(
     modifier: Modifier = Modifier,
     navigateToMain: () -> Unit,
 ) {
@@ -112,7 +106,7 @@ fun RecipeDetailScreen(
             state = pagerState
         ) { page ->
             if (page != maxPages) {
-                RecipeDetailBody(
+                RecipeStepBody(
                     page = page,
                     maxPage = maxPages,
                     goStepBack = {
@@ -147,7 +141,7 @@ fun RecipeDetailScreen(
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun RecipeDetailBody(
+fun RecipeStepBody(
     modifier: Modifier = Modifier,
     page: Int,
     maxPage: Int,

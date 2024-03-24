@@ -33,4 +33,5 @@
     <string name="btn_timer_done">타이머 완료 확인 버튼</string>
     <string name="notification_timer_done_title">타이머 완료</string>
     <string name="notification_timer_done_content">타이머가 완료되었습니다</string>
+    <string name="text_user_name">%1$s님</string>
 </resources>

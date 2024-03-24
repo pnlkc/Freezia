@@ -1,4 +1,4 @@
-package com.s005.fif.recipe.ui
+package com.s005.fif.recipe.ui.detail
 
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Box
@@ -24,12 +24,11 @@ import com.s005.fif.utils.ColorCombineTextUtil
 import com.s005.fif.utils.ScreenSize
 import com.s005.fif.utils.ScreenSize.toDpSize
 import com.s005.fif.utils.ScreenSize.toSpSize
-import com.s005.fif.utils.VibrateUtil
 
 @Composable
-fun RecipeScreen(
+fun RecipeDetailScreen(
     modifier: Modifier = Modifier,
-    navigateToRecipeDetail: () -> Unit
+    navigateToRecipeStep: () -> Unit
 ) {
     Box(
         modifier = modifier
@@ -37,15 +36,15 @@ fun RecipeScreen(
     ) {
         BackgroundImage()
 
-        RecipeBody(
+        RecipeDetailBody(
             modifier = modifier,
-            navigateToRecipeDetail = navigateToRecipeDetail
+            navigateToRecipeDetail = navigateToRecipeStep
         )
     }
 }
 
 @Composable
-fun RecipeBody(
+fun RecipeDetailBody(
     modifier: Modifier = Modifier,
     navigateToRecipeDetail: () -> Unit
 ) {

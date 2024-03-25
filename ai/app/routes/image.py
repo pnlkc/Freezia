@@ -42,12 +42,12 @@ def generate_image(
             model="dall-e-3",
             n=1,
             quality="standard",   # standard or hd
-            response_format="url",  # url or b64_json
+            response_format="b64_json",  # url or b64_json
             size="1024x1024",   # dall-e-3는 1024x1024, 1792x1024, 1024x1792만 가능
             style="natural"     # vivid or natural
         )
 
-        return response.data[0].url
+        return response.data[0].b64_json
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

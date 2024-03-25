@@ -1,5 +1,7 @@
 package com.s005.fif.controller;
 
+import java.io.IOException;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -16,7 +18,6 @@ import com.s005.fif.dto.response.CompleteCookResponseDto;
 import com.s005.fif.dto.response.RecipeResponseDto;
 import com.s005.fif.dto.response.RecipeSimpleResponseDto;
 import com.s005.fif.dto.response.RecipeStepResponseDto;
-import com.s005.fif.dto.response.ShoppingListResponseDto;
 import com.s005.fif.repository.RecipeRecommendationResponseDto;
 import com.s005.fif.service.RecipeService;
 
@@ -162,7 +163,7 @@ public class RecipeController {
             )
         }
     )
-    public Response generateAndSaveImage(@Parameter(hidden = true) MemberDto memberDto, @PathVariable Integer recipeId) {
+    public Response generateAndSaveImage(@Parameter(hidden = true) MemberDto memberDto, @PathVariable Integer recipeId) throws IOException {
         return new Response("imgUrl", recipeService.generateAndSaveImage(memberDto.getMemberId(), recipeId));
     }
 }

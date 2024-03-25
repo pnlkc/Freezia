@@ -1,13 +1,14 @@
 package com.s005.fif.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.s005.fif.common.Constant;
@@ -461,9 +462,9 @@ public class RecipeService {
 	 * FastAPI 및 DALL-E를 통해 레시피의 이미지를 생성하고 저장합니다.
 	 * @param memberId 사용자 ID
 	 * @param recipeId 레시피 ID
-	 * @return
+	 * @return S3 URL
 	 */
-	public String generateAndSaveImage(Integer memberId, Integer recipeId) {
+	public String generateAndSaveImage(Integer memberId, Integer recipeId) throws IOException {
 		Recipe recipe = recipeRepository.findById(recipeId)
 			.orElseThrow(() -> new CustomException(ExceptionType.RECIPE_NOT_FOUND));
 
@@ -483,13 +484,19 @@ public class RecipeService {
 			ingredients.deleteCharAt(ingredients.length() - 1);
 		}
 
+		// buffer 크기 제한 해제
+		ExchangeStrategies exchangeStrategies = ExchangeStrategies.builder()
+			.codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(-1))
+			.build();
+
 		// WebClient 기본 설정
 		WebClient webClient = WebClient.builder()
 			.baseUrl(aiServerBaseUrl)
+			.exchangeStrategies(exchangeStrategies)
 			.build();
 
 		// API 요청
-		String response = webClient.get()
+		String imgB64Json = webClient.get()
 			.uri(uriBuilder -> uriBuilder
 				.path("/image")
 				.queryParam("recipeName", recipe.getName())
@@ -500,11 +507,11 @@ public class RecipeService {
 			.bodyToMono(String.class)
 			.block();
 
-		if (response != null) {
-			response = response.replaceAll("\"", "");
+		if (imgB64Json != null) {
+			imgB64Json = imgB64Json.replaceAll("\"", "");
 		}
 
 		// TODO : S3의 url을 반환
-		return response;
+		return imgB64Json;
 	}
 }

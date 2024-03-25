@@ -1,7 +1,9 @@
 package com.s005.fif.service;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpEntity;
@@ -15,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.s005.fif.common.exception.CustomException;
 import com.s005.fif.common.exception.ExceptionType;
@@ -50,7 +53,7 @@ public class FirebaseCloudMessageService {
 				throw new CustomException(ExceptionType.FCM_REQUEST_FAILED);
 			}
 		} catch (IOException e) {
-			log.error("FCM 전송 오류: IOException", e.getCause());
+			log.error("FCM 전송 오류: ", e);
 			throw new CustomException(ExceptionType.FCM_REQUEST_FAILED);
 		}
 	}
@@ -80,6 +83,9 @@ public class FirebaseCloudMessageService {
 	private String makeMessage(FcmSendDto fcmSendDto) throws JsonProcessingException {
 		ObjectMapper om = new ObjectMapper();
 
+		Map<String, String> map = new HashMap<>();
+		map.put("json", om.registerModule(new JavaTimeModule()).writeValueAsString(fcmSendDto.getData()));
+
 		FcmMessageDto fcmMessageDto = FcmMessageDto.builder()
 			.message(FcmMessageDto.Message.builder()
 				.token(fcmSendDto.getToken())
@@ -89,7 +95,7 @@ public class FirebaseCloudMessageService {
 					.image(null)
 					.build()
 				)
-				.data(fcmSendDto.getData())
+				.data(map)
 				.build()).validateOnly(false).build();
 
 		return om.writeValueAsString(fcmMessageDto);

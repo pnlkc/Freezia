@@ -47,9 +47,6 @@ def generate_image(
             style="natural"     # vivid or natural
         )
 
-        # print(response.data[0].url)
-        print(response.data[0].revised_prompt)
-
         return response.data[0].url
 
     except Exception as e:

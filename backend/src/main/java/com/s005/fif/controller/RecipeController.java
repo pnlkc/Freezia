@@ -151,4 +151,18 @@ public class RecipeController {
     public Response deleteCompleteCook(@Parameter(hidden = true)MemberDto memberDto, @PathVariable Integer completeCookId) {
         return new Response(Response.MESSAGE, recipeService.deleteCompleteCook(memberDto.getMemberId(), completeCookId));
     }
+
+    @PostMapping("/{recipeId}/image")
+    @Operation(summary = "레시피 이미지 생성 및 저장")
+    @ApiResponse(
+        content = {
+            @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = String.class)
+            )
+        }
+    )
+    public Response generateAndSaveImage(@Parameter(hidden = true) MemberDto memberDto, @PathVariable Integer recipeId) {
+        return new Response("imgUrl", recipeService.generateAndSaveImage(memberDto.getMemberId(), recipeId));
+    }
 }

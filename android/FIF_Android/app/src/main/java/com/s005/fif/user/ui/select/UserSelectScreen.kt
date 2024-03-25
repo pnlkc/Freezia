@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,29 +29,47 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.integration.compose.placeholder
 import com.s005.fif.R
+import com.s005.fif.di.LoginUser
+import com.s005.fif.di.LoginUser.memberId
 import com.s005.fif.ui.theme.Typography
+import com.s005.fif.user.dto.UserItem
+import com.s005.fif.user.ui.UserViewModel
 import com.s005.fif.utils.ScreenSizeUtil
 import com.s005.fif.utils.ScreenSizeUtil.toDpSize
+import kotlinx.coroutines.launch
 
 @Composable
 fun UserSelectScreen(
     modifier: Modifier = Modifier,
+    viewModel: UserViewModel = hiltViewModel(),
     navigateToUserOnboarding: () -> Unit
 ) {
+    val coroutineScope = rememberCoroutineScope()
+
     UserSelectBody(
         modifier = modifier
             .fillMaxSize(),
-        navigateToUserOnboarding = navigateToUserOnboarding
+        navigateToUserOnboarding = { memberId ->
+            navigateToUserOnboarding()
+
+            coroutineScope.launch {
+                viewModel.getAccessToken(memberId)
+            }
+        },
+        userList = { viewModel.userList }
     )
 }
 
 @Composable
 fun UserSelectBody(
     modifier: Modifier = Modifier,
-    navigateToUserOnboarding: () -> Unit
+    navigateToUserOnboarding: (Int) -> Unit,
+    userList: () -> List<UserItem>
 ) {
     Column(
         modifier = modifier
@@ -79,9 +98,9 @@ fun UserSelectBody(
             }
 
             itemsIndexed(
-                items = listOf<String>("김싸피", "이싸피", "박싸피"),
+                items = userList(),
                 key = { _, item ->
-                    item
+                    item.memberId
                 }
             ) { _, item ->
                 UserSelectItem(
@@ -131,13 +150,13 @@ fun UserAddItem(
 @Composable
 fun UserSelectItem(
     modifier: Modifier = Modifier,
-    item: String,
-    navigateToUserOnboarding: () -> Unit
+    item: UserItem,
+    navigateToUserOnboarding: (Int) -> Unit
 ) {
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(20.dp))
-            .clickable { navigateToUserOnboarding() },
+            .clickable { navigateToUserOnboarding(item.memberId) },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
@@ -145,13 +164,15 @@ fun UserSelectItem(
             modifier = modifier
                 .clip(CircleShape)
                 .size((ScreenSizeUtil.widthDp / 3 - 40).dp),
-            model = "https://img.danawa.com/prod_img/500000/207/533/img/18533207_1.jpg?_v=20221226163359",
+            model = item.imgUrl,
             contentDescription = stringResource(id = R.string.description_img_profile),
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Crop,
+            loading = placeholder(R.drawable.account),
+            failure = placeholder(R.drawable.account)
         )
 
         Text(
-            text = item,
+            text = item.name,
             style = Typography.bodyMedium
         )
     }

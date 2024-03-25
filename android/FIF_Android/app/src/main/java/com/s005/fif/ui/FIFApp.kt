@@ -8,8 +8,10 @@ import com.s005.fif.ui.navigation.FIFNavHost
 @Composable
 fun FIFApp(
     navController: NavHostController = rememberNavController(),
+    isLoginUser: Boolean
 ) {
     FIFNavHost(
-        navController = navController
+        navController = navController,
+        isLoginUser = isLoginUser
     )
 }

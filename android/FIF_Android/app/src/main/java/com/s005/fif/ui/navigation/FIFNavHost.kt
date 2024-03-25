@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -24,6 +25,7 @@ import com.s005.fif.recipe.ui.detail.RecipeDetailScreen
 import com.s005.fif.recipe.ui.list.RecipeListScreen
 import com.s005.fif.recipe.ui.step.RecipeStepScreen
 import com.s005.fif.shopping_list.ui.ShoppingListScreen
+import com.s005.fif.user.ui.UserViewModel
 import com.s005.fif.user.ui.onboarding.UserOnboardingScreen
 import com.s005.fif.user.ui.profile.RecipePreferenceSettingScreen
 import com.s005.fif.user.ui.profile.UserProfileScreen
@@ -35,6 +37,8 @@ import com.s005.fif.user.ui.select.UserSelectScreen
 fun FIFNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController,
+    isLoginUser: Boolean,
+    userViewModel: UserViewModel = hiltViewModel(),
 ) {
     val view = LocalView.current
     val window = (view.context as Activity).window
@@ -50,7 +54,11 @@ fun FIFNavHost(
 
     NavHost(
         navController = navController,
-        startDestination = NavigationDestination.UserSelect.route,
+        startDestination = if (!isLoginUser || !userViewModel.memberInfo!!.onboardYn) {
+            NavigationDestination.UserSelect.route
+        } else {
+            NavigationDestination.Main.route
+        },
         modifier = modifier,
     ) {
         composable(route = NavigationDestination.Main.route) {
@@ -160,7 +168,8 @@ fun FIFNavHost(
         ) { navBackStackEntry ->
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
 
-            val mode = navBackStackEntry.arguments?.getInt(NavigationDestination.RecipeHistory.MODE) ?: 0
+            val mode =
+                navBackStackEntry.arguments?.getInt(NavigationDestination.RecipeHistory.MODE) ?: 0
 
             Log.d("로그", " - FIFNavHost() 호출됨 / mode: $mode")
 

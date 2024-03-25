@@ -14,3 +14,5 @@ spring:
       hibernate.format_sql: true
       hibernate.use_sql_comments: false
       hibernate.default_batch_fetch_size: 100
+
+ai-server-base-url: https://j10s005.p.ssafy.io/api/ai

@@ -22,9 +22,11 @@ import com.s005.fif.dto.fcm.FcmMessageDto;
 import com.s005.fif.dto.fcm.FcmSendDto;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FirebaseCloudMessageService {
 
 	private final String API_URL = "https://fcm.googleapis.com/v1/projects/fridgeisfree-6fca3/messages:send";  // 요청을 보낼 엔드포인트
@@ -43,9 +45,12 @@ public class FirebaseCloudMessageService {
 			ResponseEntity response = restTemplate.exchange(API_URL, HttpMethod.POST, entity, String.class);
 
 			if(response.getStatusCode() != HttpStatus.OK) {
+				log.error("FCM 전송 오류: fcm.googleapis.com HTTP 응답 오류");
+				log.error(response.toString());
 				throw new CustomException(ExceptionType.FCM_REQUEST_FAILED);
 			}
 		} catch (IOException e) {
+			log.error("FCM 전송 오류: IOException", e.getCause());
 			throw new CustomException(ExceptionType.FCM_REQUEST_FAILED);
 		}
 	}

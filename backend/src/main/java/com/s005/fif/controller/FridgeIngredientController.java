@@ -46,7 +46,7 @@ public class FridgeIngredientController {
 	@PostMapping
 	@Operation(summary = "식재료 입고")
 	public Response addIngredients(@Parameter(hidden = true) MemberDto memberDto, @RequestBody FridgeIngredientInputRequestDto dto) {
-		fridgeIngredientService.addIngredients(memberDto.getMemberId(), dto.getName());
+		fridgeIngredientService.addIngredients(memberDto.getFridgeId(), dto.getName());
 		return new Response(Response.MESSAGE, "입고되었습니다.");
 	}
 

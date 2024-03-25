@@ -23,3 +23,15 @@ springdoc:
   api-docs:
     path: /api/api-docs
   
+# AWS
+cloud:
+  aws:
+    s3:
+      bucket: fridgeisfree
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+    credentials:
+      access-key: AKIA53BIDTSEZHDIZAL3
+      secret-key: 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

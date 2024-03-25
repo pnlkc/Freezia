@@ -1,7 +1,12 @@
 package com.s005.fif.recipe.ui.step
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -70,7 +75,7 @@ fun RecipeStepScreen(
     modifier: Modifier = Modifier,
     navigateUp: () -> Unit,
     navigateToRecipeList: () -> Unit,
-    navigateToRecipeComplete: () -> Unit
+    navigateToRecipeComplete: () -> Unit,
 ) {
     val pagerState = rememberPagerState(pageCount = { 3 + 1 })
     val coroutineScope = rememberCoroutineScope()
@@ -125,15 +130,31 @@ fun RecipeStepTopBar(
             tint = Color.Black
         )
 
-        if (!isEnd) {
+        AnimatedVisibility(
+            modifier = Modifier
+                .align(Alignment.Center),
+            visible = !isEnd,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
             Text(
                 modifier = Modifier
                     .align(Alignment.Center),
-                text =  title,
+                text = title,
                 style = Typography.bodyLarge,
                 color = Color.Black
             )
         }
+
+//        if (!isEnd) {
+//            Text(
+//                modifier = Modifier
+//                    .align(Alignment.Center),
+//                text =  title,
+//                style = Typography.bodyLarge,
+//                color = Color.Black
+//            )
+//        }
     }
 }
 
@@ -143,13 +164,18 @@ fun RecipeStepBody(
     modifier: Modifier = Modifier,
     pagerState: PagerState,
     navigateToRecipeList: () -> Unit,
-    navigateToRecipeComplete: () -> Unit
+    navigateToRecipeComplete: () -> Unit,
 ) {
     val context = LocalContext.current
     val isEnd = pagerState.currentPage == pagerState.pageCount - 1
     var progress by remember {
         mutableFloatStateOf(0f)
     }
+    val progressAnimDuration = 1000
+    val progressAnimation by animateFloatAsState(
+        targetValue = progress,
+        animationSpec = tween(durationMillis = progressAnimDuration, easing = FastOutSlowInEasing),
+    )
 
     val pageModifier = { page: Int ->
         Modifier
@@ -177,6 +203,7 @@ fun RecipeStepBody(
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }.collect { page ->
             progress = (page + 1) / (pagerState.pageCount - 1).toFloat()
+
             TTSUtil.stop()
         }
     }
@@ -187,22 +214,40 @@ fun RecipeStepBody(
         verticalArrangement = Arrangement.spacedBy(30.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (!isEnd) {
-            RecipeStepProgressBar(
-                modifier = Modifier
-                    .padding(horizontal = 20.dp),
-                progress = progress,
-                page = pagerState.currentPage + 1,
-                maxPage = pagerState.pageCount - 1
-            )
-        } else {
-            Text(
-                modifier = Modifier,
-                text =  stringResource(id = R.string.text_complete_recipe_title),
-                style = Typography.bodyLarge,
-                color = Color.Black,
-                fontWeight = FontWeight.Bold
-            )
+        Box(
+            modifier = Modifier
+                .height(25.dp)
+                .fillMaxWidth()
+        ) {
+            this@Column.AnimatedVisibility(
+                visible = !isEnd,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                RecipeStepProgressBar(
+                    modifier = Modifier
+                        .padding(horizontal = 20.dp),
+                    progress = progressAnimation,
+                    page = pagerState.currentPage + 1,
+                    maxPage = pagerState.pageCount - 1
+                )
+            }
+
+            this@Column.AnimatedVisibility(
+                visible = isEnd,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    text = stringResource(id = R.string.text_complete_recipe_title),
+                    style = Typography.bodyLarge,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
 
         HorizontalPager(
@@ -213,31 +258,29 @@ fun RecipeStepBody(
             pageSpacing = 10.dp,
             contentPadding = PaddingValues(horizontal = widthDp.toDpSize(10))
         ) { page ->
-            if (!isEnd) {
-                RecipeStepPage(
-                    modifier = pageModifier(page),
-                    page = page
-                )
-            } else {
-                RecipeCompletePage(
-                    modifier = pageModifier(page),
-                    navigateToRecipeList = navigateToRecipeList,
-                    navigateToRecipeComplete = navigateToRecipeComplete
-
-                )
-            }
+            RecipeStepPage(
+                modifier = pageModifier(page),
+                page = page,
+                isEnd = isEnd,
+                navigateToRecipeList = navigateToRecipeList,
+                navigateToRecipeComplete = navigateToRecipeComplete
+            )
         }
 
-        if (!isEnd) {
-            TextToSpeechBtn(
-                onClick = {
-                    TTSUtil.speak(context, "재료를 손질합니다")
-                }
-            )
-        } else {
-            Box(
-                modifier = Modifier.size(60.dp)
-            )
+        Box(
+            modifier = Modifier.size(60.dp)
+        ) {
+            this@Column.AnimatedVisibility(
+                visible = !isEnd,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                TextToSpeechBtn(
+                    onClick = {
+                        TTSUtil.speak(context, "재료를 손질합니다")
+                    }
+                )
+            }
         }
     }
 }
@@ -267,7 +310,7 @@ fun RecipeStepProgressBar(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
                 .padding(end = 10.dp),
-            text = "${page}/${maxPage}",
+            text = "${minOf(page, maxPage)}/${maxPage}",
             style = Typography.bodyMedium,
             color = Color.Black
         )
@@ -279,63 +322,9 @@ fun RecipeStepProgressBar(
 fun RecipeStepPage(
     modifier: Modifier = Modifier,
     page: Int,
-) {
-    Surface(
-        modifier = modifier,
-        color = Color.Transparent,
-    ) {
-        Card(
-            modifier = Modifier
-                .padding(horizontal = 5.dp, vertical = 10.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
-            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-            shape = RoundedCornerShape(20.dp)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                GlideImage(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    model = "https://www.sommeliertimes.com/news/photo/202108/19305_43777_3937.jpg",
-                    contentDescription = "",
-                    contentScale = ContentScale.Crop
-                )
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(
-                        space = ScreenSizeUtil.heightDp.toDpSize(10),
-                        alignment = Alignment.CenterVertically
-                    ),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = "${page + 1}. 재료를 손질합니다",
-                        style = Typography.bodyLarge,
-                    )
-
-                    Text(
-                        text = "tip: 팁입니다.팁입니다.팁입니다.팁입니다.",
-                        style = Typography.bodyMedium,
-                        color = colorScheme.onSecondary
-                    )
-                }
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalGlideComposeApi::class)
-@Composable
-fun RecipeCompletePage(
-    modifier: Modifier = Modifier,
+    isEnd: Boolean,
     navigateToRecipeList: () -> Unit,
-    navigateToRecipeComplete: () -> Unit
+    navigateToRecipeComplete: () -> Unit,
 ) {
     Surface(
         modifier = modifier,
@@ -364,51 +353,85 @@ fun RecipeCompletePage(
                         contentDescription = "",
                         contentScale = ContentScale.Crop
                     )
-                    
-                    Image(
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .padding(top = 10.dp, end = 10.dp)
-                            .size(40.dp)
-                            .clip(CircleShape)
-                            .clickable { }
-                            .border(2.dp, colorScheme.primary, CircleShape)
-                            .background(Color.White)
-                            .padding(7.dp),
-                        painter = painterResource(id = R.drawable.bookmark),
-                        contentDescription = stringResource(id = R.string.description_btn_bookmark),
-                        colorFilter = ColorFilter.tint(colorScheme.primary)
-                    )
-                }
-                
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .padding(vertical = widthDp.toDpSize(10)),
-                    verticalArrangement = Arrangement.SpaceBetween,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    RecipeDetailInfoRow(
-                        time = "10",
-                        calorie = "400"
-                    )
 
-                    RecipeStepCompleteBtn(
-                        navigateToRecipeList = navigateToRecipeList,
-                        navigateToRecipeComplete = navigateToRecipeComplete
-                    )
+                    if (isEnd) {
+                        Image(
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .padding(top = 10.dp, end = 10.dp)
+                                .size(40.dp)
+                                .clip(CircleShape)
+                                .clickable { }
+                                .border(2.dp, colorScheme.primary, CircleShape)
+                                .background(Color.White)
+                                .padding(7.dp),
+                            painter = painterResource(id = R.drawable.bookmark),
+                            contentDescription = stringResource(id = R.string.description_btn_bookmark),
+                            colorFilter = ColorFilter.tint(colorScheme.primary)
+                        )
+
+                        Text(
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .padding(bottom = 20.dp),
+                            text = "스팸 마요 김치 덮밥",
+                            style = Typography.bodyLarge,
+                            color = Color.White,
+                        )
+                    }
+                }
+
+                if (!isEnd) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(
+                            space = ScreenSizeUtil.heightDp.toDpSize(10),
+                            alignment = Alignment.CenterVertically
+                        ),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "${page + 1}. 재료를 손질합니다",
+                            style = Typography.bodyLarge,
+                        )
+
+                        Text(
+                            text = "tip: 팁입니다.팁입니다.팁입니다.팁입니다.",
+                            style = Typography.bodyMedium,
+                            color = colorScheme.onSecondary
+                        )
+                    }
+                } else {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .padding(vertical = widthDp.toDpSize(10)),
+                        verticalArrangement = Arrangement.SpaceBetween,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        RecipeDetailInfoRow(
+                            time = "10",
+                            calorie = "400"
+                        )
+
+                        RecipeStepCompleteBtn(
+                            navigateToRecipeList = navigateToRecipeList,
+                            navigateToRecipeComplete = navigateToRecipeComplete
+                        )
+                    }
                 }
             }
         }
     }
 }
 
-
 @Composable
 fun TextToSpeechBtn(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Button(
         modifier = modifier
@@ -437,7 +460,7 @@ fun TextToSpeechBtn(
 fun RecipeStepCompleteBtn(
     modifier: Modifier = Modifier,
     navigateToRecipeList: () -> Unit,
-    navigateToRecipeComplete: () -> Unit
+    navigateToRecipeComplete: () -> Unit,
 ) {
     Column(
         modifier = modifier

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +13,7 @@ import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.s005.fif.common.Constant;
+import com.s005.fif.common.CustomMultipartFile;
 import com.s005.fif.common.exception.CustomException;
 import com.s005.fif.common.exception.ExceptionType;
 import com.s005.fif.dto.request.CompleteCookRequestDto;
@@ -48,6 +50,8 @@ public class RecipeService {
 	private final RecipeStepRepository recipeStepRepository;
 	private final CompleteCookRepository completeCookRepository;
 	private final MemberRepository memberRepository;
+
+	private final S3Service s3Service;
 
 	@Value("${ai-server-base-url}")
 	private String aiServerBaseUrl;
@@ -511,7 +515,12 @@ public class RecipeService {
 			imgB64Json = imgB64Json.replaceAll("\"", "");
 		}
 
-		// TODO : S3의 url을 반환
-		return imgB64Json;
+		// B64 String -> byte[]
+		byte[] image = Base64.decodeBase64(imgB64Json);
+
+		// byte[] -> MultipartFile
+		CustomMultipartFile multipartFile = new CustomMultipartFile(image);
+
+		return s3Service.uploadFile(multipartFile);
 	}
 }

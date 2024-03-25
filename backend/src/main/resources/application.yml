@@ -23,3 +23,12 @@ springdoc:
   api-docs:
     path: /api/api-docs
   
+# Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,logfile
+logging:
+  file:
+    name: "./target/logs/fif/202403.log"

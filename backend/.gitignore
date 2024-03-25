@@ -1,3 +1,6 @@
+### log ###
+target/logs/fif/*.log
+
 HELP.md
 .gradle
 build/

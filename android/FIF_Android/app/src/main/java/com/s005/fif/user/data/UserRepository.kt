@@ -1,8 +1,10 @@
 package com.s005.fif.user.data
 
+import com.s005.fif.common.dto.DefaultResponse
 import com.s005.fif.user.dto.AccessTokenResponse
 import com.s005.fif.user.dto.MemberInfoResponse
 import com.s005.fif.user.dto.MemberSelectRequest
+import com.s005.fif.user.dto.OnboardingRequest
 import com.s005.fif.user.dto.UserListResponse
 import com.s005.fif.user.network.UserService
 import retrofit2.Response
@@ -21,6 +23,10 @@ interface UserRepository {
     ): Response<AccessTokenResponse>
 
     suspend fun getMemberInfo() : Response<MemberInfoResponse>
+
+    suspend fun sendOnboarding(
+        onboardingRequest: OnboardingRequest
+    ) : Response<DefaultResponse>
 }
 
 class DefaultUserRepository @Inject constructor(
@@ -36,5 +42,9 @@ class DefaultUserRepository @Inject constructor(
 
     override suspend fun getMemberInfo(): Response<MemberInfoResponse> {
         return userService.getMemberInfo()
+    }
+
+    override suspend fun sendOnboarding(onboardingRequest: OnboardingRequest): Response<DefaultResponse> {
+        return userService.sendOnboarding(onboardingRequest)
     }
 }

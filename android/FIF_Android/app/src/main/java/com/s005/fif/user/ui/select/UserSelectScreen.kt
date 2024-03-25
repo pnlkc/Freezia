@@ -34,8 +34,6 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.s005.fif.R
-import com.s005.fif.di.LoginUser
-import com.s005.fif.di.LoginUser.memberId
 import com.s005.fif.ui.theme.Typography
 import com.s005.fif.user.dto.UserItem
 import com.s005.fif.user.ui.UserViewModel
@@ -47,18 +45,24 @@ import kotlinx.coroutines.launch
 fun UserSelectScreen(
     modifier: Modifier = Modifier,
     viewModel: UserViewModel = hiltViewModel(),
-    navigateToUserOnboarding: () -> Unit
+    navigateToUserOnboarding: () -> Unit,
+    navigateToMain: () -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
 
     UserSelectBody(
         modifier = modifier
             .fillMaxSize(),
-        navigateToUserOnboarding = { memberId ->
-            navigateToUserOnboarding()
-
+        userClicked = { memberId ->
             coroutineScope.launch {
                 viewModel.getAccessToken(memberId)
+                viewModel.getMemberInfo()
+
+                if (viewModel.memberInfo!!.onboardYn) {
+                    navigateToMain()
+                } else {
+                    navigateToUserOnboarding()
+                }
             }
         },
         userList = { viewModel.userList }
@@ -68,7 +72,7 @@ fun UserSelectScreen(
 @Composable
 fun UserSelectBody(
     modifier: Modifier = Modifier,
-    navigateToUserOnboarding: (Int) -> Unit,
+    userClicked: (Int) -> Unit,
     userList: () -> List<UserItem>
 ) {
     Column(
@@ -106,7 +110,7 @@ fun UserSelectBody(
                 UserSelectItem(
                     modifier = Modifier,
                     item = item,
-                    navigateToUserOnboarding = navigateToUserOnboarding
+                    userClicked = userClicked
                 )
             }
         }
@@ -151,12 +155,12 @@ fun UserAddItem(
 fun UserSelectItem(
     modifier: Modifier = Modifier,
     item: UserItem,
-    navigateToUserOnboarding: (Int) -> Unit
+    userClicked: (Int) -> Unit
 ) {
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(20.dp))
-            .clickable { navigateToUserOnboarding(item.memberId) },
+            .clickable { userClicked(item.memberId) },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {

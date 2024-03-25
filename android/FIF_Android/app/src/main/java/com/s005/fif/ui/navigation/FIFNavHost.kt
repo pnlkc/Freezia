@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
@@ -32,6 +34,8 @@ import com.s005.fif.user.ui.profile.UserProfileScreen
 import com.s005.fif.user.ui.recipe_history.ui.RecipeHistoryScreen
 import com.s005.fif.user.ui.recipe_history.ui.RecipeHistoryType
 import com.s005.fif.user.ui.select.UserSelectScreen
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun FIFNavHost(
@@ -51,10 +55,15 @@ fun FIFNavHost(
         .statusBarsPadding()
         .navigationBarsPadding()
         .imePadding()
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(key1 = true) {
+        userViewModel.getMemberInfo()
+    }
 
     NavHost(
         navController = navController,
-        startDestination = if (!isLoginUser || !userViewModel.memberInfo!!.onboardYn) {
+        startDestination = if (!isLoginUser || userViewModel.memberInfo == null || !userViewModel.memberInfo!!.onboardYn) {
             NavigationDestination.UserSelect.route
         } else {
             NavigationDestination.Main.route
@@ -96,6 +105,11 @@ fun FIFNavHost(
                 modifier = modifierSN,
                 navigateToUserOnboarding = {
                     navController.navigate(NavigationDestination.UserOnboarding.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToMain = {
+                    navController.navigate(NavigationDestination.Main.route) {
                         launchSingleTop = true
                     }
                 }

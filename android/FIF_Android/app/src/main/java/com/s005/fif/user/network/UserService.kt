@@ -1,8 +1,10 @@
 package com.s005.fif.user.network
 
+import com.s005.fif.common.dto.DefaultResponse
 import com.s005.fif.user.dto.AccessTokenResponse
 import com.s005.fif.user.dto.MemberInfoResponse
 import com.s005.fif.user.dto.MemberSelectRequest
+import com.s005.fif.user.dto.OnboardingRequest
 import com.s005.fif.user.dto.UserListResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -23,4 +25,9 @@ interface UserService {
 
     @GET("members/info")
     suspend fun getMemberInfo() : Response<MemberInfoResponse>
+
+    @POST("members/onboarding")
+    suspend fun sendOnboarding(
+        @Body onboardingRequest: OnboardingRequest
+    ) : Response<DefaultResponse>
 }

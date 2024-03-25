@@ -38,13 +38,15 @@ class MainActivity : ComponentActivity() {
         getScreenSize(resources.displayMetrics)
 
         setContent {
+            val isLoginUser = isLoginUser()
+
             FIF_AndroidTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = colorScheme.background
                 ) {
                     FIFApp(
-                        isLoginUser = isLoginUser()
+                        isLoginUser = isLoginUser
                     )
                 }
             }
@@ -82,18 +84,10 @@ class MainActivity : ComponentActivity() {
         }
 
         return if (accessToken != null && memberId != null) {
-            CoroutineScope(Dispatchers.IO).launch {
-                userViewModel.getMemberInfo()
-            }
-
             LoginUser.memberId = memberId
 
             true
         } else {
-            CoroutineScope(Dispatchers.IO).launch {
-                userViewModel.getUserList()
-            }
-
             false
         }
     }

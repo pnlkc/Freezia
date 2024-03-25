@@ -45,6 +45,9 @@ public enum ExceptionType {
 
 	// CompleteCook
 	COMPLETE_COOK_NOT_FOUND(404, "요리 기록을 찾을 수 없습니다."),
+
+	// File
+	UPLOAD_FAILED(500, "파일 업로드에 실패했습니다."),
     ;
 
     private final int code;

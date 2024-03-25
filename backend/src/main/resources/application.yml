@@ -14,6 +14,8 @@ ACCESS_TOKEN_EXPIRE_TIME_MILLI_SEC: 86400000 # 1일
 REFRESH_TOKEN_EXPIRE_TIME_MILLI_SEC: 86400000 # 1일
 REFRESH_TOKEN_NAME: refreshToken
 
+FASTAPI_SERVER_URL: https://j10s005.p.ssafy.io/api/ai
+
 
 # Swagger
 springdoc:
@@ -23,3 +25,12 @@ springdoc:
   api-docs:
     path: /api/api-docs
   
+# Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,logfile
+logging:
+  file:
+    name: "./target/logs/fif/202403.log"

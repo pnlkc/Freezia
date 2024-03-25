@@ -3,6 +3,8 @@ package com.s005.fif.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import com.s005.fif.main.ui.MainScreen
@@ -25,8 +27,6 @@ import com.s005.fif.warning.ui.WarningScreen
 fun FIFWatchNavHost(
     navController: NavHostController
 ) {
-    val context = LocalContext.current
-
     SwipeDismissableNavHost(
         navController = navController,
         startDestination = Main.route,
@@ -47,11 +47,6 @@ fun FIFWatchNavHost(
                     navController.navigate(TimerList.route) {
                         launchSingleTop = true
                     }
-                },
-                navigateToWarning =  {
-                    navController.navigate(Warning.route) {
-                        launchSingleTop = true
-                    }
                 }
             )
         }
@@ -67,38 +62,51 @@ fun FIFWatchNavHost(
         composable(route = RecipeDetail.route) {
             RecipeDetailScreen(
                 navigateToRecipeStep = {
-                    navController.navigate(RecipeStep.route) {
+                    navController.navigate("${RecipeStep.route}/1") {
                         launchSingleTop = true
                     }
                 }
             )
         }
 
-        composable(route = RecipeStep.route) {
+        composable(
+            route = "${RecipeStep.route}/{${RecipeStep.STEP}}",
+            arguments = listOf(
+                navArgument(RecipeStep.STEP) { type = NavType.IntType }
+            )
+        ) { navBackStackEntry ->
+            val step = navBackStackEntry.arguments?.getInt(RecipeStep.STEP) ?: 1
+
             RecipeStepScreen(
                 navigateToMain = {
                     navController.popBackStack(route = Main.route, inclusive = false)
-                }
+                },
+                step = step
             )
         }
 
         composable(route = Warning.route) {
-            WarningScreen(
-
-            )
+            WarningScreen()
         }
 
         composable(route = TimerList.route) {
             TimerListScreen(
-                navigateToTimerDetail = {
-                    navController.navigate(TimerDetail.route) {
+                navigateToTimerDetail = { idx ->
+                    navController.navigate("${TimerDetail.route}/${idx}") {
                         launchSingleTop = true
                     }
                 }
             )
         }
 
-        composable(route = TimerDetail.route) {
+        composable(
+            route = "${TimerDetail.route}/{${TimerDetail.TIMER_IDX}}",
+            arguments = listOf(
+                navArgument(TimerDetail.TIMER_IDX) { type = NavType.IntType }
+            )
+        ) { navBackStackEntry ->
+            val idx = navBackStackEntry.arguments?.getInt(RecipeStep.STEP) ?: 0
+
             TimerDetailScreen(
                 navigateUp = {
                     navController.navigateUp()
@@ -106,11 +114,7 @@ fun FIFWatchNavHost(
                 navigateToRecipeDetail = {
 
                 },
-                navigateToTimerDone = {
-                    AlarmUtil.setAlarm(context = context, delayMillis = 5000L, 1)
-                    AlarmUtil.setAlarm(context = context, delayMillis = 10000L, 2)
-                    AlarmUtil.setAlarm(context = context, delayMillis = 15000L, 3)
-                }
+                idx = idx
             )
         }
     }

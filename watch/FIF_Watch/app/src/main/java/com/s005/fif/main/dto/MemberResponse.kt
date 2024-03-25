@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 data class MemberResponse(
     val onboardYn: Boolean,
     val name: String,
+    val gender: String,
     val imgUrl: String,
     val stress: Int,
     val bloodOxygen: Int,

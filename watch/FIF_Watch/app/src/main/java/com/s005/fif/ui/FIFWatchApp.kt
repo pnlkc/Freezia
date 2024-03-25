@@ -15,7 +15,7 @@ import com.s005.fif.navigation.FIFWatchNavHost
 
 @Composable
 fun FIFWatchApp(
-    navController: NavHostController = rememberSwipeDismissableNavController(),
+    navController: NavHostController,
 ) {
     FIFWatchNavHost(
         navController = navController

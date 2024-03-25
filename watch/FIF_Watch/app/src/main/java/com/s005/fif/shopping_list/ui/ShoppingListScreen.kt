@@ -6,21 +6,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
+import androidx.wear.compose.foundation.lazy.ScalingLazyListAnchorType
 import androidx.wear.compose.foundation.lazy.ScalingLazyListState
+import androidx.wear.compose.foundation.lazy.itemsIndexed
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.material.Checkbox
 import androidx.wear.compose.material.CheckboxDefaults
@@ -30,16 +28,19 @@ import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.ToggleChip
 import androidx.wear.compose.material.ToggleChipDefaults
 import com.s005.fif.R
+import com.s005.fif.shopping_list.dto.ShoppingListItem
 import com.s005.fif.utils.ScreenSize
 import com.s005.fif.utils.ScreenSize.toDpSize
 import com.s005.fif.utils.ScreenSize.toSpSize
-import com.s005.fif.utils.VibrateUtil
+import kotlinx.coroutines.launch
 
 @Composable
 fun ShoppingListScreen(
     modifier: Modifier = Modifier,
+    viewModel: ShoppingListViewModel = hiltViewModel(),
 ) {
     val scalingLazyListState = rememberScalingLazyListState()
+    val coroutineScope = rememberCoroutineScope()
 
     Box(
         modifier = modifier
@@ -47,7 +48,13 @@ fun ShoppingListScreen(
     ) {
         ShoppingListBody(
             modifier = modifier,
-            scalingLazyListState = scalingLazyListState
+            scalingLazyListState = scalingLazyListState,
+            itemClicked = { idx, id, isChecked ->
+                coroutineScope.launch {
+                    viewModel.checkShoppingListItem(idx, id, isChecked)
+                }
+            },
+            shoppingList = { viewModel.shoppingList.value }
         )
 
         PositionIndicator(
@@ -60,6 +67,8 @@ fun ShoppingListScreen(
 fun ShoppingListBody(
     modifier: Modifier = Modifier,
     scalingLazyListState: ScalingLazyListState,
+    itemClicked: (Int, Int, Boolean) -> Unit,
+    shoppingList: () -> List<ShoppingListItem>
 ) {
     Column(
         modifier = modifier
@@ -79,17 +88,23 @@ fun ShoppingListBody(
             overflow = TextOverflow.Visible
         )
 
-        // TODO. 임시 체크박스 변경용 변수
-        val isChecked = remember { mutableStateOf(true) }
-
         ScalingLazyColumn(
             modifier = Modifier
                 .fillMaxWidth(),
-            state = scalingLazyListState
+            state = scalingLazyListState,
+            anchorType = ScalingLazyListAnchorType.ItemStart
         ) {
-            items(20) {
+            itemsIndexed(
+                items = shoppingList(),
+                key = { idx, item ->
+                    "$idx ${item.shoppingListId} ${item.checkYn}"
+                }
+            ) { idx, item ->
                 ShoppingListChip(
-                    modifier = modifier
+                    modifier = Modifier,
+                    item = item,
+                    idx = idx,
+                    itemClicked = itemClicked
                 )
             }
         }
@@ -99,28 +114,27 @@ fun ShoppingListBody(
 @Composable
 fun ShoppingListChip(
     modifier: Modifier = Modifier,
+    item: ShoppingListItem,
+    idx: Int,
+    itemClicked: (Int, Int, Boolean) -> Unit
 ) {
-    var isChecked by remember {
-        mutableStateOf(true)
-    }
-
     ToggleChip(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth(),
-        checked = isChecked,
+        checked = item.checkYn,
         onCheckedChange = {
-            isChecked = it
+            itemClicked(idx, item.shoppingListId, it)
         },
         label = {
             Text(
-                text = "토마토",
-                textDecoration = if (isChecked) TextDecoration.LineThrough else null
+                text = item.name,
+                textDecoration = if (item.checkYn) TextDecoration.LineThrough else null
             )
         },
         toggleControl = {
             Checkbox(
                 modifier = Modifier,
-                checked = isChecked,
+                checked = item.checkYn,
                 colors = CheckboxDefaults.colors(
                     checkedBoxColor = MaterialTheme.colors.primary,
                     uncheckedBoxColor = Color.White

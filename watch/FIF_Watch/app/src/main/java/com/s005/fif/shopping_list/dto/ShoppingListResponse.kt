@@ -7,3 +7,5 @@ data class ShoppingListResponse(
     val result: String,
     val shoppingList: List<ShoppingListItemResponse>
 )
+
+

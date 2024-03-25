@@ -9,6 +9,7 @@ data class MainUiState(
 data class Member(
     val onboardYn: Boolean,
     val name: String,
+    val gender: String,
     val imgUrl: String,
     val stress: Int,
     val bloodOxygen: Int,
@@ -20,5 +21,5 @@ data class Member(
 )
 
 fun MemberResponse.toMember() = Member(
-    onboardYn, name, imgUrl, stress, bloodOxygen, sleep, preferMenu, diseases, dislikeIngredients, fridgeId
+    onboardYn, name, gender, imgUrl, stress, bloodOxygen, sleep, preferMenu, diseases, dislikeIngredients, fridgeId
 )

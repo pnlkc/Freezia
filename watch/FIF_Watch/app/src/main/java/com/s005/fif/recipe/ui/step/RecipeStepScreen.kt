@@ -56,9 +56,10 @@ import kotlinx.coroutines.launch
 fun RecipeStepScreen(
     modifier: Modifier = Modifier,
     navigateToMain: () -> Unit,
+    step: Int
 ) {
     val maxPages = 2
-    var selectedPage by remember { mutableIntStateOf(0) }
+    var selectedPage by remember { mutableIntStateOf(step - 1) }
     val pagerState = rememberPagerState(
         initialPage = selectedPage,
         pageCount = { maxPages + 1 }

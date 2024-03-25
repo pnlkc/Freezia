@@ -1,7 +1,5 @@
 package com.s005.fif.timer.ui
 
-import android.app.Activity
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,10 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,27 +27,30 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.ScalingLazyListState
+import androidx.wear.compose.foundation.lazy.itemsIndexed
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
-import androidx.wear.compose.material.Chip
-import androidx.wear.compose.material.ChipDefaults
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.PositionIndicator
 import androidx.wear.compose.material.Text
 import com.s005.fif.R
+import com.s005.fif.timer.entity.TimerInfo
 import com.s005.fif.utils.ScreenSize
 import com.s005.fif.utils.ScreenSize.toDpSize
 import com.s005.fif.utils.ScreenSize.toSpSize
-import com.s005.fif.utils.VibrateUtil
+import com.s005.fif.utils.TimeUtil.toTime
 
 @Composable
 fun TimerListScreen(
     modifier: Modifier = Modifier,
-    navigateToTimerDetail: () -> Unit,
+    navigateToTimerDetail: (Int) -> Unit,
+    viewModel: TimerViewModel = hiltViewModel(),
 ) {
     val scalingLazyListState = rememberScalingLazyListState()
+    val context = LocalContext.current
 
     Box(
         modifier = modifier
@@ -62,7 +59,11 @@ fun TimerListScreen(
         TimerListBody(
             modifier = modifier,
             scalingLazyListState = scalingLazyListState,
-            navigateToTimerDetail = navigateToTimerDetail
+            navigateToTimerDetail = navigateToTimerDetail,
+            timerList = { viewModel.timerList },
+            timerBtnClicked = { isStart, timerInfo ->
+                viewModel.timerBtnClicked(isStart, context, timerInfo)
+            }
         )
 
         PositionIndicator(
@@ -75,7 +76,9 @@ fun TimerListScreen(
 fun TimerListBody(
     modifier: Modifier = Modifier,
     scalingLazyListState: ScalingLazyListState,
-    navigateToTimerDetail: () -> Unit,
+    navigateToTimerDetail: (Int) -> Unit,
+    timerList: () -> List<TimerInfo>,
+    timerBtnClicked: (Boolean, TimerInfo) -> Unit
 ) {
     Column(
         modifier = modifier
@@ -100,9 +103,18 @@ fun TimerListBody(
                 .fillMaxWidth(),
             state = scalingLazyListState
         ) {
-            items(20) {
+            itemsIndexed(
+                items = timerList(),
+                key =  { _, item ->
+                    item.timerId
+                }
+            ) { idx, item ->
                 TimerListChip(
-                    navigateToTimerDetail = navigateToTimerDetail
+                    navigateToTimerDetail = {
+                        navigateToTimerDetail(idx)
+                    },
+                    item = item,
+                    timerBtnClicked = timerBtnClicked
                 )
             }
         }
@@ -113,13 +125,11 @@ fun TimerListBody(
 fun TimerListChip(
     modifier: Modifier = Modifier,
     navigateToTimerDetail: () -> Unit,
+    item: TimerInfo,
+    timerBtnClicked: (Boolean, TimerInfo) -> Unit
 ) {
-    var isStart by remember {
-        mutableStateOf(true)
-    }
-
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(ScreenSize.screenHeightDp.toDpSize(30))
             .clip(RoundedCornerShape(ScreenSize.screenHeightDp.toDpSize(30)))
@@ -131,17 +141,19 @@ fun TimerListChip(
         Box(
             modifier = Modifier
                 .padding(vertical = ScreenSize.screenHeightDp.toDpSize(3))
-                .padding(start = ScreenSize.screenHeightDp.toDpSize(3), end = ScreenSize.screenHeightDp.toDpSize(2))
+                .padding(
+                    start = ScreenSize.screenHeightDp.toDpSize(3),
+                    end = ScreenSize.screenHeightDp.toDpSize(2)
+                )
         ) {
             TimerBtn(
-                isStart = isStart,
+                isStart = item.isStart,
                 startBtnClicked = {
-                    isStart = !isStart
+                    timerBtnClicked(!item.isStart, item)
                 },
                 size = ScreenSize.screenHeightDp.toDpSize(24)
             )
         }
-
 
         Column(
             modifier = Modifier
@@ -152,7 +164,7 @@ fun TimerListChip(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = ScreenSize.screenHeightDp.toDpSize(2)),
-                text = "02:10",
+                text = String.format("%02d:%02d", item.leftTime.toTime().m, item.leftTime.toTime().s),
                 fontSize = ScreenSize.screenHeightDp.toSpSize(12),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -166,7 +178,7 @@ fun TimerListChip(
                         start = ScreenSize.screenHeightDp.toDpSize(1),
                         bottom = ScreenSize.screenHeightDp.toDpSize(2)
                     ),
-                text = "끓이기",
+                text = item.title,
                 fontSize = ScreenSize.screenHeightDp.toSpSize(5),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,

@@ -40,13 +40,15 @@ import com.s005.fif.utils.ColorCombineTextUtil
 import com.s005.fif.utils.ScreenSize
 import com.s005.fif.utils.ScreenSize.toDpSize
 import com.s005.fif.utils.ScreenSize.toSpSize
+import com.s005.fif.utils.TimeUtil.toTime
 import com.s005.fif.utils.VibrateUtil
 import kotlinx.coroutines.delay
 
 @Composable
 fun TimerDoneScreen(
     modifier: Modifier = Modifier,
-    text: String
+    text: String,
+    initTime: Int = 0
 ) {
     val context = LocalContext.current
 
@@ -89,7 +91,8 @@ fun TimerDoneScreen(
         )
 
         TimerDoneBody(
-            text = text
+            text = text,
+            initTime = initTime
         )
 
         SwipeDismissBox(
@@ -105,7 +108,8 @@ fun TimerDoneScreen(
 @Composable
 fun TimerDoneBody(
     modifier: Modifier = Modifier,
-    text: String
+    text: String,
+    initTime: Int
 ) {
     val btnSize = ScreenSize.screenHeightDp.toDpSize(22)
 
@@ -148,7 +152,7 @@ fun TimerDoneBody(
             Text(
                 modifier = Modifier
                     .fillMaxWidth(),
-                text = "06:00",
+                text = if (initTime == 0) "" else String.format("%02d:%02d", initTime / 60, initTime % 60),
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 fontSize = ScreenSize.screenHeightDp.toSpSize(7),

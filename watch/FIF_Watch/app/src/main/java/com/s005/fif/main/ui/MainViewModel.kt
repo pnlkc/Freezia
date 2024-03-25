@@ -6,15 +6,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bumptech.glide.Glide.init
 import com.s005.fif.common.dto.ErrorResponse
 import com.s005.fif.di.LoginUser
-import com.s005.fif.di.LoginUserPreferenceModule
+import com.s005.fif.di.FIFPreferenceModule
 import com.s005.fif.main.data.MainRepository
 import com.s005.fif.main.dto.AccessTokenResponse
 import com.s005.fif.main.dto.MemberInfoResponse
 import com.s005.fif.main.dto.MemberSelectRequest
-import com.s005.fif.main.network.MainService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -26,14 +24,14 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val mainRepository: MainRepository,
-    private val loginUserPreferenceModule: LoginUserPreferenceModule
+    private val fifPreferenceModule: FIFPreferenceModule
 ) : ViewModel() {
-    var mainUiState = MainUiState()
+    var mainUiState by mutableStateOf(MainUiState())
 
     init {
         viewModelScope.launch {
-            var accessToken = runBlocking {
-                loginUserPreferenceModule.accessTokenFlow.first()
+            val accessToken = runBlocking {
+                fifPreferenceModule.accessTokenFlow.first()
             }
 
             if (accessToken == null) {
@@ -54,7 +52,7 @@ class MainViewModel @Inject constructor(
 
             Log.d("로그", "MainViewModel - getAccessToken() 호출됨 / 응답 성공 : $accessToken")
 
-            loginUserPreferenceModule.setAccessToken(accessToken)
+            fifPreferenceModule.setAccessToken(accessToken)
         } else {
             val body = Json.decodeFromString<ErrorResponse>(
                 responseResult.errorBody()?.string()!!
@@ -69,6 +67,7 @@ class MainViewModel @Inject constructor(
 
         if (responseResult.isSuccessful) {
             mainUiState = MainUiState(member = responseResult.body()!!.member.toMember())
+            Log.d("로그", "MainViewModel - getMemberInfo() 호출됨 / ${mainUiState.member}")
         } else {
             val body = Json.decodeFromString<ErrorResponse>(
                 responseResult.errorBody()?.string()!!

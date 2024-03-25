@@ -6,62 +6,45 @@
 
 package com.s005.fif
 
-import android.Manifest
-import android.app.Activity
 import android.app.AlarmManager
-import android.app.AlertDialog
-import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.DisplayMetrics
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
+import androidx.activity.viewModels
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.core.app.ActivityCompat
-import androidx.core.app.NotificationCompat
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.wear.compose.material.MaterialTheme
+import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import androidx.wear.tooling.preview.devices.WearDevices
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
+import com.s005.fif.fcm.RecipeLiveData
+import com.s005.fif.navigation.NavigationDestination
+import com.s005.fif.timer.ui.TimerViewModel
 import com.s005.fif.ui.theme.FIF_WatchTheme
 import com.s005.fif.ui.FIFWatchApp
 import com.s005.fif.utils.AlarmUtil.alarmManager
-import com.s005.fif.utils.AlarmUtil.setAlarm
-import com.s005.fif.utils.NotificationUtil
 import com.s005.fif.utils.ScreenSize.screenHeightDp
 import com.s005.fif.utils.ScreenSize.screenWidthDp
-import com.s005.fif.utils.VibrateUtil
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private val timerViewModel: TimerViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
 
@@ -74,6 +57,8 @@ class MainActivity : ComponentActivity() {
         getFCMToken()
 
         setContent {
+            val navController = rememberSwipeDismissableNavController()
+
             FIF_WatchTheme {
                 Box(
                     modifier = Modifier
@@ -81,7 +66,23 @@ class MainActivity : ComponentActivity() {
                         .background(MaterialTheme.colors.background),
                     contentAlignment = Alignment.Center
                 ) {
-                    FIFWatchApp()
+                    FIFWatchApp(navController)
+                }
+            }
+
+            RecipeLiveData.isRecipeConnected.observe(this) { isRecipeConnected ->
+                if (isRecipeConnected) {
+                    navController.navigate(NavigationDestination.RecipeDetail.route) {
+                        launchSingleTop = true
+                    }
+                }
+            }
+
+            RecipeLiveData.recipeStep.observe(this) { step ->
+                if (RecipeLiveData.isRecipeConnected.value!! && step != 0) {
+                    navController.navigate("${NavigationDestination.RecipeStep.route}/$step") {
+                        launchSingleTop = true
+                    }
                 }
             }
         }
@@ -116,33 +117,31 @@ class MainActivity : ComponentActivity() {
     private fun getFCMToken() {
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
             if (!task.isSuccessful) {
-                Log.d("로그", "FCMUtil - getFCMToken() 호출됨 / 토큰 가져오기 실패")
+                Log.d("로그", "MainActivity - getFCMToken() 호출됨 / 토큰 가져오기 실패")
                 return@OnCompleteListener
             }
 
             val token = task.result
 
-            Log.d("로그", "FCMUtil - getFCMToken() 호출됨 / 토큰 가져오기 성공 ${token}")
+            Log.d("로그", "MainActivity - getFCMToken() 호출됨 / 토큰 가져오기 성공 ${token}")
         })
     }
+
+    override fun onStart() {
+        super.onStart()
+
+        timerViewModel.getTimerList()
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        timerViewModel.saveTimerListDataStore()
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()
         Log.d("로그", "MainActivity - onDestroy() 호출됨")
-    }
-}
-
-@Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
-@Composable
-fun DefaultPreview() {
-    FIF_WatchTheme {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colors.background),
-            contentAlignment = Alignment.Center
-        ) {
-            FIFWatchApp()
-        }
     }
 }

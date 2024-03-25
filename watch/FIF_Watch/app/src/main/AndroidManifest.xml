@@ -40,12 +40,19 @@
             android:name=".MainActivity"
             android:exported="true"
             android:taskAffinity="com.s005.fif"
+            android:launchMode="singleTop"
             android:theme="@style/MainActivityTheme.Starting">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.TTS_SERVICE" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".warning.ui.WarningActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:taskAffinity="com.s005.fif">
         </activity>
         <activity
             android:name=".timer.ui.TimerActivity"

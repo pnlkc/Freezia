@@ -18,13 +18,9 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
-import okhttp3.Dispatcher
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -32,7 +28,6 @@ import okhttp3.Response
 import okhttp3.ResponseBody
 import retrofit2.Converter
 import retrofit2.Retrofit
-import retrofit2.http.HTTP
 import java.lang.reflect.Type
 import javax.inject.Inject
 import javax.inject.Qualifier
@@ -45,7 +40,7 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideLoginUserPreference(@ApplicationContext context: Context): LoginUserPreferenceModule = LoginUserPreferenceModule(context)
+    fun provideFIFPreference(@ApplicationContext context: Context): FIFPreferenceModule = FIFPreferenceModule(context)
 
     @Singleton
     @Provides
@@ -176,12 +171,12 @@ object AppModule {
 
     @Singleton
     class AuthInterceptor @Inject constructor(
-        private val loginUserPreference: LoginUserPreferenceModule,
+        private val fifPreference: FIFPreferenceModule,
         @PlainMainRepository private val mainRepository: MainRepository,
     ) : Interceptor {
         override fun intercept(chain: Interceptor.Chain): Response = with(chain) {
             val accessToken = runBlocking {
-                loginUserPreference.accessTokenFlow.first()
+                fifPreference.accessTokenFlow.first()
             }
 
             val request = request().newBuilder()
@@ -203,7 +198,7 @@ object AppModule {
                             val newAccessToken = responseResult.body()!!.accessToken
 
                             if (accessToken == newAccessToken) {
-                                loginUserPreference.setAccessToken(newAccessToken)
+                                fifPreference.setAccessToken(newAccessToken)
 
                                 val newRequest = request().newBuilder()
                                     .apply {

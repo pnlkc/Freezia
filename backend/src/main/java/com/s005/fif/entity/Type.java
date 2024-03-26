@@ -4,10 +4,9 @@ import lombok.Getter;
 
 @Getter
 public enum Type {
-	BOIL("끓이기", 0),
-	ROAST("굽기", 1),
-	PUT("넣기", 2),
-	DONE("완성", 999),
+	PREPARE("재료 손질", 0),
+	COOK("조리", 1),
+	FINISH("마무리", 2),
 	;
 
 	private final String title;

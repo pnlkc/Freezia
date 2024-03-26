@@ -256,7 +256,7 @@ fun MainRecipeRecommendPager(
     navigateToRecipeDetail: () -> Unit,
     recommendRecipeListItem: List<RecommendRecipeListItem>
 ) {
-    val pagerState = rememberPagerState(pageCount = { recommendRecipeListItem.size })
+    val pagerState = rememberPagerState(pageCount = { maxOf(1, recommendRecipeListItem.size) })
 
     Column(
         modifier = modifier,
@@ -268,7 +268,7 @@ fun MainRecipeRecommendPager(
             pageSpacing = 20.dp
         ) { page ->
             MainRecipeRecommendCard(
-                item = recommendRecipeListItem[page],
+                item = if (recommendRecipeListItem.isEmpty()) null else recommendRecipeListItem[page],
                 navigateToRecipeDetail = navigateToRecipeDetail
             )
         }
@@ -302,7 +302,7 @@ fun MainRecipeRecommendPager(
 @Composable
 fun MainRecipeRecommendCard(
     modifier: Modifier = Modifier,
-    item: RecommendRecipeListItem,
+    item: RecommendRecipeListItem?,
     navigateToRecipeDetail: () -> Unit,
 ) {
     Card(
@@ -319,9 +319,10 @@ fun MainRecipeRecommendCard(
         ) {
             GlideImage(
                 modifier = Modifier
+                    .fillMaxWidth()
                     .fillMaxHeight(0.5f)
                     .clip(RoundedCornerShape(10.dp)),
-                model = item.imgUrl,
+                model = item?.imgUrl ?: "",
                 contentDescription = stringResource(id = R.string.description_recipe_img),
                 contentScale = ContentScale.Crop,
                 colorFilter = ColorFilter.tint(Color.Black.copy(alpha = 0.2f), BlendMode.Overlay),
@@ -336,7 +337,7 @@ fun MainRecipeRecommendCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = item.recommendDesc,
+                    text = item?.recommendDesc ?: "추천 레시피가 없습니다",
                     style = Typography.bodyMedium
                 )
 

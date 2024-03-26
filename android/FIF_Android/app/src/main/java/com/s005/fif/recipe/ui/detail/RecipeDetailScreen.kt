@@ -54,9 +54,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.integration.compose.placeholder
 import com.s005.fif.R
+import com.s005.fif.recipe.dto.RecipeListItem
+import com.s005.fif.recipe.ui.RecipeViewModel
 import com.s005.fif.ui.theme.Typography
 import com.s005.fif.utils.ScreenSizeUtil.heightDp
 import com.s005.fif.utils.ScreenSizeUtil.statusBarHeightDp
@@ -72,9 +76,17 @@ enum class RecipeDetailType {
 @Composable
 fun RecipeDetailScreen(
     modifier: Modifier = Modifier,
+    recipeViewModel: RecipeViewModel = hiltViewModel(),
+    recipeId: Int,
     navigateUp: () -> Unit,
-    navigateToRecipeStep: () -> Unit
+    navigateToRecipeStep: () -> Unit,
 ) {
+    val recipe = if (recipeViewModel.recipeListItem.isNotEmpty()) recipeViewModel.recipeListItem.first { it.recipeId == recipeId } else null
+
+    LaunchedEffect(key1 = true) {
+        recipeViewModel.getCompleteRecipeRecord(recipeId)
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -87,16 +99,19 @@ fun RecipeDetailScreen(
             GlideImage(
                 modifier = Modifier
                     .fillMaxHeight(0.4f),
-                model = "https://static.wtable.co.kr/image/production/service/recipe/1967/bfbec835-45b4-4e15-a658-ec4f1947ba2e.jpg?size=800x800",
+                model = recipe?.imgUrl ?: "",
                 contentDescription = stringResource(id = R.string.description_recipe_img),
                 contentScale = ContentScale.Crop,
-                colorFilter = ColorFilter.tint(Color.Black.copy(alpha = 0.2f), BlendMode.ColorBurn)
+                colorFilter = ColorFilter.tint(Color.Black.copy(alpha = 0.2f), BlendMode.ColorBurn),
+                loading = placeholder(R.drawable.close),
+                failure = placeholder(R.drawable.close)
             )
 
             RecipeDetailBody(
                 modifier = Modifier,
                 navigateUp = navigateUp,
-                navigateToRecipeStep = navigateToRecipeStep
+                navigateToRecipeStep = navigateToRecipeStep,
+                recipe = recipe
             )
 
             Box(
@@ -115,6 +130,7 @@ fun RecipeDetailTopBar(
     modifier: Modifier = Modifier,
     navigateUp: () -> Unit,
     isExpanded: Boolean,
+    recipe: RecipeListItem?
 ) {
     Row(
         modifier = modifier
@@ -141,7 +157,7 @@ fun RecipeDetailTopBar(
             exit = fadeOut()
         ) {
             Text(
-                text = "스팸 마요 김치 덮밥",
+                text = recipe?.name ?: "요리 이름",
                 style = Typography.bodyLarge,
                 color = Color.White
             )
@@ -164,7 +180,8 @@ fun RecipeDetailTopBar(
 fun RecipeDetailBody(
     modifier: Modifier = Modifier,
     navigateUp: () -> Unit,
-    navigateToRecipeStep: () -> Unit
+    navigateToRecipeStep: () -> Unit,
+    recipe: RecipeListItem?
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState()
     var isExpanded by remember {
@@ -196,14 +213,16 @@ fun RecipeDetailBody(
                 modifier = Modifier
                     .padding(horizontal = 10.dp),
                 navigateUp = { navigateUp() },
-                isExpanded = isExpanded
+                isExpanded = isExpanded,
+                recipe = recipe
             )
         },
         sheetContent = {
             RecipeDetailBottomSheetColumn(
                 modifier = Modifier
                     .height((heightDp - statusBarHeightDp - 45).dp),
-                navigateToRecipeStep = navigateToRecipeStep
+                navigateToRecipeStep = navigateToRecipeStep,
+                recipe = recipe
             )
         },
         sheetDragHandle = {
@@ -231,7 +250,7 @@ fun RecipeDetailBody(
             ) {
                 Column {
                     Text(
-                        text = "스팸 마요 김치 덮밥",
+                        text = recipe?.name ?: "요리 이름",
                         style = Typography.titleMedium,
                         color = Color.White
                     )
@@ -247,7 +266,7 @@ fun RecipeDetailBody(
                         horizontalArrangement = Arrangement.spacedBy(5.dp)
                     ) {
                         itemsIndexed(
-                            items = listOf("점심", "덮밥"),
+                            items = recipe?.recipeTypes?.split(",") ?: listOf(),
                             key = { _, item ->
                                 item
                             }
@@ -284,7 +303,8 @@ fun RecipeDetailFoodTag(
 @Composable
 fun RecipeDetailBottomSheetColumn(
     modifier: Modifier = Modifier,
-    navigateToRecipeStep: () -> Unit
+    navigateToRecipeStep: () -> Unit,
+    recipe: RecipeListItem?
 ) {
     Column(
         modifier = modifier
@@ -293,23 +313,25 @@ fun RecipeDetailBottomSheetColumn(
         verticalArrangement = Arrangement.spacedBy(30.dp)
     ) {
         RecipeDetailInfoRow(
-            time = "10",
-            calorie = "400"
+            time = recipe?.cookTime ?: 0,
+            calorie = recipe?.calorie ?: 0
         )
 
         RecipeDetailBtn(
             navigateToRecipeStep = navigateToRecipeStep
         )
 
-        RecipeDetailPager()
+        RecipeDetailPager(
+            recipe = recipe
+        )
     }
 }
 
 @Composable
 fun RecipeDetailInfoRow(
     modifier: Modifier = Modifier,
-    time: String,
-    calorie: String
+    time: Int,
+    calorie: Int,
 ) {
     Row(
         modifier = modifier
@@ -320,7 +342,7 @@ fun RecipeDetailInfoRow(
             modifier = Modifier
                 .weight(1f),
             title = stringResource(id = R.string.text_cook_time),
-            body = time + "m",
+            body = "${time}m",
         )
 
         VerticalDivider(
@@ -334,7 +356,7 @@ fun RecipeDetailInfoRow(
             modifier = Modifier
                 .weight(1f),
             title = stringResource(id = R.string.text_calorie),
-            body = calorie + "kcal"
+            body = "${calorie}kcal"
         )
     }
 }
@@ -389,6 +411,7 @@ fun RecipeDetailBtn(
 @Composable
 fun RecipeDetailPager(
     modifier: Modifier = Modifier,
+    recipe: RecipeListItem?
 ) {
     val pagerState = rememberPagerState(pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope()
@@ -440,8 +463,11 @@ fun RecipeDetailPager(
         ) { page ->
             when (page) {
                 0 -> {
-                    IngredientListPage()
+                    IngredientListPage(
+                        recipe = recipe
+                    )
                 }
+
                 1 -> {
                     MyFoodHistoryPage()
                 }

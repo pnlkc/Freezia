@@ -22,7 +22,7 @@ data class RecipeListItemResponse(
     val recommendType: Int,
     val recommendDesc: String = "",
     val recipeTypes: String,
-    val serving: Int
+    val serving: Int,
 )
 
 data class RecipeListItem(
@@ -31,17 +31,30 @@ data class RecipeListItem(
     val createDate: java.time.LocalDate,
     val cookTime: Int,
     val calorie: Int,
-    val ingredientList: List<IngredientItemResponse>,
-    val seasoningList: List<IngredientItemResponse>,
+    val ingredientList: List<IngredientItem>,
+    val seasoningList: List<IngredientItem>,
     val imgUrl: String,
     val saveYn: Boolean,
     val completeYn: Boolean,
     val recommendType: Int,
     val recommendDesc: String,
     val recipeTypes: String,
-    val serving: Int
+    val serving: Int,
 )
 
 fun RecipeListItemResponse.toRecipeListItem() = RecipeListItem(
-    recipeId, name, createDate.toJavaLocalDate(), cookTime, calorie, ingredientList, seasoningList, imgUrl, saveYn, completeYn, recommendType, recommendDesc, recipeTypes, serving
+    recipeId,
+    name,
+    createDate.toJavaLocalDate(),
+    cookTime,
+    calorie,
+    ingredientList.map { it.toIngredientItem() },
+    seasoningList.map { it.toIngredientItem() },
+    imgUrl,
+    saveYn,
+    completeYn,
+    recommendType,
+    recommendDesc,
+    recipeTypes,
+    serving
 )

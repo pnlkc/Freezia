@@ -25,15 +25,23 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.integration.compose.placeholder
 import com.s005.fif.R
+import com.s005.fif.recipe.dto.IngredientItem
+import com.s005.fif.recipe.dto.RecipeListItem
+import com.s005.fif.recipe.ui.RecipeViewModel
 import com.s005.fif.ui.theme.Typography
+import com.s005.fif.utils.GCDUtil
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun IngredientListPage(
     modifier: Modifier = Modifier,
+    recipeViewModel: RecipeViewModel = hiltViewModel(),
+    recipe: RecipeListItem?,
 ) {
     LazyColumn(
         modifier = modifier
@@ -41,7 +49,12 @@ fun IngredientListPage(
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         item {
-            IngredientListHeader()
+            IngredientListHeader(
+                servings = recipeViewModel.servings,
+                onBtnClicked = { isAdd ->
+                    recipeViewModel.changeServings(isAdd)
+                }
+            )
         }
 
         item {
@@ -59,29 +72,14 @@ fun IngredientListPage(
         }
 
         itemsIndexed(
-            items = listOf(
-                "마늘1",
-                "마늘2",
-                "마늘3",
-                "마늘4",
-                "마늘5",
-                "마늘6",
-                "마늘7",
-                "마늘8",
-                "마늘9",
-                "마늘10",
-                "마늘11",
-                "마늘12",
-                "마늘13",
-                "마늘14",
-                "마늘15"
-            ),
+            items = recipe?.ingredientList ?: listOf(),
             key = { _, item ->
-                item
+                item.ingredientId
             }
         ) { _, item ->
             IngredientListItem(
-                item = item
+                item = item,
+                servings = recipeViewModel.servings
             )
         }
 
@@ -100,29 +98,14 @@ fun IngredientListPage(
         }
 
         itemsIndexed(
-            items = listOf(
-                "소금1",
-                "소금2",
-                "소금3",
-                "소금4",
-                "소금5",
-                "소금6",
-                "소금7",
-                "소금8",
-                "소금9",
-                "소금10",
-                "소금11",
-                "소금12",
-                "소금13",
-                "소금14",
-                "소금15"
-            ),
+            items = recipe?.seasoningList ?: listOf(),
             key = { _, item ->
-                item
+                item.ingredientId
             }
         ) { _, item ->
             IngredientListItem(
-                item = item
+                item = item,
+                servings = recipeViewModel.servings
             )
         }
     }
@@ -131,6 +114,8 @@ fun IngredientListPage(
 @Composable
 fun IngredientListHeader(
     modifier: Modifier = Modifier,
+    servings: Int,
+    onBtnClicked: (Boolean) -> Unit,
 ) {
     Row(
         modifier = modifier
@@ -152,14 +137,14 @@ fun IngredientListHeader(
                 modifier = Modifier
                     .size(20.dp)
                     .clip(CircleShape)
-                    .clickable { },
+                    .clickable { onBtnClicked(false) },
                 painter = painterResource(id = R.drawable.remove_circle),
                 contentDescription = stringResource(id = R.string.description_serving_size_decrease_btn),
                 colorFilter = ColorFilter.tint(colorScheme.primary)
             )
 
             Text(
-                text = "2인분",
+                text = "${servings}인분",
                 style = Typography.titleSmall
             )
 
@@ -167,7 +152,7 @@ fun IngredientListHeader(
                 modifier = Modifier
                     .size(20.dp)
                     .clip(CircleShape)
-                    .clickable { },
+                    .clickable { onBtnClicked(true) },
                 painter = painterResource(id = R.drawable.add_circle),
                 contentDescription = stringResource(id = R.string.description_serving_size_increase_btn),
                 colorFilter = ColorFilter.tint(colorScheme.primary)
@@ -180,7 +165,8 @@ fun IngredientListHeader(
 @Composable
 fun IngredientListItem(
     modifier: Modifier = Modifier,
-    item: String,
+    item: IngredientItem,
+    servings: Int,
 ) {
     Column(
         modifier = modifier
@@ -203,18 +189,34 @@ fun IngredientListItem(
                     modifier = modifier
                         .clip(CircleShape)
                         .size(30.dp),
-                    model = "https://ouch-cdn2.icons8.com/-huiQFwzs0evgWutGwwsvzKk6k5OwM21IwK9pLPTF7s/rs:fit:368:412/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9wbmcvMTky/L2I4YzI0NmMzLTA3/ZmEtNDFiOC1iMDM1/LTUyNDgyMmMxOTg4/OC5wbmc.png",
+                    model = item.image,
                     contentDescription = stringResource(id = R.string.description_ingredient_img),
+                    loading = placeholder(R.drawable.add_circle),
+                    failure = placeholder(R.drawable.add_circle)
                 )
 
                 Text(
-                    text = item,
+                    text = item.name,
                     style = Typography.bodyMedium,
                 )
             }
 
             Text(
-                text = "2개",
+                text = if (item.amounts.contains("/")) {
+                    var (a, b) = item.amounts.split("/").map { it.toInt() }
+                    a *= servings
+                    val gcd = GCDUtil.gcd(a, b)
+                    a /= gcd
+                    b /= gcd
+
+                    if (b == 1) {
+                        "${a.toFloat()}${item.unit}"
+                    } else {
+                        "${a}/${b}${item.unit}"
+                    }
+                } else {
+                    "${item.amounts.toFloat() * servings}${item.unit}"
+                },
                 style = Typography.bodyMedium,
             )
         }

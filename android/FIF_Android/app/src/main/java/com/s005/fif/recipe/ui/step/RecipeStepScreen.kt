@@ -413,8 +413,8 @@ fun RecipeStepPage(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         RecipeDetailInfoRow(
-                            time = "10",
-                            calorie = "400"
+                            time = 10,
+                            calorie = 400
                         )
 
                         RecipeStepCompleteBtn(

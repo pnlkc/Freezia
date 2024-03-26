@@ -34,14 +34,22 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.integration.compose.placeholder
 import com.s005.fif.R
+import com.s005.fif.recipe.dto.CompleteRecipeRecordIngredient
+import com.s005.fif.recipe.dto.CompleteRecipeRecordItem
+import com.s005.fif.recipe.dto.RecipeListItem
+import com.s005.fif.recipe.ui.RecipeViewModel
 import com.s005.fif.ui.theme.Typography
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun MyFoodHistoryPage(
     modifier: Modifier = Modifier,
+    recipeViewModel: RecipeViewModel = hiltViewModel()
 ) {
     LazyColumn(
         modifier = modifier
@@ -50,9 +58,9 @@ fun MyFoodHistoryPage(
         contentPadding = PaddingValues(3.dp)
     ) {
         itemsIndexed(
-            items = listOf<String>("24.03.05", "24.03.04", "24.03.03", "24.03.02", "24.03.01"),
+            items = recipeViewModel.completeRecipeRecordList.toList(),
             key = { _, item ->
-                item
+                item.completeCookId
             }
         ) { _, item ->
             MyFoodHistoryItem(
@@ -66,7 +74,7 @@ fun MyFoodHistoryPage(
 @Composable
 fun MyFoodHistoryItem(
     modifier: Modifier = Modifier,
-    item: String
+    item: CompleteRecipeRecordItem
 ) {
     Card(
         modifier = modifier
@@ -82,7 +90,7 @@ fun MyFoodHistoryItem(
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             Text(
-                text = item,
+                text = item.completeDate.format(DateTimeFormatter.ofPattern("yy.MM.dd")),
                 style = Typography.titleSmall
             )
 
@@ -99,7 +107,7 @@ fun MyFoodHistoryItem(
                     text = stringResource(id = R.string.text_add_ingredient),
                     img = painterResource(id = R.drawable.add_circle),
                     desc = stringResource(id = R.string.description_add_ingredient),
-                    list = listOf("양배추", "버섯", "당근")
+                    list = item.addIngredients
                 )
 
                 VerticalDivider(
@@ -115,7 +123,7 @@ fun MyFoodHistoryItem(
                     text = stringResource(id = R.string.text_remove_ingredient),
                     img = painterResource(id = R.drawable.remove_circle),
                     desc = stringResource(id = R.string.description_remove_ingredient),
-                    list = listOf("오이", "아스파라거스")
+                    list = item.removeIngredient
                 )
             }
         }
@@ -128,7 +136,7 @@ fun MyFoodHistoryIngredientList(
     text: String,
     img: Painter,
     desc: String,
-    list: List<String>
+    list: List<CompleteRecipeRecordIngredient>
 ) {
     Column(
         modifier = modifier,
@@ -148,7 +156,7 @@ fun MyFoodHistoryIngredientList(
                     .clickable { },
                 painter = img,
                 contentDescription = desc,
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
+                colorFilter = ColorFilter.tint(colorScheme.primary)
             )
 
             Text(
@@ -169,7 +177,7 @@ fun MyFoodHistoryIngredientList(
 @Composable
 fun MyFoodHistoryIngredientItem(
     modifier: Modifier = Modifier,
-    item: String,
+    item: CompleteRecipeRecordIngredient,
 ) {
     Row(
         modifier = modifier
@@ -181,12 +189,14 @@ fun MyFoodHistoryIngredientItem(
             modifier = Modifier
                 .clip(CircleShape)
                 .size(30.dp),
-            model = "https://ouch-cdn2.icons8.com/-huiQFwzs0evgWutGwwsvzKk6k5OwM21IwK9pLPTF7s/rs:fit:368:412/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9wbmcvMTky/L2I4YzI0NmMzLTA3/ZmEtNDFiOC1iMDM1/LTUyNDgyMmMxOTg4/OC5wbmc.png",
+            model = item.image,
             contentDescription = stringResource(id = R.string.description_ingredient_img),
+            loading = placeholder(R.drawable.add_circle),
+            failure = placeholder(R.drawable.add_circle)
         )
 
         Text(
-            text = item,
+            text = item.name,
             style = Typography.bodyMedium,
             maxLines = 1
         )

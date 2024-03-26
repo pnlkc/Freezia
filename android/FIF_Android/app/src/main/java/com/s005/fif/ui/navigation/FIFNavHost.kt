@@ -91,8 +91,8 @@ fun FIFNavHost(
                         launchSingleTop = true
                     }
                 },
-                navigateToRecipeDetail = {
-                    navController.navigate(NavigationDestination.RecipeDetail.route) {
+                navigateToRecipeDetail = { recipeInt ->
+                    navController.navigate("${NavigationDestination.RecipeDetail.route}/${recipeInt}") {
                         launchSingleTop = true
                     }
                 }
@@ -186,8 +186,6 @@ fun FIFNavHost(
             val mode =
                 navBackStackEntry.arguments?.getInt(NavigationDestination.RecipeHistory.MODE) ?: 0
 
-            Log.d("로그", " - FIFNavHost() 호출됨 / mode: $mode")
-
             RecipeHistoryScreen(
                 modifier = modifierSN,
                 navigateUp = {
@@ -221,8 +219,8 @@ fun FIFNavHost(
                         launchSingleTop = true
                     }
                 },
-                navigateToRecipeDetail = {
-                    navController.navigate(NavigationDestination.RecipeDetail.route) {
+                navigateToRecipeDetail = { recipeInt ->
+                    navController.navigate("${NavigationDestination.RecipeDetail.route}/${recipeInt}") {
                         launchSingleTop = true
                     }
                 }
@@ -240,11 +238,20 @@ fun FIFNavHost(
             )
         }
 
-        composable(route = NavigationDestination.RecipeDetail.route) {
+        composable(
+            route = "${NavigationDestination.RecipeDetail.route}/{${NavigationDestination.RecipeDetail.RECIPE_ID}}",
+            arguments = listOf(
+                navArgument(NavigationDestination.RecipeDetail.RECIPE_ID) { type = NavType.IntType }
+            )
+        ) { navBackStackEntry ->
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
+
+            val recipeId =
+                navBackStackEntry.arguments?.getInt(NavigationDestination.RecipeDetail.RECIPE_ID) ?: 0
 
             RecipeDetailScreen(
                 modifier = modifierN,
+                recipeId = recipeId,
                 navigateUp = {
                     navController.navigateUp()
                 },

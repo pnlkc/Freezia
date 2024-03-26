@@ -61,7 +61,7 @@ fun MainScreen(
     navigateToUserProfile: () -> Unit,
     navigateToRecipeList: () -> Unit,
     navigateToRecipeChat: () -> Unit,
-    navigateToRecipeDetail: () -> Unit,
+    navigateToRecipeDetail: (Int) -> Unit,
 ) {
     var backWait = 0L
     val context = LocalContext.current
@@ -164,7 +164,7 @@ fun MainBody(
     navigateToUserProfile: () -> Unit,
     navigateToRecipeList: () -> Unit,
     navigateToRecipeChat: () -> Unit,
-    navigateToRecipeDetail: () -> Unit,
+    navigateToRecipeDetail: (Int) -> Unit,
     memberInfo: Member?,
     recommendRecipeListItem: List<RecommendRecipeListItem>
 ) {
@@ -229,7 +229,7 @@ fun MainHealthColumn(
 @Composable
 fun MainRecipeRecommendColumn(
     modifier: Modifier = Modifier,
-    navigateToRecipeDetail: () -> Unit,
+    navigateToRecipeDetail: (Int) -> Unit,
     recommendRecipeListItem: List<RecommendRecipeListItem>
 ) {
     Column(
@@ -253,7 +253,7 @@ fun MainRecipeRecommendColumn(
 @Composable
 fun MainRecipeRecommendPager(
     modifier: Modifier = Modifier,
-    navigateToRecipeDetail: () -> Unit,
+    navigateToRecipeDetail: (Int) -> Unit,
     recommendRecipeListItem: List<RecommendRecipeListItem>
 ) {
     val pagerState = rememberPagerState(pageCount = { maxOf(1, recommendRecipeListItem.size) })
@@ -269,7 +269,13 @@ fun MainRecipeRecommendPager(
         ) { page ->
             MainRecipeRecommendCard(
                 item = if (recommendRecipeListItem.isEmpty()) null else recommendRecipeListItem[page],
-                navigateToRecipeDetail = navigateToRecipeDetail
+                navigateToRecipeDetail = {
+                    if (recommendRecipeListItem.isEmpty()) {
+                        null
+                    } else {
+                        navigateToRecipeDetail(recommendRecipeListItem[page].recipeId)
+                    }
+                }
             )
         }
 

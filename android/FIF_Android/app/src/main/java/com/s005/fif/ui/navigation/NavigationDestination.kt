@@ -23,7 +23,9 @@ sealed class NavigationDestination(val route: String) {
 
     data object RecipeChat : NavigationDestination("recipe_chat")
 
-    data object RecipeDetail : NavigationDestination("recipe_detail")
+    data object RecipeDetail : NavigationDestination("recipe_detail") {
+        const val RECIPE_ID = "recipe_id"
+    }
 
     data object RecipeStep : NavigationDestination("recipe_step")
 

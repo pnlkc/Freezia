@@ -63,7 +63,7 @@ fun RecipeListScreen(
     recipeViewModel: RecipeViewModel = hiltViewModel(),
     navigateUp: () -> Unit,
     navigateToRecipeChat: () -> Unit,
-    navigateToRecipeDetail: () -> Unit,
+    navigateToRecipeDetail: (Int) -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -93,7 +93,7 @@ fun RecipeListScreen(
 fun RecipeListBody(
     modifier: Modifier = Modifier,
     navigateToRecipeChat: () -> Unit,
-    navigateToRecipeDetail: () -> Unit,
+    navigateToRecipeDetail: (Int) -> Unit,
     recipeListItem: List<RecipeListItem>,
     recipeTypeList: List<LikeFoodCheckableItem>,
     onItemClicked: (String, Boolean) -> Unit,
@@ -166,7 +166,7 @@ fun RecipeListLazyGrid(
     modifier: Modifier = Modifier,
     list: List<RecipeListItem>,
     navigateToRecipeChat: () -> Unit,
-    navigateToRecipeDetail: () -> Unit,
+    navigateToRecipeDetail: (Int) -> Unit,
     recipeTypeList: List<LikeFoodCheckableItem>,
 ) {
     var isShow by remember {
@@ -217,7 +217,7 @@ fun RecipeListLazyGrid(
                 modifier = Modifier
                     .animateItemPlacement(),
                 item = item,
-                onClick = { navigateToRecipeDetail() }
+                onClick = { navigateToRecipeDetail(item.recipeId) }
             )
         }
     }

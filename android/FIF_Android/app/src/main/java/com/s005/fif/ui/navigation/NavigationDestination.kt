@@ -1,6 +1,8 @@
 package com.s005.fif.ui.navigation
 
 sealed class NavigationDestination(val route: String) {
+    data object Splash : NavigationDestination("splash")
+
     data object Main : NavigationDestination("main")
 
     data object UserSelect : NavigationDestination("user_select")

@@ -27,9 +27,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    @Inject lateinit var fifPreferenceModule: FIFPreferenceModule
-    private val userViewModel: UserViewModel by viewModels()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -38,16 +35,12 @@ class MainActivity : ComponentActivity() {
         getScreenSize(resources.displayMetrics)
 
         setContent {
-            val isLoginUser = isLoginUser()
-
             FIF_AndroidTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = colorScheme.background
                 ) {
-                    FIFApp(
-                        isLoginUser = isLoginUser
-                    )
+                    FIFApp()
                 }
             }
         }
@@ -72,23 +65,5 @@ class MainActivity : ComponentActivity() {
     private fun getScreenSize(displayMetrics: DisplayMetrics) {
         ScreenSizeUtil.heightDp = (displayMetrics.heightPixels - getStatusBarHeight(displayMetrics)) / displayMetrics.density
         ScreenSizeUtil.widthDp = displayMetrics.widthPixels / displayMetrics.density
-    }
-
-    private fun isLoginUser(): Boolean {
-        val accessToken = runBlocking {
-            fifPreferenceModule.accessTokenFlow.first()
-        }
-
-        val memberId = runBlocking {
-            fifPreferenceModule.memberIdFlow.first()
-        }
-
-        return if (accessToken != null && memberId != null) {
-            LoginUser.memberId = memberId
-
-            true
-        } else {
-            false
-        }
     }
 }

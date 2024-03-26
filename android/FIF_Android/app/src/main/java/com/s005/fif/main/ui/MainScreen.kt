@@ -1,5 +1,8 @@
 package com.s005.fif.main.ui
 
+import android.app.Activity
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -34,6 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -53,8 +57,21 @@ fun MainScreen(
     navigateToUserProfile: () -> Unit,
     navigateToRecipeList: () -> Unit,
     navigateToRecipeChat: () -> Unit,
-    navigateToRecipeDetail: () -> Unit
+    navigateToRecipeDetail: () -> Unit,
 ) {
+    var backWait = 0L
+    val context = LocalContext.current
+
+    // 뒤로가기시 종료 안내 Toast 메세지
+    BackHandler {
+        if (System.currentTimeMillis() - backWait >= 2000) {
+            backWait = System.currentTimeMillis()
+            Toast.makeText(context, context.getText(R.string.text_exit_app), Toast.LENGTH_SHORT).show()
+        } else {
+            (context as? Activity)?.finish()
+        }
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -76,14 +93,14 @@ fun MainScreen(
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun MainTopBar(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 10.dp)
             .height(30.dp),
-        horizontalArrangement = Arrangement .SpaceBetween,
+        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -136,7 +153,7 @@ fun MainBody(
     navigateToUserProfile: () -> Unit,
     navigateToRecipeList: () -> Unit,
     navigateToRecipeChat: () -> Unit,
-    navigateToRecipeDetail: () -> Unit
+    navigateToRecipeDetail: () -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -161,7 +178,7 @@ fun MainBody(
 @Composable
 fun MainHealthColumn(
     modifier: Modifier = Modifier,
-    navigateToUserProfile: () -> Unit
+    navigateToUserProfile: () -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -194,7 +211,7 @@ fun MainHealthColumn(
 @Composable
 fun MainRecipeRecommendColumn(
     modifier: Modifier = Modifier,
-    navigateToRecipeDetail: () -> Unit
+    navigateToRecipeDetail: () -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -216,15 +233,24 @@ fun MainRecipeRecommendColumn(
 @Composable
 fun MainRecipeRecommendPager(
     modifier: Modifier = Modifier,
-    navigateToRecipeDetail: () -> Unit
+    navigateToRecipeDetail: () -> Unit,
 ) {
     // TODO. 실제 리스트로 변경 필요
     val list = listOf(
-        MainData("https://flexible.img.hani.co.kr/flexible/normal/640/427/imgdb/original/2023/0306/20230306502777.jpg", "스트레스가 높으신 날\n자장면 어떠세요?"),
-        MainData("https://i.namu.wiki/i/upNZ7cYsFsAfU0KcguO6OHMK68xC-Bj8EXxdCti61Jhjx10UCBgdK5bZCEx41-aAWcjWZ5JMKFUSaUGLC1tqWg.webp", "스트레스가 높으신 날\n" +
-                "짬뽕 어떠세요?"),
-        MainData("https://i.namu.wiki/i/NSZu9w4DRwEPOCgPSzvs4sAZlxfMBoxZLCZQgM_O4wRH8jN0guRfBiLURu-Tno5p-Q2aw5e5gy9gLJsnYKlq8Q.webp", "스트레스가 높으신 날\n" +
-                "탕수육 어떠세요?"),
+        MainData(
+            "https://flexible.img.hani.co.kr/flexible/normal/640/427/imgdb/original/2023/0306/20230306502777.jpg",
+            "스트레스가 높으신 날\n자장면 어떠세요?"
+        ),
+        MainData(
+            "https://i.namu.wiki/i/upNZ7cYsFsAfU0KcguO6OHMK68xC-Bj8EXxdCti61Jhjx10UCBgdK5bZCEx41-aAWcjWZ5JMKFUSaUGLC1tqWg.webp",
+            "스트레스가 높으신 날\n" +
+                    "짬뽕 어떠세요?"
+        ),
+        MainData(
+            "https://i.namu.wiki/i/NSZu9w4DRwEPOCgPSzvs4sAZlxfMBoxZLCZQgM_O4wRH8jN0guRfBiLURu-Tno5p-Q2aw5e5gy9gLJsnYKlq8Q.webp",
+            "스트레스가 높으신 날\n" +
+                    "탕수육 어떠세요?"
+        ),
     )
 
     val pagerState = rememberPagerState(pageCount = { list.size })
@@ -252,8 +278,10 @@ fun MainRecipeRecommendPager(
             horizontalArrangement = Arrangement.Center
         ) {
             repeat(pagerState.pageCount) { iteration ->
-                val color = if (pagerState.currentPage == iteration) colorScheme.primary else Color.White
-                val borderColor = if (pagerState.currentPage == iteration) Color.Transparent else colorScheme.primary
+                val color =
+                    if (pagerState.currentPage == iteration) colorScheme.primary else Color.White
+                val borderColor =
+                    if (pagerState.currentPage == iteration) Color.Transparent else colorScheme.primary
 
                 Box(
                     modifier = Modifier
@@ -273,7 +301,7 @@ fun MainRecipeRecommendPager(
 fun MainRecipeRecommendCard(
     modifier: Modifier = Modifier,
     item: MainData,
-    navigateToRecipeDetail: () -> Unit
+    navigateToRecipeDetail: () -> Unit,
 ) {
     Card(
         modifier = modifier
@@ -327,7 +355,7 @@ fun MainRecipeRecommendCard(
 fun MainRecipeBtnRow(
     modifier: Modifier = Modifier,
     navigateToRecipeList: () -> Unit,
-    navigateToRecipeChat: () -> Unit
+    navigateToRecipeChat: () -> Unit,
 ) {
     Row(
         modifier = modifier
@@ -365,7 +393,7 @@ fun MainRecipeBtnCard(
     text: String,
     icon: Painter,
     contentDescription: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Card(
         modifier = modifier,

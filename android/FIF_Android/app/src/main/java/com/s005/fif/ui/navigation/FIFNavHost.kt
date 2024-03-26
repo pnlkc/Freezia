@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -19,6 +20,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.s005.fif.main.ui.MainScreen
+import com.s005.fif.main.ui.SplashScreen
 import com.s005.fif.recipe.ui.chat.RecipeChatScreen
 import com.s005.fif.recipe.ui.complete.IngredientAddScreen
 import com.s005.fif.recipe.ui.complete.IngredientRemoveScreen
@@ -41,8 +43,6 @@ import kotlinx.coroutines.launch
 fun FIFNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    isLoginUser: Boolean,
-    userViewModel: UserViewModel = hiltViewModel(),
 ) {
     val view = LocalView.current
     val window = (view.context as Activity).window
@@ -55,21 +55,30 @@ fun FIFNavHost(
         .statusBarsPadding()
         .navigationBarsPadding()
         .imePadding()
-    val coroutineScope = rememberCoroutineScope()
-
-    LaunchedEffect(key1 = true) {
-        userViewModel.getMemberInfo()
-    }
 
     NavHost(
         navController = navController,
-        startDestination = if (!isLoginUser || userViewModel.memberInfo == null || !userViewModel.memberInfo!!.onboardYn) {
-            NavigationDestination.UserSelect.route
-        } else {
-            NavigationDestination.Main.route
-        },
+        startDestination = NavigationDestination.Splash.route,
         modifier = modifier,
     ) {
+        composable(route = NavigationDestination.Splash.route) {
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
+
+            SplashScreen(
+                modifier = modifierSN,
+                navigateToMain = {
+                    navController.navigate(NavigationDestination.Main.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToUserSelect = {
+                    navController.navigate(NavigationDestination.UserSelect.route) {
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
         composable(route = NavigationDestination.Main.route) {
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
 

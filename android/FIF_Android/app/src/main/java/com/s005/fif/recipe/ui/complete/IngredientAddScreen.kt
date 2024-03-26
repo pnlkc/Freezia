@@ -18,6 +18,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.s005.fif.R
+import com.s005.fif.common.data.IngredientItemData
+import com.s005.fif.common.data.IngredientListData
 import com.s005.fif.recipe.ui.step.RecipeStepTopBar
 import com.s005.fif.user.ui.onboarding.DislikeIngredientSearchResultItem
 import com.s005.fif.user.ui.onboarding.DislikeIngredientSelectLazyRow
@@ -80,17 +82,14 @@ fun IngredientAddBody(
             }
 
             itemsIndexed(
-                items = listOf<String>(
-                    "파",
-                    "양파",
-                    "쪽파"
-                ),
+                items = IngredientListData.list,
                 key = { _, item ->
                     item
                 }
             ) { _, item ->
                 DislikeIngredientSearchResultItem(
-                    item = item
+                    item = item,
+                    onItemClicked = { _, _ -> }
                 )
             }
 
@@ -105,7 +104,10 @@ fun IngredientAddBody(
             color = Color.Black.copy(0.1f),
         )
 
-        DislikeIngredientSelectLazyRow()
+        DislikeIngredientSelectLazyRow(
+            dislikeIngredientList = listOf(),
+            onItemClicked = { _, _ -> }
+        )
 
         UserOnboardingBtn(
             modifier = Modifier,

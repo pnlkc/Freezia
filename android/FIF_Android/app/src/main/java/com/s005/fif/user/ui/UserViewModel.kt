@@ -8,6 +8,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bumptech.glide.Glide.init
+import com.s005.fif.common.data.DiseaseItemData
+import com.s005.fif.common.data.IngredientItemData
+import com.s005.fif.common.data.LikeFoodItemData
 import com.s005.fif.common.dto.DefaultResponse
 import com.s005.fif.common.dto.ErrorResponse
 import com.s005.fif.di.FIFPreferenceModule
@@ -40,10 +43,30 @@ class UserViewModel @Inject constructor(
     var userList by mutableStateOf<List<UserItem>>(listOf())
     var memberInfo by mutableStateOf<Member?>(null)
     var onboardingState by mutableStateOf(Onboarding())
+    var dislikeInputText by mutableStateOf("")
+    var diseaseInputText by mutableStateOf("")
 
     init {
         viewModelScope.launch {
             getUserList()
+        }
+    }
+
+    suspend fun isLoginUser(): Boolean {
+        val accessToken = runBlocking {
+            fifPreferenceModule.accessTokenFlow.first()
+        }
+
+        val memberId = runBlocking {
+            fifPreferenceModule.memberIdFlow.first()
+        }
+
+        return if (accessToken != null && memberId != null) {
+            LoginUser.memberId = memberId
+
+            true
+        } else {
+            false
         }
     }
 
@@ -114,5 +137,59 @@ class UserViewModel @Inject constructor(
 
             Log.d("로그", "UserViewModel - sendOnboarding() 호출됨 / 응답 실패 : ${body}")
         }
+    }
+
+    fun checkLikeFood(isChecked: Boolean, item: LikeFoodItemData) {
+        onboardingState = if (isChecked) {
+            onboardingState.copy(
+                preferMenu = onboardingState.preferMenu + item
+            )
+        } else {
+            onboardingState.copy(
+                preferMenu = onboardingState.preferMenu.filter { it != item }
+            )
+        }
+
+        Log.d("로그", "UserViewModel - checkLikeFood() 호출됨 / ${onboardingState.preferMenu}")
+    }
+
+    fun clearOnboarding() {
+        onboardingState = Onboarding()
+    }
+
+    fun clickDislikeIngredientItem(isAdd: Boolean, item: IngredientItemData) {
+        onboardingState = if (isAdd) {
+            if (!onboardingState.dislikeIngredients.contains(item)) {
+                onboardingState.copy(
+                    dislikeIngredients = onboardingState.dislikeIngredients + item
+                )
+            } else {
+                onboardingState
+            }
+        } else {
+            onboardingState.copy(
+                dislikeIngredients = onboardingState.dislikeIngredients.filter { it != item }
+            )
+        }
+
+        Log.d("로그", "UserViewModel - clickDislikeIngredientItem() 호출됨 / ${onboardingState.dislikeIngredients}")
+    }
+
+    fun clickDiseaseItem(isAdd: Boolean, item: DiseaseItemData) {
+        onboardingState = if (isAdd) {
+            if (!onboardingState.diseases.contains(item)) {
+                onboardingState.copy(
+                    diseases = onboardingState.diseases + item
+                )
+            } else {
+                onboardingState
+            }
+        } else {
+            onboardingState.copy(
+                diseases = onboardingState.diseases.filter { it != item }
+            )
+        }
+
+        Log.d("로그", "UserViewModel - clickDiseaseItem() 호출됨 / ${onboardingState.diseases}")
     }
 }

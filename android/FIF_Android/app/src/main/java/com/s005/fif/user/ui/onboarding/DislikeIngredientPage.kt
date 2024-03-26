@@ -5,7 +5,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -33,14 +32,19 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.s005.fif.R
+import com.s005.fif.common.data.IngredientItemData
+import com.s005.fif.common.data.IngredientListData
 import com.s005.fif.ui.theme.Typography
+import com.s005.fif.user.ui.UserViewModel
 
 @Composable
 fun DislikeIngredientPage(
     modifier: Modifier = Modifier,
+    viewModel: UserViewModel = hiltViewModel(),
     goPrevPage: () -> Unit,
     goNextPage: () -> Unit,
 ) {
@@ -52,7 +56,15 @@ fun DislikeIngredientPage(
         modifier = modifier
             .fillMaxSize(),
         goPrevPage = goPrevPage,
-        goNextPage = goNextPage
+        goNextPage = goNextPage,
+        inputText = viewModel.dislikeInputText,
+        inputTextChange = {
+            viewModel.dislikeInputText = it
+        },
+        dislikeIngredientList = viewModel.onboardingState.dislikeIngredients,
+        onItemClicked = { isAdd, item ->
+            viewModel.clickDislikeIngredientItem(isAdd, item)
+        }
     )
 }
 
@@ -61,6 +73,10 @@ fun DislikeIngredientBody(
     modifier: Modifier = Modifier,
     goPrevPage: () -> Unit,
     goNextPage: () -> Unit,
+    inputText: String,
+    inputTextChange: (String) -> Unit,
+    dislikeIngredientList: List<IngredientItemData>,
+    onItemClicked: (Boolean, IngredientItemData) -> Unit
 ) {
     Column(
         modifier = modifier
@@ -88,24 +104,27 @@ fun DislikeIngredientBody(
 
             item {
                 UserProfileTextField(
-                    content = "",
-                    setContent = { },
+                    content = inputText,
+                    setContent = {
+                        inputTextChange(it)
+                    },
                     hintText = stringResource(id = R.string.text_field_hint_dislike_ingredient)
                 )
             }
 
             itemsIndexed(
-                items = listOf<String>(
-                    "파",
-                    "양파",
-                    "쪽파"
-                ),
+                items = if (inputText.isBlank()) {
+                    IngredientListData.list
+                } else {
+                    IngredientListData.list.filter { it.name.contains(inputText) }
+                },
                 key = { _, item ->
-                    item
+                    item.name
                 }
             ) { _, item ->
                 DislikeIngredientSearchResultItem(
-                    item = item
+                    item = item,
+                    onItemClicked = onItemClicked
                 )
             }
 
@@ -120,7 +139,10 @@ fun DislikeIngredientBody(
             color = Color.Black.copy(0.1f),
         )
 
-        DislikeIngredientSelectLazyRow()
+        DislikeIngredientSelectLazyRow(
+            dislikeIngredientList = dislikeIngredientList,
+            onItemClicked = onItemClicked
+        )
 
         UserOnboardingBtn(
             modifier = Modifier,
@@ -134,12 +156,13 @@ fun DislikeIngredientBody(
 @Composable
 fun DislikeIngredientSearchResultItem(
     modifier: Modifier = Modifier,
-    item: String
+    item: IngredientItemData,
+    onItemClicked: (Boolean, IngredientItemData) -> Unit
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable {  },
+            .clickable { onItemClicked(true, item) },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -152,12 +175,13 @@ fun DislikeIngredientSearchResultItem(
                 modifier = modifier
                     .clip(CircleShape)
                     .size(30.dp),
-                model = "https://ouch-cdn2.icons8.com/-huiQFwzs0evgWutGwwsvzKk6k5OwM21IwK9pLPTF7s/rs:fit:368:412/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9wbmcvMTky/L2I4YzI0NmMzLTA3/ZmEtNDFiOC1iMDM1/LTUyNDgyMmMxOTg4/OC5wbmc.png",
+                model = item.imgUrl,
                 contentDescription = stringResource(id = R.string.description_ingredient_img),
+                contentScale = ContentScale.Crop
             )
 
             Text(
-                text = item,
+                text = item.name,
                 style = Typography.bodyMedium,
                 color = Color.Black.copy(alpha = 0.5f)
             )
@@ -179,26 +203,25 @@ fun DislikeIngredientSearchResultItem(
 @Composable
 fun DislikeIngredientSelectLazyRow(
     modifier: Modifier = Modifier,
+    dislikeIngredientList: List<IngredientItemData>,
+    onItemClicked: (Boolean, IngredientItemData) -> Unit
 ) {
     LazyRow(
         modifier = modifier
             .padding(vertical = 20.dp),
-        horizontalArrangement = Arrangement.spacedBy(5.dp)
+        horizontalArrangement = Arrangement.spacedBy(5.dp),
+        reverseLayout = true
     ) {
         itemsIndexed(
-            items = listOf<String>(
-                "파",
-                "양파",
-                "쪽파"
-            ),
+            items = dislikeIngredientList,
             key = { _, item ->
-                item
+                item.ingredientId
             }
         ) { _, item ->
             DislikeIngredientSelectItem(
                 modifier = Modifier,
                 item = item,
-                onClick = {  }
+                onItemClicked = onItemClicked
             )
         }
     }
@@ -208,8 +231,8 @@ fun DislikeIngredientSelectLazyRow(
 @Composable
 fun DislikeIngredientSelectItem(
     modifier: Modifier = Modifier,
-    item: String,
-    onClick: () -> Unit
+    item: IngredientItemData,
+    onItemClicked: (Boolean, IngredientItemData) -> Unit,
 ) {
     Card(
         modifier = modifier
@@ -221,7 +244,7 @@ fun DislikeIngredientSelectItem(
     ) {
         Row(
             modifier = modifier
-                .clickable { onClick() }
+                .clickable { onItemClicked(false, item) }
                 .padding(vertical = 5.dp, horizontal = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(5.dp)
@@ -230,12 +253,13 @@ fun DislikeIngredientSelectItem(
                 modifier = modifier
                     .clip(CircleShape)
                     .size(25.dp),
-                model = "https://ouch-cdn2.icons8.com/-huiQFwzs0evgWutGwwsvzKk6k5OwM21IwK9pLPTF7s/rs:fit:368:412/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9wbmcvMTky/L2I4YzI0NmMzLTA3/ZmEtNDFiOC1iMDM1/LTUyNDgyMmMxOTg4/OC5wbmc.png",
+                model = item.imgUrl,
                 contentDescription = stringResource(id = R.string.description_ingredient_img),
+                contentScale = ContentScale.Crop
             )
 
             Text(
-                text = item,
+                text = item.name,
                 style = Typography.bodyMedium,
                 color = Color.Black.copy(alpha = 0.5f)
             )

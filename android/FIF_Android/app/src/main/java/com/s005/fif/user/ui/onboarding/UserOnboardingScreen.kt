@@ -32,21 +32,32 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.s005.fif.R
 import com.s005.fif.ui.theme.Typography
+import com.s005.fif.user.ui.UserViewModel
 import kotlinx.coroutines.launch
 
 @Composable
 fun UserOnboardingScreen(
     modifier: Modifier = Modifier,
+    viewModel: UserViewModel = hiltViewModel(),
     navigateToUserSelect: () -> Unit,
     navigateToMain: () -> Unit
 ) {
+    val coroutineScope = rememberCoroutineScope()
+
     UserOnboardingBody(
         modifier = modifier
             .fillMaxSize(),
         navigateToUserSelect = navigateToUserSelect,
-        navigateToMain = navigateToMain
+        navigateToMain = {
+            coroutineScope.launch {
+                viewModel.sendOnboarding()
+            }
+
+            navigateToMain()
+        }
     )
 }
 

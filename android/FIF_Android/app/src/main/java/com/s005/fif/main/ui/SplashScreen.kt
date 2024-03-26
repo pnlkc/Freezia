@@ -37,6 +37,8 @@ fun SplashScreen(
             } else {
                 navigateToUserSelect()
             }
+        } else {
+            navigateToUserSelect()
         }
     }
 
@@ -45,6 +47,7 @@ fun SplashScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
+        // TODO. 앱 아이콘으로 이미지 변경 필요
         Image(
             modifier = Modifier
                 .size(100.dp)

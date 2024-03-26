@@ -18,4 +18,6 @@ object DiseaseListData {
         DiseaseItemData(9, "빈혈"),
         DiseaseItemData(10, "통풍"),
     )
+
+    val map = list.associate { it.diseaseId to it.name }
 }

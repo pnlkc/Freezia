@@ -6,19 +6,14 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import androidx.navigation.navigation
 import com.s005.fif.main.ui.MainScreen
 import com.s005.fif.main.ui.SplashScreen
 import com.s005.fif.recipe.ui.chat.RecipeChatScreen
@@ -29,15 +24,12 @@ import com.s005.fif.recipe.ui.detail.RecipeDetailScreen
 import com.s005.fif.recipe.ui.list.RecipeListScreen
 import com.s005.fif.recipe.ui.step.RecipeStepScreen
 import com.s005.fif.shopping_list.ui.ShoppingListScreen
-import com.s005.fif.user.ui.UserViewModel
 import com.s005.fif.user.ui.onboarding.UserOnboardingScreen
 import com.s005.fif.user.ui.profile.RecipePreferenceSettingScreen
 import com.s005.fif.user.ui.profile.UserProfileScreen
 import com.s005.fif.user.ui.recipe_history.ui.RecipeHistoryScreen
 import com.s005.fif.user.ui.recipe_history.ui.RecipeHistoryType
 import com.s005.fif.user.ui.select.UserSelectScreen
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Composable
 fun FIFNavHost(
@@ -201,7 +193,7 @@ fun FIFNavHost(
                 navigateUp = {
                     navController.navigateUp()
                 },
-                mode = if (mode == 0) RecipeHistoryType.SavedHistory else RecipeHistoryType.CompletedFood
+                mode = if (mode == 0) RecipeHistoryType.SavedRecipe else RecipeHistoryType.CompletedFood
             )
         }
 

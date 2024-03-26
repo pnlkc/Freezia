@@ -19,7 +19,7 @@ data class Onboarding(
 )
 
 fun Onboarding.toOnboardingRequest() = OnboardingRequest(
-    preferMenu.sortedBy { it.foodId }.joinToString(" ") { it.name },
+    preferMenu.sortedBy { it.foodId }.joinToString(", ") { it.name },
     diseases.map { it.diseaseId }.sorted(),
     dislikeIngredients.map { it.ingredientId }.sorted()
 )

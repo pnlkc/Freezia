@@ -3,6 +3,12 @@ package com.s005.fif.di
 import android.content.Context
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.s005.fif.di.LoginUser.memberId
+import com.s005.fif.main.data.DefaultMainRepository
+import com.s005.fif.main.data.MainRepository
+import com.s005.fif.main.network.MainService
+import com.s005.fif.shopping_list.data.DefaultShoppingListRepository
+import com.s005.fif.shopping_list.data.ShoppingListRepository
+import com.s005.fif.shopping_list.network.ShoppingListService
 import com.s005.fif.user.data.DefaultUserRepository
 import com.s005.fif.user.data.UserRepository
 import com.s005.fif.user.dto.MemberSelectRequest
@@ -22,6 +28,7 @@ import okhttp3.Response
 import okhttp3.ResponseBody
 import retrofit2.Converter
 import retrofit2.Retrofit
+import retrofit2.create
 import java.lang.reflect.Type
 import javax.inject.Inject
 import javax.inject.Qualifier
@@ -116,28 +123,53 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideMainService(retrofit: Retrofit): UserService {
+    fun provideUserService(retrofit: Retrofit): UserService {
         return retrofit.create(UserService::class.java)
     }
 
     @Singleton
     @Provides
-    fun provideMainRepository(userService: UserService): UserRepository {
+    fun provideUserRepository(userService: UserService): UserRepository {
         return DefaultUserRepository(userService)
     }
 
 //    @Singleton
     @Provides
     @PlainUserService
-    fun providePlainMainService(@PlainRetrofit retrofit: Retrofit): UserService {
+    fun providePlainUserService(@PlainRetrofit retrofit: Retrofit): UserService {
         return retrofit.create(UserService::class.java)
     }
 
     @Singleton
     @Provides
     @PlainUserRepository
-    fun providePlainMainRepository(@PlainUserService userService: UserService): UserRepository {
+    fun providePlainUserRepository(@PlainUserService userService: UserService): UserRepository {
         return DefaultUserRepository(userService)
+    }
+
+    @Singleton
+    @Provides
+    fun provideMainService(retrofit: Retrofit): MainService {
+        return retrofit.create(MainService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideMainRepository(mainService: MainService): MainRepository {
+        return DefaultMainRepository(mainService)
+    }
+
+
+    @Singleton
+    @Provides
+    fun provideShoppingListService(retrofit: Retrofit): ShoppingListService {
+        return retrofit.create(ShoppingListService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideShoppingListRepository(shoppingListService: ShoppingListService): ShoppingListRepository {
+        return DefaultShoppingListRepository(shoppingListService)
     }
 
     @Singleton

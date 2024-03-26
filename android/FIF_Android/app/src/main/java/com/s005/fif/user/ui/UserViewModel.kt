@@ -49,6 +49,10 @@ class UserViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             getUserList()
+
+            if (isLoginUser()) {
+                getMemberInfo()
+            }
         }
     }
 
@@ -62,6 +66,8 @@ class UserViewModel @Inject constructor(
         }
 
         return if (accessToken != null && memberId != null) {
+            Log.d("로그", "UserViewModel - isLoginUser() 호출됨 / accessToken : ${accessToken}")
+
             LoginUser.memberId = memberId
 
             true

@@ -1,5 +1,6 @@
 package com.s005.fif.shopping_list.ui
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,8 +26,13 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,35 +44,61 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.s005.fif.R
+import com.s005.fif.common.data.IngredientListData
+import com.s005.fif.shopping_list.dto.ShoppingListItem
 import com.s005.fif.ui.theme.Typography
+import com.s005.fif.user.ui.UserViewModel
 import com.s005.fif.user.ui.profile.UserProfileTopBar
+import kotlinx.coroutines.launch
 
 @Composable
 fun ShoppingListScreen(
     modifier: Modifier = Modifier,
-    navigateUp: () -> Unit
+    userViewModel: UserViewModel = hiltViewModel(),
+    shoppingListViewModel: ShoppingListViewModel = hiltViewModel(),
+    navigateUp: () -> Unit,
 ) {
+    val coroutineScope = rememberCoroutineScope()
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 10.dp)
             .padding(bottom = 20.dp)
-            .background(MaterialTheme.colorScheme.background)
+            .background(colorScheme.background)
     ) {
         UserProfileTopBar(
-            navigateUp = navigateUp
+            navigateUp = navigateUp,
+            memberInfo = userViewModel.memberInfo
         )
 
-        ShoppingListBody()
+        ShoppingListBody(
+            shoppingList = shoppingListViewModel.shoppingList.toList(),
+            isCheckedChanged = { id, isChecked ->
+                coroutineScope.launch {
+                    shoppingListViewModel.checkShoppingListItem(id, isChecked)
+                }
+            },
+            onDeleteBtnClicked = {
+                coroutineScope.launch {
+                    shoppingListViewModel.deleteShoppingListItem()
+                }
+            }
+        )
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ShoppingListBody(
     modifier: Modifier = Modifier,
+    shoppingList: List<ShoppingListItem>,
+    isCheckedChanged: (Int, Boolean) -> Unit,
+    onDeleteBtnClicked: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -106,23 +138,27 @@ fun ShoppingListBody(
                     .padding(20.dp),
                 verticalArrangement = Arrangement.spacedBy(25.dp),
             ) {
-                val list1 = listOf("당근", "대파", "토마토", "양파", "양배추", "당근1", "대파1", "토마토1", "양파1", "양배추1","당근2", "대파2", "토마토2", "양파2", "양배추2")
-                
                 item {
                     UncheckedItem(
-                        cnt = list1.size
+                        cnt = shoppingList.size
                     )
                 }
 
                 itemsIndexed(
-                    items = list1,
+                    items = shoppingList.filter { !it.checkYn },
                     key = { _, item ->
-                        item
+                        item.shoppingListId
                     }
                 ) { _, item ->
                     ShoppingListLazyColumnItem(
+                        modifier = Modifier
+                            .animateItemPlacement(),
                         item = item,
-                        isDone = false
+                        isDone = false,
+                        isChecked = item.checkYn,
+                        isCheckedChanged = { id ->
+                            isCheckedChanged(id, true)
+                        }
                     )
                 }
 
@@ -135,20 +171,26 @@ fun ShoppingListBody(
                 }
 
                 item {
-                    CheckedItemTitle()
+                    CheckedItemTitle(
+                        onDeleteBtnClicked = onDeleteBtnClicked
+                    )
                 }
 
-                val list2 = listOf("당근3", "대파3", "토마토3", "양파3", "양배추3","당근4", "대파4", "토마토4", "양파4", "양배추4")
-
                 itemsIndexed(
-                    items = list2,
+                    items = shoppingList.filter { it.checkYn },
                     key = { _, item ->
-                        item
+                        item.shoppingListId
                     }
                 ) { _, item ->
                     ShoppingListLazyColumnItem(
+                        modifier = Modifier
+                            .animateItemPlacement(),
                         item = item,
-                        isDone = true
+                        isDone = true,
+                        isChecked = item.checkYn,
+                        isCheckedChanged = { id ->
+                            isCheckedChanged(id, false)
+                        }
                     )
                 }
             }
@@ -159,6 +201,7 @@ fun ShoppingListBody(
 @Composable
 fun CheckedItemTitle(
     modifier: Modifier = Modifier,
+    onDeleteBtnClicked: () -> Unit
 ) {
     Row(
         modifier = modifier
@@ -175,7 +218,7 @@ fun CheckedItemTitle(
         Surface(
             modifier = Modifier
                 .clip(RoundedCornerShape(20.dp))
-                .clickable { },
+                .clickable { onDeleteBtnClicked() },
             shape = RoundedCornerShape(20.dp),
             shadowElevation = 2.dp
         ) {
@@ -195,7 +238,7 @@ fun CheckedItemTitle(
 @Composable
 fun UncheckedItem(
     modifier: Modifier = Modifier,
-    cnt: Int
+    cnt: Int,
 ) {
     Row(
         modifier = modifier
@@ -221,45 +264,21 @@ fun UncheckedItem(
     }
 }
 
-@Composable
-fun ShoppingListLazyColumn(
-    modifier: Modifier = Modifier,
-    list: List<String>,
-    isDone: Boolean
-) {
-    LazyColumn(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-        itemsIndexed(
-            items = list,
-            key = { _, item ->
-                item
-            }
-        ) { _, item ->
-            ShoppingListLazyColumnItem(
-                item = item,
-                isDone = isDone
-            )
-        }
-    }
-}
-
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun ShoppingListLazyColumnItem(
     modifier: Modifier = Modifier,
-    item: String,
-    isDone: Boolean
+    item: ShoppingListItem,
+    isDone: Boolean,
+    isChecked: Boolean,
+    isCheckedChanged: (Int) -> Unit
 ) {
-    val (checkedState, onStateChange) = remember { mutableStateOf(false) }
-
     Row(
-        Modifier
+        modifier = modifier
             .fillMaxWidth()
             .toggleable(
-                value = checkedState,
-                onValueChange = { onStateChange(!checkedState) },
+                value = isChecked,
+                onValueChange = { isCheckedChanged(item.shoppingListId) },
                 role = Role.Checkbox
             ),
         verticalAlignment = Alignment.CenterVertically,
@@ -274,20 +293,20 @@ fun ShoppingListLazyColumnItem(
                 modifier = Modifier
                     .size(30.dp)
                     .clip(CircleShape),
-                model = "https://i.namu.wiki/i/n2LztcrML9hzPww_iKNeMuh34vg48dkmZmGuMEC_e-DSpNoPGwch9nR9FZz9WfVx6nvv5aSDxqlxEG8iA9tcLQ.webp",
+                model = IngredientListData.nameMap[item.name],
                 contentDescription = stringResource(id = R.string.description_ingredient_img),
                 contentScale = ContentScale.Crop
             )
 
             Text(
-                text = item,
+                text = item.name,
                 style = Typography.bodyMedium,
                 textDecoration = if (isDone) TextDecoration.LineThrough else TextDecoration.None
             )
         }
 
         Checkbox(
-            checked = checkedState,
+            checked = isChecked,
             onCheckedChange = null, // null recommended for accessibility with screenreaders
             colors = CheckboxDefaults.colors(
                 uncheckedColor = colorScheme.onSecondary

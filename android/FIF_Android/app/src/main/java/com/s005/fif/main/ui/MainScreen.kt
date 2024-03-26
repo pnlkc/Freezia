@@ -42,18 +42,23 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.integration.compose.placeholder
 import com.s005.fif.R
+import com.s005.fif.main.dto.RecipeList
 import com.s005.fif.ui.theme.Typography
+import com.s005.fif.user.dto.Member
+import com.s005.fif.user.ui.UserViewModel
 import com.s005.fif.user.ui.profile.HealthCard
 import com.s005.fif.user.ui.profile.UserProfileColumnText
-
-data class MainData(val imgUrl: String, val desc: String)
 
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
+    userViewModel: UserViewModel = hiltViewModel(),
+    mainViewModel: MainViewModel = hiltViewModel(),
     navigateToUserProfile: () -> Unit,
     navigateToRecipeList: () -> Unit,
     navigateToRecipeChat: () -> Unit,
@@ -79,13 +84,17 @@ fun MainScreen(
             .padding(bottom = 20.dp)
             .background(colorScheme.background)
     ) {
-        MainTopBar()
+        MainTopBar(
+            memberInfo = userViewModel.memberInfo
+        )
 
         MainBody(
             navigateToUserProfile = navigateToUserProfile,
             navigateToRecipeList = navigateToRecipeList,
             navigateToRecipeChat = navigateToRecipeChat,
-            navigateToRecipeDetail = navigateToRecipeDetail
+            navigateToRecipeDetail = navigateToRecipeDetail,
+            memberInfo = userViewModel.memberInfo,
+            recommendRecipeList = mainViewModel.recommendRecipeList
         )
     }
 }
@@ -94,6 +103,7 @@ fun MainScreen(
 @Composable
 fun MainTopBar(
     modifier: Modifier = Modifier,
+    memberInfo: Member?,
 ) {
     Row(
         modifier = Modifier
@@ -139,9 +149,11 @@ fun MainTopBar(
                     .clip(CircleShape)
                     .size(25.dp)
                     .clickable { },
-                model = "https://img.danawa.com/prod_img/500000/207/533/img/18533207_1.jpg?_v=20221226163359",
+                model = memberInfo?.imgUrl ?: "",
                 contentDescription = stringResource(id = R.string.description_img_profile),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
+                loading = placeholder(R.drawable.account),
+                failure = placeholder(R.drawable.account)
             )
         }
     }
@@ -154,6 +166,8 @@ fun MainBody(
     navigateToRecipeList: () -> Unit,
     navigateToRecipeChat: () -> Unit,
     navigateToRecipeDetail: () -> Unit,
+    memberInfo: Member?,
+    recommendRecipeList: List<RecipeList>
 ) {
     Column(
         modifier = modifier
@@ -161,11 +175,13 @@ fun MainBody(
         verticalArrangement = Arrangement.spacedBy(30.dp)
     ) {
         MainHealthColumn(
-            navigateToUserProfile = navigateToUserProfile
+            navigateToUserProfile = navigateToUserProfile,
+            memberInfo = memberInfo
         )
 
         MainRecipeRecommendColumn(
-            navigateToRecipeDetail = navigateToRecipeDetail
+            navigateToRecipeDetail = navigateToRecipeDetail,
+            recommendRecipeList = recommendRecipeList
         )
 
         MainRecipeBtnRow(
@@ -179,6 +195,7 @@ fun MainBody(
 fun MainHealthColumn(
     modifier: Modifier = Modifier,
     navigateToUserProfile: () -> Unit,
+    memberInfo: Member?
 ) {
     Column(
         modifier = modifier
@@ -191,7 +208,7 @@ fun MainHealthColumn(
             verticalAlignment = Alignment.CenterVertically
         ) {
             UserProfileColumnText(
-                text = stringResource(id = R.string.text_health_title, "김싸피")
+                text = stringResource(id = R.string.text_health_title, memberInfo?.name ?: "닉네임")
             )
 
             Icon(
@@ -204,7 +221,9 @@ fun MainHealthColumn(
             )
         }
 
-        HealthCard()
+        HealthCard(
+            memberInfo = memberInfo
+        )
     }
 }
 
@@ -212,6 +231,7 @@ fun MainHealthColumn(
 fun MainRecipeRecommendColumn(
     modifier: Modifier = Modifier,
     navigateToRecipeDetail: () -> Unit,
+    recommendRecipeList: List<RecipeList>
 ) {
     Column(
         modifier = modifier,
@@ -224,7 +244,8 @@ fun MainRecipeRecommendColumn(
         )
 
         MainRecipeRecommendPager(
-            navigateToRecipeDetail = navigateToRecipeDetail
+            navigateToRecipeDetail = navigateToRecipeDetail,
+            recommendRecipeList = recommendRecipeList
         )
     }
 }
@@ -234,27 +255,9 @@ fun MainRecipeRecommendColumn(
 fun MainRecipeRecommendPager(
     modifier: Modifier = Modifier,
     navigateToRecipeDetail: () -> Unit,
+    recommendRecipeList: List<RecipeList>
 ) {
-    // TODO. 실제 리스트로 변경 필요
-    val list = listOf(
-        MainData(
-            "https://flexible.img.hani.co.kr/flexible/normal/640/427/imgdb/original/2023/0306/20230306502777.jpg",
-            "스트레스가 높으신 날\n자장면 어떠세요?"
-        ),
-        MainData(
-            "https://i.namu.wiki/i/upNZ7cYsFsAfU0KcguO6OHMK68xC-Bj8EXxdCti61Jhjx10UCBgdK5bZCEx41-aAWcjWZ5JMKFUSaUGLC1tqWg.webp",
-            "스트레스가 높으신 날\n" +
-                    "짬뽕 어떠세요?"
-        ),
-        MainData(
-            "https://i.namu.wiki/i/NSZu9w4DRwEPOCgPSzvs4sAZlxfMBoxZLCZQgM_O4wRH8jN0guRfBiLURu-Tno5p-Q2aw5e5gy9gLJsnYKlq8Q.webp",
-            "스트레스가 높으신 날\n" +
-                    "탕수육 어떠세요?"
-        ),
-    )
-
-    val pagerState = rememberPagerState(pageCount = { list.size })
-    val coroutineScope = rememberCoroutineScope()
+    val pagerState = rememberPagerState(pageCount = { recommendRecipeList.size })
 
     Column(
         modifier = modifier,
@@ -266,7 +269,7 @@ fun MainRecipeRecommendPager(
             pageSpacing = 20.dp
         ) { page ->
             MainRecipeRecommendCard(
-                item = list[page],
+                item = recommendRecipeList[page],
                 navigateToRecipeDetail = navigateToRecipeDetail
             )
         }
@@ -300,7 +303,7 @@ fun MainRecipeRecommendPager(
 @Composable
 fun MainRecipeRecommendCard(
     modifier: Modifier = Modifier,
-    item: MainData,
+    item: RecipeList,
     navigateToRecipeDetail: () -> Unit,
 ) {
     Card(
@@ -322,7 +325,9 @@ fun MainRecipeRecommendCard(
                 model = item.imgUrl,
                 contentDescription = stringResource(id = R.string.description_recipe_img),
                 contentScale = ContentScale.Crop,
-                colorFilter = ColorFilter.tint(Color.Black.copy(alpha = 0.2f), BlendMode.Overlay)
+                colorFilter = ColorFilter.tint(Color.Black.copy(alpha = 0.2f), BlendMode.Overlay),
+                loading = placeholder(R.drawable.close),
+                failure = placeholder(R.drawable.close)
             )
 
             Row(
@@ -332,7 +337,7 @@ fun MainRecipeRecommendCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = item.desc,
+                    text = item.recommendDesc,
                     style = Typography.bodyMedium
                 )
 

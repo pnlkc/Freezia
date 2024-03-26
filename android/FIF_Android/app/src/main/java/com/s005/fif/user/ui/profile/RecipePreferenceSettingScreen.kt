@@ -42,13 +42,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.s005.fif.R
 import com.s005.fif.ui.theme.Typography
+import com.s005.fif.user.ui.UserViewModel
 import com.s005.fif.user.ui.onboarding.UserOnboardingBtn
 
 @Composable
 fun RecipePreferenceSettingScreen(
     modifier: Modifier = Modifier,
+    userViewModel: UserViewModel = hiltViewModel(),
     navigateToUserProfile: () -> Unit,
     navigateUp: () -> Unit
 ) {
@@ -59,7 +62,8 @@ fun RecipePreferenceSettingScreen(
             .background(MaterialTheme.colorScheme.background)
     ) {
         UserProfileTopBar(
-            navigateUp = navigateUp
+            navigateUp = navigateUp,
+            memberInfo = userViewModel.memberInfo
         )
 
         RecipePreferenceSettingBody()

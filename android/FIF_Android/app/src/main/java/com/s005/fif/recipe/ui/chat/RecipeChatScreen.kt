@@ -45,7 +45,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.s005.fif.R
 import com.s005.fif.ui.theme.Typography
-import com.s005.fif.user.ui.recipe_history.ui.RecipeHistoryData
+import com.s005.fif.user.dto.RecipeItem
 import com.s005.fif.user.ui.recipe_history.ui.RecipeHistoryLazyVerticalGridItem
 import com.s005.fif.utils.ScreenSizeUtil
 import com.s005.fif.utils.ScreenSizeUtil.toDpSize
@@ -268,7 +268,9 @@ fun GPTChat(
             )
         }
 
-        GPTRecipeLazyRow()
+        GPTRecipeLazyRow(
+            list = listOf()
+        )
 
         GPTRecommendPromptLazyColumn()
     }
@@ -277,18 +279,7 @@ fun GPTChat(
 @Composable
 fun GPTRecipeLazyRow(
     modifier: Modifier = Modifier,
-    list: List<RecipeHistoryData> = listOf(
-        RecipeHistoryData(30, "자장면", "https://flexible.img.hani.co.kr/flexible/normal/640/427/imgdb/original/2023/0306/20230306502777.jpg"),
-        RecipeHistoryData(35, "짬뽕", "https://i.namu.wiki/i/upNZ7cYsFsAfU0KcguO6OHMK68xC-Bj8EXxdCti61Jhjx10UCBgdK5bZCEx41-aAWcjWZ5JMKFUSaUGLC1tqWg.webp"),
-        RecipeHistoryData(40, "탕수육", "https://i.namu.wiki/i/NSZu9w4DRwEPOCgPSzvs4sAZlxfMBoxZLCZQgM_O4wRH8jN0guRfBiLURu-Tno5p-Q2aw5e5gy9gLJsnYKlq8Q.webp"),
-        RecipeHistoryData(25, "볶음밥", "https://i.namu.wiki/i/LSHO99AHJpGzryDcM1npuUFNwzSUFYxUmXmqnmVZHOuc5iqCkNYRjRli9aX50BZ3cHz4gtPTqxldJee82Zj0Mg.webp"),
-        RecipeHistoryData(50, "라면", "https://img1.daumcdn.net/thumb/R658x0.q70/?fname=https://t1.daumcdn.net/news/202310/20/dailylife/20231020130002135gmiu.jpg"),
-        RecipeHistoryData(50, "족발", "https://i.namu.wiki/i/I63sEiy-8vUXVhV-I0IZiS9ntT0INuKXgBYAE3QqUvOlToSoEqSgpvEbUmxsFTXtoBRN4WJolyAFEAlDdeZFhQ.webp"),
-        RecipeHistoryData(50, "마라탕", "https://i.namu.wiki/i/qFWfOHBd0mx7NmNquwtaSbUjnPumXpk5oi1jxNKpWUsv_eGJe44xm9AePkbhQ6hIxTjMtroFaOFPbhBy0MSbNQ.webp"),
-        RecipeHistoryData(50, "순대볶음", "https://cdn.mkhealth.co.kr/news/photo/202008/img_MKH200814003_0.jpg"),
-        RecipeHistoryData(50, "떡볶이", "https://i.namu.wiki/i/A5AIHovo1xwuEjs7V8-aKpZCSWY2gN3mZEPR9fymaez_J7ufmI9B7YyDBu6kZy9TC9VWJatXVJZbDjcYLO2S8Q.webp"),
-        RecipeHistoryData(50, "해물찜", "https://recipe1.ezmember.co.kr/cache/recipe/2016/12/16/99d6cb0cb6c434b562217f407623c8491.jpg"),
-    )
+    list: List<RecipeItem>
 ) {
 
     LazyRow(

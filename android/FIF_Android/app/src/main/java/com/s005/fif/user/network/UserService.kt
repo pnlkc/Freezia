@@ -5,6 +5,7 @@ import com.s005.fif.user.dto.AccessTokenResponse
 import com.s005.fif.user.dto.MemberInfoResponse
 import com.s005.fif.user.dto.MemberSelectRequest
 import com.s005.fif.user.dto.OnboardingRequest
+import com.s005.fif.user.dto.RecipeHistoryListResponse
 import com.s005.fif.user.dto.UserListResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -30,4 +31,10 @@ interface UserService {
     suspend fun sendOnboarding(
         @Body onboardingRequest: OnboardingRequest
     ) : Response<DefaultResponse>
+
+    @GET("recipes/history/save")
+    suspend fun getSavedRecipeList() : Response<RecipeHistoryListResponse>
+
+    @GET("recipes/history/complete")
+    suspend fun getCompletedRecipeList() : Response<RecipeHistoryListResponse>
 }

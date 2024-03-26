@@ -102,4 +102,8 @@ object IngredientListData {
         IngredientItemData(90,"소금", "https://img.freepik.com/free-photo/spoon-heap-salt-table_144627-11035.jpg?t=st=1710404899~exp=1710408499~hmac=f9181190bf34862cbfdabaf4d79d8b9291a86e31b91943d4448c135bf026bbc3&w=996", true, 365),
         IngredientItemData(91,"토마토", "https://cdn.pixabay.com/photo/2021/10/14/03/19/tomato-6707992_1280.png", false, 7),
     )
+
+    val map = list.associate { it.ingredientId to it.name }
+
+    val nameMap = list.associate { it.name to it.imgUrl }
 }

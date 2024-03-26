@@ -5,12 +5,10 @@ import com.s005.fif.user.dto.AccessTokenResponse
 import com.s005.fif.user.dto.MemberInfoResponse
 import com.s005.fif.user.dto.MemberSelectRequest
 import com.s005.fif.user.dto.OnboardingRequest
+import com.s005.fif.user.dto.RecipeHistoryListResponse
 import com.s005.fif.user.dto.UserListResponse
 import com.s005.fif.user.network.UserService
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
 import javax.inject.Inject
 
 interface UserRepository {
@@ -27,6 +25,10 @@ interface UserRepository {
     suspend fun sendOnboarding(
         onboardingRequest: OnboardingRequest
     ) : Response<DefaultResponse>
+
+    suspend fun getSavedRecipeList() : Response<RecipeHistoryListResponse>
+
+    suspend fun getCompletedRecipeList() : Response<RecipeHistoryListResponse>
 }
 
 class DefaultUserRepository @Inject constructor(
@@ -46,5 +48,13 @@ class DefaultUserRepository @Inject constructor(
 
     override suspend fun sendOnboarding(onboardingRequest: OnboardingRequest): Response<DefaultResponse> {
         return userService.sendOnboarding(onboardingRequest)
+    }
+
+    override suspend fun getSavedRecipeList(): Response<RecipeHistoryListResponse> {
+        return userService.getSavedRecipeList()
+    }
+
+    override suspend fun getCompletedRecipeList(): Response<RecipeHistoryListResponse> {
+        return userService.getCompletedRecipeList()
     }
 }

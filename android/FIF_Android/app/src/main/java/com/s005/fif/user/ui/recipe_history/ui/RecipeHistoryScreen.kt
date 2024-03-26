@@ -43,26 +43,29 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.s005.fif.R
 import com.s005.fif.ui.theme.Typography
+import com.s005.fif.user.dto.RecipeItem
+import com.s005.fif.user.ui.UserViewModel
 import com.s005.fif.user.ui.profile.UserProfileTopBar
 import com.s005.fif.user.ui.recipe_history.ui.RecipeHistoryType.CompletedFood
-import com.s005.fif.user.ui.recipe_history.ui.RecipeHistoryType.SavedHistory
+import com.s005.fif.user.ui.recipe_history.ui.RecipeHistoryType.SavedRecipe
 import com.s005.fif.utils.ScreenSizeUtil
 import kotlinx.coroutines.launch
 
 
 enum class RecipeHistoryType {
-    SavedHistory, CompletedFood
+    SavedRecipe, CompletedFood
 }
-
-data class RecipeHistoryData(val time: Int, val name: String, val imgUrl: String)
 
 @Composable
 fun RecipeHistoryScreen(
     modifier: Modifier = Modifier,
+    userViewModel: UserViewModel = hiltViewModel(),
+    recipeHistoryViewModel: RecipeHistoryViewModel = hiltViewModel(),
     navigateUp: () -> Unit,
     mode: RecipeHistoryType
 ) {
@@ -73,11 +76,14 @@ fun RecipeHistoryScreen(
             .background(MaterialTheme.colorScheme.background)
     ) {
         UserProfileTopBar(
-            navigateUp = navigateUp
+            navigateUp = navigateUp,
+            memberInfo = userViewModel.memberInfo
         )
 
         SavedRecipeBody(
             mode = mode,
+            savedRecipeList = recipeHistoryViewModel.savedRecipeList,
+            completedRecipeList = recipeHistoryViewModel.completedRecipeList
         )
     }
 }
@@ -86,44 +92,21 @@ fun RecipeHistoryScreen(
 @Composable
 fun SavedRecipeBody(
     modifier: Modifier = Modifier,
-    mode: RecipeHistoryType
+    mode: RecipeHistoryType,
+    savedRecipeList: List<RecipeItem>,
+    completedRecipeList: List<RecipeItem>
 ) {
     var selected by remember { mutableStateOf(mode) }
     val pagerState = rememberPagerState(
         pageCount = { 2 },
-        initialPage = if (mode == SavedHistory) 0 else 1
+        initialPage = if (mode == SavedRecipe) 0 else 1
     )
 
     val coroutineScope = rememberCoroutineScope()
 
-    val list1 = listOf(
-        RecipeHistoryData(30, "자장면", "https://flexible.img.hani.co.kr/flexible/normal/640/427/imgdb/original/2023/0306/20230306502777.jpg"),
-        RecipeHistoryData(35, "짬뽕", "https://i.namu.wiki/i/upNZ7cYsFsAfU0KcguO6OHMK68xC-Bj8EXxdCti61Jhjx10UCBgdK5bZCEx41-aAWcjWZ5JMKFUSaUGLC1tqWg.webp"),
-        RecipeHistoryData(40, "탕수육", "https://i.namu.wiki/i/NSZu9w4DRwEPOCgPSzvs4sAZlxfMBoxZLCZQgM_O4wRH8jN0guRfBiLURu-Tno5p-Q2aw5e5gy9gLJsnYKlq8Q.webp"),
-        RecipeHistoryData(25, "볶음밥", "https://i.namu.wiki/i/LSHO99AHJpGzryDcM1npuUFNwzSUFYxUmXmqnmVZHOuc5iqCkNYRjRli9aX50BZ3cHz4gtPTqxldJee82Zj0Mg.webp"),
-        RecipeHistoryData(50, "라면", "https://img1.daumcdn.net/thumb/R658x0.q70/?fname=https://t1.daumcdn.net/news/202310/20/dailylife/20231020130002135gmiu.jpg"),
-        RecipeHistoryData(50, "족발", "https://i.namu.wiki/i/I63sEiy-8vUXVhV-I0IZiS9ntT0INuKXgBYAE3QqUvOlToSoEqSgpvEbUmxsFTXtoBRN4WJolyAFEAlDdeZFhQ.webp"),
-        RecipeHistoryData(50, "마라탕", "https://i.namu.wiki/i/qFWfOHBd0mx7NmNquwtaSbUjnPumXpk5oi1jxNKpWUsv_eGJe44xm9AePkbhQ6hIxTjMtroFaOFPbhBy0MSbNQ.webp"),
-        RecipeHistoryData(50, "순대볶음", "https://cdn.mkhealth.co.kr/news/photo/202008/img_MKH200814003_0.jpg"),
-        RecipeHistoryData(50, "떡볶이", "https://i.namu.wiki/i/A5AIHovo1xwuEjs7V8-aKpZCSWY2gN3mZEPR9fymaez_J7ufmI9B7YyDBu6kZy9TC9VWJatXVJZbDjcYLO2S8Q.webp"),
-        RecipeHistoryData(50, "해물찜", "https://recipe1.ezmember.co.kr/cache/recipe/2016/12/16/99d6cb0cb6c434b562217f407623c8491.jpg"),
-    )
-    val list2 = listOf(
-        RecipeHistoryData(30, "자장면", "https://flexible.img.hani.co.kr/flexible/normal/640/427/imgdb/original/2023/0306/20230306502777.jpg"),
-        RecipeHistoryData(35, "짬뽕", "https://i.namu.wiki/i/upNZ7cYsFsAfU0KcguO6OHMK68xC-Bj8EXxdCti61Jhjx10UCBgdK5bZCEx41-aAWcjWZ5JMKFUSaUGLC1tqWg.webp"),
-        RecipeHistoryData(40, "탕수육", "https://i.namu.wiki/i/NSZu9w4DRwEPOCgPSzvs4sAZlxfMBoxZLCZQgM_O4wRH8jN0guRfBiLURu-Tno5p-Q2aw5e5gy9gLJsnYKlq8Q.webp"),
-        RecipeHistoryData(25, "볶음밥", "https://i.namu.wiki/i/LSHO99AHJpGzryDcM1npuUFNwzSUFYxUmXmqnmVZHOuc5iqCkNYRjRli9aX50BZ3cHz4gtPTqxldJee82Zj0Mg.webp"),
-        RecipeHistoryData(50, "라면", "https://img1.daumcdn.net/thumb/R658x0.q70/?fname=https://t1.daumcdn.net/news/202310/20/dailylife/20231020130002135gmiu.jpg"),
-        RecipeHistoryData(50, "족발", "https://i.namu.wiki/i/I63sEiy-8vUXVhV-I0IZiS9ntT0INuKXgBYAE3QqUvOlToSoEqSgpvEbUmxsFTXtoBRN4WJolyAFEAlDdeZFhQ.webp"),
-        RecipeHistoryData(50, "마라탕", "https://i.namu.wiki/i/qFWfOHBd0mx7NmNquwtaSbUjnPumXpk5oi1jxNKpWUsv_eGJe44xm9AePkbhQ6hIxTjMtroFaOFPbhBy0MSbNQ.webp"),
-        RecipeHistoryData(50, "순대볶음", "https://cdn.mkhealth.co.kr/news/photo/202008/img_MKH200814003_0.jpg"),
-        RecipeHistoryData(50, "떡볶이", "https://i.namu.wiki/i/A5AIHovo1xwuEjs7V8-aKpZCSWY2gN3mZEPR9fymaez_J7ufmI9B7YyDBu6kZy9TC9VWJatXVJZbDjcYLO2S8Q.webp"),
-        RecipeHistoryData(50, "해물찜", "https://recipe1.ezmember.co.kr/cache/recipe/2016/12/16/99d6cb0cb6c434b562217f407623c8491.jpg"),
-    ).reversed()
-
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }.collect { page ->
-            selected = if (page == 0) SavedHistory else CompletedFood
+            selected = if (page == 0) SavedRecipe else CompletedFood
         }
     }
 
@@ -135,7 +118,7 @@ fun SavedRecipeBody(
         SavedRecipeTitleRow(
             selected = selected,
             savedRecipeClicked = {
-                selected = SavedHistory
+                selected = SavedRecipe
 
                 coroutineScope.launch {
                     pagerState.animateScrollToPage(0)
@@ -147,7 +130,9 @@ fun SavedRecipeBody(
                 coroutineScope.launch {
                     pagerState.animateScrollToPage(1)
                 }
-            }
+            },
+            savedRecipeListSize = savedRecipeList.size,
+            completedRecipeListSize = completedRecipeList.size
         )
 
         HorizontalPager(
@@ -161,13 +146,13 @@ fun SavedRecipeBody(
                 0 -> {
                     // TODO. 실제 리스트로 변경 필요
                     RecipeHistoryPagerItem(
-                        list = list1
+                        list = savedRecipeList
                     )
                 }
                 1 -> {
                     // TODO. 실제 리스트로 변경 필요
                     RecipeHistoryPagerItem(
-                        list = list2
+                        list = completedRecipeList
                     )
                 }
             }
@@ -180,7 +165,9 @@ fun SavedRecipeTitleRow(
     modifier: Modifier = Modifier,
     selected: RecipeHistoryType,
     savedRecipeClicked: () -> Unit,
-    completedFoodClicked: () -> Unit
+    completedFoodClicked: () -> Unit,
+    savedRecipeListSize: Int,
+    completedRecipeListSize: Int,
 ) {
     Row(
         modifier = modifier
@@ -191,10 +178,10 @@ fun SavedRecipeTitleRow(
             modifier = Modifier
                 .weight(1f),
             icon = painterResource(id = R.drawable.bookmark_fill),
-            text = stringResource(id = R.string.text_saved_recipe) + " (10)",
-            iconColor = if (selected == SavedHistory) Color.White else colorScheme.primary,
-            textColor = if (selected == SavedHistory) Color.White else Color.Black,
-            backgroundColor = if (selected == SavedHistory) colorScheme.primary else Color.White,
+            text = stringResource(id = R.string.text_saved_recipe) + " (${savedRecipeListSize})",
+            iconColor = if (selected == SavedRecipe) Color.White else colorScheme.primary,
+            textColor = if (selected == SavedRecipe) Color.White else Color.Black,
+            backgroundColor = if (selected == SavedRecipe) colorScheme.primary else Color.White,
             onClick = savedRecipeClicked
         )
 
@@ -202,10 +189,10 @@ fun SavedRecipeTitleRow(
             modifier = Modifier
                 .weight(1f),
             icon = painterResource(id = R.drawable.complete),
-            text = stringResource(id = R.string.text_completed_food)+ " (10)",
-            iconColor = if (selected == SavedHistory) colorScheme.primary else Color.White,
-            textColor = if (selected == SavedHistory) Color.Black else Color.White,
-            backgroundColor = if (selected == SavedHistory) Color.White else colorScheme.primary,
+            text = stringResource(id = R.string.text_completed_food)+ " (${completedRecipeListSize})",
+            iconColor = if (selected == SavedRecipe) colorScheme.primary else Color.White,
+            textColor = if (selected == SavedRecipe) Color.Black else Color.White,
+            backgroundColor = if (selected == SavedRecipe) Color.White else colorScheme.primary,
             onClick = completedFoodClicked
         )
     }
@@ -253,18 +240,7 @@ fun SavedRecipeTitleItem(
 @Composable
 fun RecipeHistoryPagerItem(
     modifier: Modifier = Modifier,
-    list: List<RecipeHistoryData> = listOf(
-        RecipeHistoryData(30, "자장면", "https://flexible.img.hani.co.kr/flexible/normal/640/427/imgdb/original/2023/0306/20230306502777.jpg"),
-        RecipeHistoryData(35, "짬뽕", "https://i.namu.wiki/i/upNZ7cYsFsAfU0KcguO6OHMK68xC-Bj8EXxdCti61Jhjx10UCBgdK5bZCEx41-aAWcjWZ5JMKFUSaUGLC1tqWg.webp"),
-        RecipeHistoryData(40, "탕수육", "https://i.namu.wiki/i/NSZu9w4DRwEPOCgPSzvs4sAZlxfMBoxZLCZQgM_O4wRH8jN0guRfBiLURu-Tno5p-Q2aw5e5gy9gLJsnYKlq8Q.webp"),
-        RecipeHistoryData(25, "볶음밥", "https://i.namu.wiki/i/LSHO99AHJpGzryDcM1npuUFNwzSUFYxUmXmqnmVZHOuc5iqCkNYRjRli9aX50BZ3cHz4gtPTqxldJee82Zj0Mg.webp"),
-        RecipeHistoryData(50, "라면", "https://img1.daumcdn.net/thumb/R658x0.q70/?fname=https://t1.daumcdn.net/news/202310/20/dailylife/20231020130002135gmiu.jpg"),
-        RecipeHistoryData(50, "족발", "https://i.namu.wiki/i/I63sEiy-8vUXVhV-I0IZiS9ntT0INuKXgBYAE3QqUvOlToSoEqSgpvEbUmxsFTXtoBRN4WJolyAFEAlDdeZFhQ.webp"),
-        RecipeHistoryData(50, "마라탕", "https://i.namu.wiki/i/qFWfOHBd0mx7NmNquwtaSbUjnPumXpk5oi1jxNKpWUsv_eGJe44xm9AePkbhQ6hIxTjMtroFaOFPbhBy0MSbNQ.webp"),
-        RecipeHistoryData(50, "순대볶음", "https://cdn.mkhealth.co.kr/news/photo/202008/img_MKH200814003_0.jpg"),
-        RecipeHistoryData(50, "떡볶이", "https://i.namu.wiki/i/A5AIHovo1xwuEjs7V8-aKpZCSWY2gN3mZEPR9fymaez_J7ufmI9B7YyDBu6kZy9TC9VWJatXVJZbDjcYLO2S8Q.webp"),
-        RecipeHistoryData(50, "해물찜", "https://recipe1.ezmember.co.kr/cache/recipe/2016/12/16/99d6cb0cb6c434b562217f407623c8491.jpg"),
-    )
+    list: List<RecipeItem>
 ) {
     LazyVerticalGrid(
         modifier = modifier
@@ -292,7 +268,7 @@ fun RecipeHistoryPagerItem(
 @Composable
 fun RecipeHistoryLazyVerticalGridItem(
     modifier: Modifier = Modifier,
-    item: RecipeHistoryData,
+    item: RecipeItem,
     onClick: () -> Unit
 ) {
     Box(
@@ -335,7 +311,7 @@ fun RecipeHistoryLazyVerticalGridItem(
                 )
 
                 Text(
-                    text = "${item.time} min",
+                    text = "${item.cookTime / 60} min",
                     style = Typography.bodySmall,
                     color = Color.White,
                     fontWeight = FontWeight.Bold

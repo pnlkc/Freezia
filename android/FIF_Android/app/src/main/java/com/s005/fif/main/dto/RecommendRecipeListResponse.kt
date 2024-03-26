@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class RecommendRecipeListResponse(
     val result: String,
-    val recipes: List<RecipeListResponse>
+    val recipes: List<RecommendRecipeListItemResponse>
 )

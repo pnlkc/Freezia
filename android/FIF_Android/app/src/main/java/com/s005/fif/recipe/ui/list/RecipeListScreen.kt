@@ -3,6 +3,7 @@ package com.s005.fif.recipe.ui.list
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -45,8 +46,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.s005.fif.R
+import com.s005.fif.common.data.LikeFoodCheckableItem
+import com.s005.fif.recipe.dto.RecipeListItem
+import com.s005.fif.recipe.ui.RecipeViewModel
 import com.s005.fif.ui.theme.Typography
-import com.s005.fif.user.dto.RecipeItem
 import com.s005.fif.user.ui.UserViewModel
 import com.s005.fif.user.ui.profile.UserProfileTopBar
 import com.s005.fif.user.ui.recipe_history.ui.RecipeHistoryLazyVerticalGridItem
@@ -57,6 +60,7 @@ import kotlinx.coroutines.delay
 fun RecipeListScreen(
     modifier: Modifier = Modifier,
     userViewModel: UserViewModel = hiltViewModel(),
+    recipeViewModel: RecipeViewModel = hiltViewModel(),
     navigateUp: () -> Unit,
     navigateToRecipeChat: () -> Unit,
     navigateToRecipeDetail: () -> Unit,
@@ -75,7 +79,12 @@ fun RecipeListScreen(
 
         RecipeListBody(
             navigateToRecipeChat = navigateToRecipeChat,
-            navigateToRecipeDetail = navigateToRecipeDetail
+            navigateToRecipeDetail = navigateToRecipeDetail,
+            recipeListItem = recipeViewModel.recipeListItem.toList(),
+            recipeTypeList = recipeViewModel.recipeTypeList,
+            onItemClicked = { name, isChecked ->
+                recipeViewModel.checkRecipeType(name, isChecked)
+            }
         )
     }
 }
@@ -84,7 +93,10 @@ fun RecipeListScreen(
 fun RecipeListBody(
     modifier: Modifier = Modifier,
     navigateToRecipeChat: () -> Unit,
-    navigateToRecipeDetail: () -> Unit
+    navigateToRecipeDetail: () -> Unit,
+    recipeListItem: List<RecipeListItem>,
+    recipeTypeList: List<LikeFoodCheckableItem>,
+    onItemClicked: (String, Boolean) -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -92,12 +104,16 @@ fun RecipeListBody(
             .padding(horizontal = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        RecipeListTagList()
+        RecipeListTagList(
+            recipeTypeList = recipeTypeList,
+            onItemClicked = onItemClicked
+        )
 
         RecipeListLazyGrid(
             navigateToRecipeChat = navigateToRecipeChat,
             navigateToRecipeDetail = navigateToRecipeDetail,
-            list = listOf()
+            list = recipeListItem,
+            recipeTypeList = recipeTypeList,
         )
     }
 }
@@ -106,20 +122,9 @@ fun RecipeListBody(
 @Composable
 fun RecipeListTagList(
     modifier: Modifier = Modifier,
+    recipeTypeList: List<LikeFoodCheckableItem>,
+    onItemClicked: (String, Boolean) -> Unit,
 ) {
-    val list = listOf(
-        "한식",
-        "중식",
-        "양식",
-        "일식",
-        "밑반찬",
-        "면 요리",
-        "국물 요리",
-        "볶음 요리",
-        "찜 요리",
-        "유통기한 임박"
-    )
-
     FlowRow(
         modifier = modifier
             .fillMaxWidth()
@@ -127,9 +132,10 @@ fun RecipeListTagList(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        list.forEach { item ->
+        recipeTypeList.forEach { item ->
             RecipeListTagItem(
-                item = item
+                item = item,
+                onItemClicked = onItemClicked
             )
         }
     }
@@ -138,31 +144,30 @@ fun RecipeListTagList(
 @Composable
 fun RecipeListTagItem(
     modifier: Modifier = Modifier,
-    item: String,
+    item: LikeFoodCheckableItem,
+    onItemClicked: (String, Boolean) -> Unit,
 ) {
-    var isSelected by remember {
-        mutableStateOf(false)
-    }
-
     Text(
         modifier = modifier
             .clip(RoundedCornerShape(50.dp))
-            .clickable { isSelected = !isSelected }
-            .background(if (isSelected) MaterialTheme.colorScheme.primary else Color.White)
+            .clickable { onItemClicked(item.name, !item.isChecked) }
+            .background(if (item.isChecked) MaterialTheme.colorScheme.primary else Color.White)
             .padding(vertical = 5.dp, horizontal = 10.dp),
-        text = item,
+        text = item.name,
         style = Typography.bodyMedium,
-        color = if (isSelected) MaterialTheme.colorScheme.onPrimary else Color.Black,
+        color = if (item.isChecked) MaterialTheme.colorScheme.onPrimary else Color.Black,
         maxLines = 1
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun RecipeListLazyGrid(
     modifier: Modifier = Modifier,
-    list: List<RecipeItem>,
+    list: List<RecipeListItem>,
     navigateToRecipeChat: () -> Unit,
-    navigateToRecipeDetail: () -> Unit
+    navigateToRecipeDetail: () -> Unit,
+    recipeTypeList: List<LikeFoodCheckableItem>,
 ) {
     var isShow by remember {
         mutableStateOf(false)
@@ -190,12 +195,27 @@ fun RecipeListLazyGrid(
         }
 
         itemsIndexed(
-            items = list,
+            items = if (recipeTypeList.count { it.isChecked } == 0) {
+                list
+            } else {
+                val filterList = recipeTypeList.filter { it.isChecked }
+                list.filter { recipeListItem ->
+                    var isContain = false
+
+                    recipeListItem.recipeTypes.split(",").forEach { type ->
+                        if (filterList.count { it.name ==  type} > 0) isContain = true
+                    }
+
+                    isContain
+                }
+            },
             key = { _, item ->
                 item.imgUrl
             }
         ) { _, item ->
             RecipeHistoryLazyVerticalGridItem(
+                modifier = Modifier
+                    .animateItemPlacement(),
                 item = item,
                 onClick = { navigateToRecipeDetail() }
             )
@@ -208,7 +228,7 @@ fun RecipeListLazyGrid(
 fun RecipeListRecipeGPTBtn(
     modifier: Modifier = Modifier,
     isShow: Boolean,
-    navigateToRecipeChat: () -> Unit
+    navigateToRecipeChat: () -> Unit,
 ) {
     Box(
         modifier = modifier

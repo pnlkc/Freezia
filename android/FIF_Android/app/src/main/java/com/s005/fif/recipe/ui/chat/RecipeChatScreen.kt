@@ -45,7 +45,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.s005.fif.R
 import com.s005.fif.ui.theme.Typography
-import com.s005.fif.user.dto.RecipeItem
+import com.s005.fif.user.dto.RecipeHistoryItem
 import com.s005.fif.user.ui.recipe_history.ui.RecipeHistoryLazyVerticalGridItem
 import com.s005.fif.utils.ScreenSizeUtil
 import com.s005.fif.utils.ScreenSizeUtil.toDpSize
@@ -279,7 +279,7 @@ fun GPTChat(
 @Composable
 fun GPTRecipeLazyRow(
     modifier: Modifier = Modifier,
-    list: List<RecipeItem>
+    list: List<RecipeHistoryItem>
 ) {
 
     LazyRow(

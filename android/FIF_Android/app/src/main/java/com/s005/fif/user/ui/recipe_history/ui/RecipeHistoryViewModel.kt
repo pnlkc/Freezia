@@ -6,11 +6,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.s005.fif.common.dto.DefaultResponse
 import com.s005.fif.common.dto.ErrorResponse
 import com.s005.fif.user.data.UserRepository
-import com.s005.fif.user.dto.RecipeItem
-import com.s005.fif.user.dto.toRecipeItem
+import com.s005.fif.user.dto.RecipeHistoryItem
+import com.s005.fif.user.dto.toRecipeHistoryItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
@@ -20,8 +19,8 @@ import javax.inject.Inject
 class RecipeHistoryViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
-    var savedRecipeList by mutableStateOf(listOf<RecipeItem>())
-    var completedRecipeList by mutableStateOf(listOf<RecipeItem>())
+    var savedRecipeList by mutableStateOf(listOf<RecipeHistoryItem>())
+    var completedRecipeList by mutableStateOf(listOf<RecipeHistoryItem>())
 
     init {
         viewModelScope.launch {
@@ -34,7 +33,7 @@ class RecipeHistoryViewModel @Inject constructor(
         val responseResult = userRepository.getSavedRecipeList()
 
         if (responseResult.isSuccessful) {
-            savedRecipeList = responseResult.body()!!.recipes.map { it.toRecipeItem() }
+            savedRecipeList = responseResult.body()!!.recipes.map { it.toRecipeHistoryItem() }
 
             Log.d("로그", "RecipeHistoryViewModel - getSavedRecipeList() 호출됨 / 응답 성공 : ${savedRecipeList}")
         } else {
@@ -50,7 +49,7 @@ class RecipeHistoryViewModel @Inject constructor(
         val responseResult = userRepository.getCompletedRecipeList()
 
         if (responseResult.isSuccessful) {
-            completedRecipeList = responseResult.body()!!.recipes.map { it.toRecipeItem() }
+            completedRecipeList = responseResult.body()!!.recipes.map { it.toRecipeHistoryItem() }
 
             Log.d("로그", "RecipeHistoryViewModel - getCompletedRecipeList() 호출됨 / 응답 성공 : ${completedRecipeList}")
         } else {

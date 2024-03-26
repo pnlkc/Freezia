@@ -190,7 +190,7 @@ fun UserProfileHealthColumn(
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         UserProfileColumnText(
-            text = stringResource(id = R.string.text_health_title, "김싸피")
+            text = stringResource(id = R.string.text_health_title, memberInfo?.name ?: "닉네임")
         )
 
         HealthCard(
@@ -499,14 +499,15 @@ fun UserProfileListColumnCard(
     onClicked: () -> Unit
 ) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClicked() },
+        modifier = modifier
+            .fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
     ) {
         Row(
             modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onClicked() }
                 .padding(15.dp),
             verticalAlignment = Alignment.Bottom
         ) {

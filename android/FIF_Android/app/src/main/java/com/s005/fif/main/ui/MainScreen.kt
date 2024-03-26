@@ -28,7 +28,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,7 +46,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.s005.fif.R
-import com.s005.fif.main.dto.RecipeList
+import com.s005.fif.main.dto.RecommendRecipeListItem
 import com.s005.fif.ui.theme.Typography
 import com.s005.fif.user.dto.Member
 import com.s005.fif.user.ui.UserViewModel
@@ -94,7 +93,7 @@ fun MainScreen(
             navigateToRecipeChat = navigateToRecipeChat,
             navigateToRecipeDetail = navigateToRecipeDetail,
             memberInfo = userViewModel.memberInfo,
-            recommendRecipeList = mainViewModel.recommendRecipeList
+            recommendRecipeListItem = mainViewModel.recommendRecipeListItem
         )
     }
 }
@@ -167,7 +166,7 @@ fun MainBody(
     navigateToRecipeChat: () -> Unit,
     navigateToRecipeDetail: () -> Unit,
     memberInfo: Member?,
-    recommendRecipeList: List<RecipeList>
+    recommendRecipeListItem: List<RecommendRecipeListItem>
 ) {
     Column(
         modifier = modifier
@@ -181,7 +180,7 @@ fun MainBody(
 
         MainRecipeRecommendColumn(
             navigateToRecipeDetail = navigateToRecipeDetail,
-            recommendRecipeList = recommendRecipeList
+            recommendRecipeListItem = recommendRecipeListItem
         )
 
         MainRecipeBtnRow(
@@ -231,7 +230,7 @@ fun MainHealthColumn(
 fun MainRecipeRecommendColumn(
     modifier: Modifier = Modifier,
     navigateToRecipeDetail: () -> Unit,
-    recommendRecipeList: List<RecipeList>
+    recommendRecipeListItem: List<RecommendRecipeListItem>
 ) {
     Column(
         modifier = modifier,
@@ -245,7 +244,7 @@ fun MainRecipeRecommendColumn(
 
         MainRecipeRecommendPager(
             navigateToRecipeDetail = navigateToRecipeDetail,
-            recommendRecipeList = recommendRecipeList
+            recommendRecipeListItem = recommendRecipeListItem
         )
     }
 }
@@ -255,9 +254,9 @@ fun MainRecipeRecommendColumn(
 fun MainRecipeRecommendPager(
     modifier: Modifier = Modifier,
     navigateToRecipeDetail: () -> Unit,
-    recommendRecipeList: List<RecipeList>
+    recommendRecipeListItem: List<RecommendRecipeListItem>
 ) {
-    val pagerState = rememberPagerState(pageCount = { recommendRecipeList.size })
+    val pagerState = rememberPagerState(pageCount = { recommendRecipeListItem.size })
 
     Column(
         modifier = modifier,
@@ -269,7 +268,7 @@ fun MainRecipeRecommendPager(
             pageSpacing = 20.dp
         ) { page ->
             MainRecipeRecommendCard(
-                item = recommendRecipeList[page],
+                item = recommendRecipeListItem[page],
                 navigateToRecipeDetail = navigateToRecipeDetail
             )
         }
@@ -303,7 +302,7 @@ fun MainRecipeRecommendPager(
 @Composable
 fun MainRecipeRecommendCard(
     modifier: Modifier = Modifier,
-    item: RecipeList,
+    item: RecommendRecipeListItem,
     navigateToRecipeDetail: () -> Unit,
 ) {
     Card(

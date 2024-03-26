@@ -47,8 +47,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.s005.fif.R
+import com.s005.fif.main.dto.RecommendRecipeListItem
+import com.s005.fif.recipe.dto.RecipeListItem
 import com.s005.fif.ui.theme.Typography
-import com.s005.fif.user.dto.RecipeItem
+import com.s005.fif.user.dto.RecipeHistoryItem
 import com.s005.fif.user.ui.UserViewModel
 import com.s005.fif.user.ui.profile.UserProfileTopBar
 import com.s005.fif.user.ui.recipe_history.ui.RecipeHistoryType.CompletedFood
@@ -93,8 +95,8 @@ fun RecipeHistoryScreen(
 fun SavedRecipeBody(
     modifier: Modifier = Modifier,
     mode: RecipeHistoryType,
-    savedRecipeList: List<RecipeItem>,
-    completedRecipeList: List<RecipeItem>
+    savedRecipeList: List<RecipeHistoryItem>,
+    completedRecipeList: List<RecipeHistoryItem>
 ) {
     var selected by remember { mutableStateOf(mode) }
     val pagerState = rememberPagerState(
@@ -240,7 +242,7 @@ fun SavedRecipeTitleItem(
 @Composable
 fun RecipeHistoryPagerItem(
     modifier: Modifier = Modifier,
-    list: List<RecipeItem>
+    list: List<RecipeHistoryItem>
 ) {
     LazyVerticalGrid(
         modifier = modifier
@@ -268,7 +270,40 @@ fun RecipeHistoryPagerItem(
 @Composable
 fun RecipeHistoryLazyVerticalGridItem(
     modifier: Modifier = Modifier,
-    item: RecipeItem,
+    item: RecipeHistoryItem,
+    onClick: () -> Unit
+) {
+    RecipeHistoryLazyVerticalGridItemBox(
+        modifier = modifier,
+        imgUrl = item.imgUrl,
+        name = item.name,
+        cookTime = item.cookTime,
+        onClick = onClick
+    )
+}
+
+@Composable
+fun RecipeHistoryLazyVerticalGridItem(
+    modifier: Modifier = Modifier,
+    item: RecipeListItem,
+    onClick: () -> Unit
+) {
+    RecipeHistoryLazyVerticalGridItemBox(
+        modifier = modifier,
+        imgUrl = item.imgUrl,
+        name = item.name,
+        cookTime = item.cookTime,
+        onClick = onClick
+    )
+}
+
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun RecipeHistoryLazyVerticalGridItemBox(
+    modifier: Modifier = Modifier,
+    imgUrl: String,
+    name: String,
+    cookTime: Int,
     onClick: () -> Unit
 ) {
     Box(
@@ -281,7 +316,7 @@ fun RecipeHistoryLazyVerticalGridItem(
         GlideImage(
             modifier = Modifier
                 .fillMaxSize(),
-            model = item.imgUrl,
+            model = imgUrl,
             contentDescription = stringResource(id = R.string.description_recipe_img),
             contentScale = ContentScale.Crop,
             colorFilter = ColorFilter.tint(Color.Black.copy(alpha = 0.1f), BlendMode.ColorBurn)
@@ -311,7 +346,7 @@ fun RecipeHistoryLazyVerticalGridItem(
                 )
 
                 Text(
-                    text = "${item.cookTime / 60} min",
+                    text = "$cookTime min",
                     style = Typography.bodySmall,
                     color = Color.White,
                     fontWeight = FontWeight.Bold
@@ -321,7 +356,7 @@ fun RecipeHistoryLazyVerticalGridItem(
             Text(
                 modifier = Modifier
                     .padding(start = 2.dp),
-                text = item.name,
+                text = name,
                 style = Typography.titleSmall,
                 color = Color.White,
                 fontWeight = FontWeight.Bold

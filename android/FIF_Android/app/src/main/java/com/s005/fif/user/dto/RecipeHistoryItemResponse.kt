@@ -3,7 +3,7 @@ package com.s005.fif.user.dto
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class RecipeItemResponse(
+data class RecipeHistoryItemResponse(
     val recipeId: Int,
     val name: String,
     val cookTime: Int,
@@ -11,7 +11,7 @@ data class RecipeItemResponse(
     val saveYn: Boolean
 )
 
-data class RecipeItem(
+data class RecipeHistoryItem(
     val recipeId: Int,
     val name: String,
     val cookTime: Int,
@@ -19,6 +19,6 @@ data class RecipeItem(
     val saveYn: Boolean
 )
 
-fun RecipeItemResponse.toRecipeItem() = RecipeItem(
+fun RecipeHistoryItemResponse.toRecipeHistoryItem() = RecipeHistoryItem(
     recipeId, name, cookTime, imgUrl, saveYn
 )

@@ -5,6 +5,17 @@ data class LikeFoodItemData(
     val foodId: Int,
     val name: String
 )
+
+data class LikeFoodCheckableItem(
+    val foodId: Int,
+    val name: String,
+    var isChecked: Boolean
+)
+
+fun LikeFoodItemData.toLikeFoodCheckableItem() = LikeFoodCheckableItem(
+    foodId, name, false
+)
+
 object LikeFoodListData {
     val list = listOf(
         LikeFoodItemData(1, "한식"),
@@ -17,4 +28,6 @@ object LikeFoodListData {
         LikeFoodItemData(8, "찜요리"),
         LikeFoodItemData(9, "국물요리"),
     )
+
+    val checkList = list.map { it.toLikeFoodCheckableItem() } + LikeFoodCheckableItem(10, "유통기한 임박", false)
 }

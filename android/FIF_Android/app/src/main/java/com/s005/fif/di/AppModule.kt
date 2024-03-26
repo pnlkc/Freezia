@@ -6,6 +6,9 @@ import com.s005.fif.di.LoginUser.memberId
 import com.s005.fif.main.data.DefaultMainRepository
 import com.s005.fif.main.data.MainRepository
 import com.s005.fif.main.network.MainService
+import com.s005.fif.recipe.data.DefaultRecipeRepository
+import com.s005.fif.recipe.data.RecipeRepository
+import com.s005.fif.recipe.network.RecipeService
 import com.s005.fif.shopping_list.data.DefaultShoppingListRepository
 import com.s005.fif.shopping_list.data.ShoppingListRepository
 import com.s005.fif.shopping_list.network.ShoppingListService
@@ -170,6 +173,18 @@ object AppModule {
     @Provides
     fun provideShoppingListRepository(shoppingListService: ShoppingListService): ShoppingListRepository {
         return DefaultShoppingListRepository(shoppingListService)
+    }
+
+    @Singleton
+    @Provides
+    fun provideRecipeService(retrofit: Retrofit): RecipeService {
+        return retrofit.create(RecipeService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideRecipeRepository(recipeService: RecipeService): RecipeRepository {
+        return DefaultRecipeRepository(recipeService)
     }
 
     @Singleton

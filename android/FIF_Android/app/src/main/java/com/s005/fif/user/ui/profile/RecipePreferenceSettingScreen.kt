@@ -44,7 +44,11 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.s005.fif.R
+import com.s005.fif.common.data.DiseaseListData
+import com.s005.fif.common.data.IngredientListData
+import com.s005.fif.recipe.ui.detail.IngredientListItem
 import com.s005.fif.ui.theme.Typography
+import com.s005.fif.user.dto.Member
 import com.s005.fif.user.ui.UserViewModel
 import com.s005.fif.user.ui.onboarding.UserOnboardingBtn
 
@@ -66,13 +70,16 @@ fun RecipePreferenceSettingScreen(
             memberInfo = userViewModel.memberInfo
         )
 
-        RecipePreferenceSettingBody()
+        RecipePreferenceSettingBody(
+            memberInfo = userViewModel.memberInfo
+        )
     }
 }
 
 @Composable
 fun RecipePreferenceSettingBody(
     modifier: Modifier = Modifier,
+    memberInfo: Member?
 ) {
     Column(
         modifier = modifier
@@ -84,7 +91,8 @@ fun RecipePreferenceSettingBody(
         RecipePreferenceSettingColumn(
             modifier
                 .weight(1f)
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(rememberScrollState()),
+            memberInfo = memberInfo
         )
 
         UserOnboardingBtn(
@@ -98,6 +106,7 @@ fun RecipePreferenceSettingBody(
 @Composable
 fun RecipePreferenceSettingColumn(
     modifier: Modifier = Modifier,
+    memberInfo: Member?
 ) {
     Column(
         modifier = modifier
@@ -122,30 +131,31 @@ fun RecipePreferenceSettingColumn(
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
                 RecipePreferenceSettingRow(
+                    modifier = Modifier.clickable {  },
                     hintText = stringResource(id = R.string.text_like_food_setting_hint),
-                    list = listOf("한식", "일식", "국물 요리")
+                    list = memberInfo?.preferMenu?.split(", ") ?: listOf()
                 )
 
                 HorizontalDivider(
                     modifier = Modifier,
                     thickness = 1.dp,
-                    color = MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.1f)
+                    color = colorScheme.onSecondary.copy(alpha = 0.1f)
                 )
 
                 RecipePreferenceSettingRow(
                     hintText = stringResource(id = R.string.text_dislike_ingredient_setting_hint),
-                    list = listOf("오이", "고수")
+                    list = memberInfo?.dislikeIngredients?.map { IngredientListData.map[it]!! } ?: listOf()
                 )
 
                 HorizontalDivider(
                     modifier = Modifier,
                     thickness = 1.dp,
-                    color = MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.1f)
+                    color = colorScheme.onSecondary.copy(alpha = 0.1f)
                 )
 
                 RecipePreferenceSettingRow(
                     hintText = stringResource(id = R.string.text_illness_setting_hint),
-                    list = listOf("당뇨")
+                    list = memberInfo?.diseases?.map { DiseaseListData.map[it]!! } ?: listOf()
                 )
             }
         }

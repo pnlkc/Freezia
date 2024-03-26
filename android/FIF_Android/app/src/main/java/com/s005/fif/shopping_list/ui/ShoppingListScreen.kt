@@ -140,7 +140,7 @@ fun ShoppingListBody(
             ) {
                 item {
                     UncheckedItem(
-                        cnt = shoppingList.size
+                        cnt = shoppingList.filter { !it.checkYn }.size
                     )
                 }
 

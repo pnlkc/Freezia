@@ -15,20 +15,11 @@ root_router.include_router(health_router,  prefix="/health")
 root_router.include_router(category_router,  prefix="/category")
 root_router.include_router(image_router, prefix="/image")
 
-# FastAPI에서는 dependency를 사용하여 반복적인 로직을 중앙에서 처리할 수 있음
-# Access Token을 확인하는 dependency를 생성
-def get_accessToken():
-    accessToken = "DUMMY ACCESS TOKEN"
-    if not accessToken:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-    return accessToken
-
 
 @root_router.delete('/thread-assistant', response_model=ThreadAssistantResponse)
 def delete_thread_and_assistant(
     threadId: str,
-    assistantId: str,
-    # accessToken: str = Depends(get_accessToken),
+    assistantId: str
 ):
     try:
         thread_response = client.beta.threads.delete(threadId)
@@ -88,8 +79,8 @@ async def get_recipe_stream(ingredients, diseases, dislikeIngredients, prompt, t
         )
 
     # Thread 생성
-    # thread = client.beta.threads.retrieve(thread_id=threadId)
-    thread = client.beta.threads.create()
+    thread = client.beta.threads.retrieve(thread_id=threadId)
+    # thread = client.beta.threads.create()
 
     try:
         message = client.beta.threads.messages.create(

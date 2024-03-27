@@ -26,11 +26,8 @@ public class GeneAIController {
     @Operation(summary = "대화형 레시피 추천")
     public Flux<String> streamDataFromAI(@Parameter(hidden = true) MemberDto memberDto, GeneAIPromptRequestDto geneAIPromptRequestDto) {
 
-        // FastAPI에서 SSE 스트림을 받는 로직
-        Flux<String> fastApiStream = geneAIService.getStreamDataFromAI(memberDto, geneAIPromptRequestDto);
-
-        // 받아온 스트림을 그대로 클라이언트에 전송
-        return fastApiStream;
+        // FastAPI에서 받아온 스트림을 그대로 클라이언트에 전송
+        return geneAIService.getStreamDataFromAI(memberDto, geneAIPromptRequestDto);
     }
 
 }

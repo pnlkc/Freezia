@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -49,6 +50,7 @@ import com.s005.fif.timer.entity.TimerInfo
 import com.s005.fif.utils.ScreenSize
 import com.s005.fif.utils.ScreenSize.toDpSize
 import com.s005.fif.utils.ScreenSize.toSpSize
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -57,11 +59,10 @@ fun TimerDetailScreen(
     modifier: Modifier = Modifier,
     timerViewModel: TimerViewModel,
     navigateUp: () -> Unit,
-    navigateToRecipeDetail: () -> Unit,
-    idx: Int
+    navigateToRecipeDetail: (Int) -> Unit,
+    navigateToTimerList: () -> Unit,
+    idx: Int,
 ) {
-    Log.d("로그", " - TimerDetailScreen() 호출됨 / ${timerViewModel.timerList}")
-
     val context = LocalContext.current
     val maxPages = timerViewModel.timerList.size
     var selectedPage by remember { mutableIntStateOf(idx) }
@@ -75,6 +76,10 @@ fun TimerDetailScreen(
         snapshotFlow { pagerState.currentPage }.collect { page ->
             selectedPage = page
         }
+    }
+
+    LaunchedEffect(key1 = idx) {
+        selectedPage = idx
     }
 
     HorizontalPager(
@@ -99,9 +104,13 @@ fun TimerDetailScreen(
             },
             navigateUp = navigateUp,
             navigateToRecipeDetail = navigateToRecipeDetail,
+            navigateToTimerList = navigateToTimerList,
             item = { timerViewModel.timerList[page] },
             timerClicked = { isStart, timerInfo ->
                 timerViewModel.timerBtnClicked(isStart, context, timerInfo)
+            },
+            onResetBtnClicked = {
+                timerViewModel.resetTimer(timerViewModel.timerList[page])
             }
         )
     }
@@ -113,9 +122,11 @@ fun TimerDetailBody(
     goTimerBack: () -> Unit,
     goTimerForward: () -> Unit,
     navigateUp: () -> Unit,
-    navigateToRecipeDetail: () -> Unit,
+    navigateToRecipeDetail: (Int) -> Unit,
+    navigateToTimerList: () -> Unit,
     item: () -> TimerInfo,
-    timerClicked: (Boolean, TimerInfo) -> Unit
+    timerClicked: (Boolean, TimerInfo) -> Unit,
+    onResetBtnClicked: () -> Unit
 ) {
     val timerInfo = item()
 
@@ -141,12 +152,13 @@ fun TimerDetailBody(
         TimerDetailPage(
             goTimerBack = goTimerBack,
             goTimerForward = goTimerForward,
-            navigateUp = navigateUp,
             navigateToRecipeDetail = navigateToRecipeDetail,
+            navigateToTimerList = navigateToTimerList,
             item = item,
             timerClicked = {
                 timerClicked(!item().isStart, item())
-            }
+            },
+            onResetBtnClicked = onResetBtnClicked
         )
 
         SwipeDismissBox(
@@ -177,10 +189,11 @@ fun TimerDetailPage(
     modifier: Modifier = Modifier,
     goTimerBack: () -> Unit,
     goTimerForward: () -> Unit,
-    navigateUp: () -> Unit,
-    navigateToRecipeDetail: () -> Unit,
+    navigateToRecipeDetail: (Int) -> Unit,
+    navigateToTimerList: () -> Unit,
     item: () -> TimerInfo,
     timerClicked: () -> Unit,
+    onResetBtnClicked: () -> Unit
 ) {
     val btnSize = ScreenSize.screenHeightDp.toDpSize(22)
     val arrowBtnSize = ScreenSize.screenHeightDp.toDpSize(10)
@@ -275,10 +288,13 @@ fun TimerDetailPage(
                 ),
             btnSize = btnSize,
             btnBottomPadding = btnBottomPadding,
-            navigateUp = navigateUp,
-            navigateToRecipeDetail = navigateToRecipeDetail,
+            navigateToRecipeDetail = {
+                navigateToRecipeDetail(item().step)
+            },
+            navigateToTimerList = navigateToTimerList,
             isStart = item().isStart,
-            startBtnClicked = timerClicked
+            startBtnClicked = timerClicked,
+            onResetBtnClicked = onResetBtnClicked
         )
     }
 }
@@ -288,10 +304,11 @@ fun TimerDetailBtnRow(
     modifier: Modifier = Modifier,
     btnBottomPadding: Dp,
     btnSize: Dp,
-    navigateUp: () -> Unit,
     navigateToRecipeDetail: () -> Unit,
+    navigateToTimerList: () -> Unit,
     isStart: Boolean,
     startBtnClicked: () -> Unit,
+    onResetBtnClicked: () -> Unit
 ) {
     Box(
         modifier = modifier
@@ -302,7 +319,7 @@ fun TimerDetailBtnRow(
                 .padding(bottom = btnBottomPadding)
                 .size(btnSize)
                 .align(Alignment.TopStart),
-            onClick = { },
+            onClick = { onResetBtnClicked() },
         ) {
             Icon(
                 modifier = Modifier
@@ -322,7 +339,7 @@ fun TimerDetailBtnRow(
             Button(
                 modifier = Modifier
                     .size(btnSize),
-                onClick = { navigateUp() }
+                onClick = { navigateToTimerList() }
             ) {
                 Icon(
                     modifier = Modifier

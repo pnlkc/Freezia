@@ -34,7 +34,7 @@ object AlarmUtil {
     @SuppressLint("ScheduleExactAlarm")
     fun setAlarm(context: Context, delayMillis: Long, id: Int, title: String, initTime: Int) {
         if (alarmManager != null) {
-            Log.d("로그", "AlarmUtil - setAlarm() 호출됨")
+            Log.d("로그", "AlarmUtil - setAlarm() 호출됨 / $delayMillis")
             val alarmIntent = Intent(context, TimerReceiver::class.java).apply {
                 action = "TimerActivity + ${id}" // BroadcastReceiver에서 구별할 액션
                 putExtra("id", id)
@@ -52,9 +52,10 @@ object AlarmUtil {
             pendingIntentMap[id] = pendingIntent
 
             val alarmClock = AlarmManager.AlarmClockInfo(
-                SystemClock.elapsedRealtime() + delayMillis,
+                System.currentTimeMillis() + delayMillis,
                 pendingIntent
             )
+
             alarmManager!!.setAlarmClock(alarmClock, pendingIntent)
         }
     }

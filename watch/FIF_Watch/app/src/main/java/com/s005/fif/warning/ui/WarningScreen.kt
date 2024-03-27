@@ -78,8 +78,9 @@ fun WarningScreen(
 
         Text(
             modifier = Modifier
-                .fillMaxWidth(),
-            text = ColorCombineTextUtil.makeWarningText(ingredient, fullText),
+                .fillMaxWidth()
+                .padding(horizontal = ScreenSize.screenWidthDp.toDpSize(10)),
+            text = ColorCombineTextUtil.makeWarningText(ingredient, stringResource(id = R.string.text_danger_ingredient_body, ingredient)),
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             fontSize = ScreenSize.screenHeightDp.toSpSize(10),

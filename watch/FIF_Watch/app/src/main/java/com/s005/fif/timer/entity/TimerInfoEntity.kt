@@ -13,7 +13,8 @@ data class TimerInfoEntity(
     val leftTime: Int,
     val isStart: Boolean,
     val timeMillis: Long,
-    val title: String
+    val title: String,
+    val step: Int
 )
 
 data class TimerInfo(
@@ -22,13 +23,14 @@ data class TimerInfo(
     var leftTime: Int,
     var isStart: Boolean,
     var timeMillis: Long,
-    val title: String
+    val title: String,
+    val step: Int
 )
 
 fun TimerInfoEntity.toTimerInfo() = TimerInfo(
-    timerId, initTime, leftTime, isStart, timeMillis, title
+    timerId, initTime, leftTime, isStart, timeMillis, title, step
 )
 
 fun TimerInfo.toTimerInfoEntity() = TimerInfoEntity(
-    timerId, initTime, leftTime, isStart, timeMillis, title
+    timerId, initTime, leftTime, isStart, timeMillis, title, step
 )

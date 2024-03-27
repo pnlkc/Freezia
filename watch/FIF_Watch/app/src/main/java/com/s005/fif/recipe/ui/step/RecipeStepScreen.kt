@@ -68,7 +68,6 @@ fun RecipeStepScreen(
     navigateToTimerDetail: (Int) -> Unit,
     step: Int,
 ) {
-    Log.d("로그", " - RecipeStepScreen() 호출됨 / step : $step")
     val maxPages = RecipeLiveData.recipeData!!.recipeSteps.size
     var selectedPage by remember { mutableIntStateOf(step) }
     val pagerState = rememberPagerState(
@@ -109,7 +108,7 @@ fun RecipeStepScreen(
 
             if (RecipeLiveData.isFcmNotification) {
                 RecipeLiveData.isFcmNotification = false
-            } else {
+            } else if (page <= maxPages) {
                 recipeViewModel.moveRecipeStep(page + 1)
             }
         }
@@ -149,7 +148,7 @@ fun RecipeStepScreen(
                         }
                     },
                     onTimerClicked = { time, name ->
-                        navigateToTimerDetail(timerViewModel.addTimer(time, name) - 1)
+                        navigateToTimerDetail(timerViewModel.addTimer(time, name, page) - 1)
                     }
                 )
             } else {

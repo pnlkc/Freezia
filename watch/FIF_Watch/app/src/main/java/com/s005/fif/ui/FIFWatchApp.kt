@@ -12,13 +12,16 @@ import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.s005.fif.navigation.FIFWatchNavHost
+import com.s005.fif.timer.ui.TimerViewModel
 
 @Composable
 fun FIFWatchApp(
     navController: NavHostController,
+    timerViewModel: TimerViewModel
 ) {
     FIFWatchNavHost(
-        navController = navController
+        navController = navController,
+        timerViewModel = timerViewModel
     )
 }
 

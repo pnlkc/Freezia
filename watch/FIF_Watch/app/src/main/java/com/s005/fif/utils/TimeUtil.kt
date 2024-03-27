@@ -18,7 +18,8 @@ object TimeUtil {
                 leftTime - ((System.currentTimeMillis() - timeMillis) / 1000).toInt(),
                 isStart,
                 timeMillis = System.currentTimeMillis(),
-                title
+                title,
+                step
             )
 
             if (leftTime <= 0) {

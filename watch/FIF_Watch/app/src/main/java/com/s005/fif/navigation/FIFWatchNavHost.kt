@@ -31,9 +31,9 @@ import com.s005.fif.warning.ui.WarningScreen
 @Composable
 fun FIFWatchNavHost(
     navController: NavHostController,
+    timerViewModel: TimerViewModel
 ) {
     val mainViewModel: MainViewModel = hiltViewModel()
-    val timerViewModel: TimerViewModel = hiltViewModel()
     val recipeViewModel: RecipeViewModel = hiltViewModel()
     val shoppingListViewModel: ShoppingListViewModel = hiltViewModel()
 
@@ -97,6 +97,7 @@ fun FIFWatchNavHost(
                 navigateToTimerDetail = { idx ->
                     navController.navigate("${TimerDetail.route}/${idx}") {
                         launchSingleTop = false
+                        restoreState = true
                     }
                 },
                 step = step
@@ -124,15 +125,22 @@ fun FIFWatchNavHost(
                 navArgument(TimerDetail.TIMER_IDX) { type = NavType.IntType }
             )
         ) { navBackStackEntry ->
-            val idx = navBackStackEntry.arguments?.getInt(RecipeStep.STEP) ?: 0
+            val idx = navBackStackEntry.arguments?.getInt(TimerDetail.TIMER_IDX) ?: 0
 
             TimerDetailScreen(
                 timerViewModel = timerViewModel,
                 navigateUp = {
                     navController.navigateUp()
                 },
-                navigateToRecipeDetail = {
-
+                navigateToRecipeDetail = { step ->
+                    navController.navigate("${RecipeStep.route}/${step}") {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToTimerList = {
+                    navController.navigate(TimerList.route) {
+                        launchSingleTop = true
+                    }
                 },
                 idx = idx
             )

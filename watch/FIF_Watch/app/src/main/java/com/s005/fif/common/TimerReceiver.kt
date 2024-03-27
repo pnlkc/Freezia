@@ -13,8 +13,6 @@ class TimerReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         Log.d("로그", "TimerReceiver - onReceive() 호출됨")
 
-        val action = intent.action
-
         NotificationUtil.showTimerNotification(
             context,
             intent.getStringExtra("title") ?: "",

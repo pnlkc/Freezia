@@ -3,6 +3,7 @@ package com.s005.fif.warning.ui
 import android.content.Intent
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -23,6 +24,8 @@ import dagger.hilt.android.AndroidEntryPoint
 class WarningActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        Log.d("로그", "WarningActivity - onCreate() 호출됨")
 
         setTheme(android.R.style.Theme_DeviceDefault)
 
@@ -64,6 +67,11 @@ class WarningActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
 
+        VibrateUtil.vibrateWarning(this)
+
+        val fullText = intent.getStringExtra("fullText") ?: ""
+        val ingredient = intent.getStringExtra("ingredient") ?: ""
+
         setContent {
             FIF_WatchTheme {
                 Box(
@@ -72,7 +80,10 @@ class WarningActivity : ComponentActivity() {
                         .background(MaterialTheme.colors.background),
                     contentAlignment = Alignment.Center
                 ) {
-                    WarningScreen()
+                    WarningScreen(
+                        ingredient = ingredient,
+                        fullText = fullText
+                    )
                 }
             }
         }

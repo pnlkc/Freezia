@@ -30,7 +30,9 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.s005.fif.R
+import com.s005.fif.components.BackgroundImage
 import com.s005.fif.fcm.RecipeLiveData
+import com.s005.fif.recipe.ui.RecipeViewModel
 import com.s005.fif.utils.ScreenSize
 import com.s005.fif.utils.ScreenSize.toDpSize
 import com.s005.fif.utils.ScreenSize.toSpSize
@@ -49,17 +51,26 @@ fun MainScreen(
 
     val isRecipeSelected = RecipeLiveData.recipeData != null
 
-    MainBody(
-        modifier = modifier,
-        btnSize = btnSize,
-        btnBottomPadding = btnBottomPadding,
-        btnSpaceBy = btnSpaceBy,
-        isRecipeSelected = isRecipeSelected,
-        navigateToShoppingList = navigateToShoppingList,
-        navigateToRecipe = navigateToRecipeDetail,
-        navigateToTimerList = navigateToTimerList,
-        mainUiState = { mainViewModel.mainUiState }
-    )
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+    ) {
+        BackgroundImage(
+            imgUrl = RecipeLiveData.recipeData?.recipeInfo?.imgUrl ?: ""
+        )
+
+        MainBody(
+            modifier = Modifier,
+            btnSize = btnSize,
+            btnBottomPadding = btnBottomPadding,
+            btnSpaceBy = btnSpaceBy,
+            isRecipeSelected = isRecipeSelected,
+            navigateToShoppingList = navigateToShoppingList,
+            navigateToRecipe = navigateToRecipeDetail,
+            navigateToTimerList = navigateToTimerList,
+            mainUiState = { mainViewModel.mainUiState }
+        )
+    }
 }
 
 @Composable

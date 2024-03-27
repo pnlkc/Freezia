@@ -51,7 +51,7 @@ object NotificationUtil {
     }
 
     @SuppressLint("MissingPermission")
-    fun showRecipeStepNotification(context: Context, text: String) {
+    fun showMainActivityNotification(context: Context) {
         createNotificationChannel(context)
 
         val intent = Intent(context, MainActivity::class.java).apply {
@@ -67,8 +67,8 @@ object NotificationUtil {
 
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.alarm)
-            .setContentTitle(context.getString(R.string.notification_recipe_step_title))
-            .setContentText(context.getString(R.string.notification_recipe_step_content))
+            .setContentTitle(context.getString(R.string.notification_recipe_connect_title))
+            .setContentText(context.getString(R.string.notification_recipe_connect_content))
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setFullScreenIntent(pendingIntent, true)

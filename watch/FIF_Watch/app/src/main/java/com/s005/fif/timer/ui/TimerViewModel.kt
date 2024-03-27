@@ -3,6 +3,7 @@ package com.s005.fif.timer.ui
 import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -14,6 +15,7 @@ import com.s005.fif.timer.entity.toTimerInfoEntity
 import com.s005.fif.utils.AlarmUtil
 import com.s005.fif.utils.TimeUtil.update
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -24,8 +26,17 @@ import javax.inject.Singleton
 class TimerViewModel @Inject constructor(
     private val fifPreferenceModule: FIFPreferenceModule,
 ) : ViewModel() {
-    var timerList by mutableStateOf(listOf<TimerInfo>())
+    var timerList = mutableStateListOf<TimerInfo>()
     private var cTimerId = 1
+
+    init {
+        viewModelScope.launch {
+            while (true) {
+                delay(1000)
+                updateTime()
+            }
+        }
+    }
 
     fun getTimerList() {
         viewModelScope.launch {
@@ -34,8 +45,9 @@ class TimerViewModel @Inject constructor(
             }
 
             if (!tempList.isNullOrEmpty()) {
-                timerList = tempList.map { it.toTimerInfo().update() }.sortedBy { it.timerId }
-                cTimerId = tempList.last().timerId
+                timerList.clear()
+                timerList.addAll(tempList.map { it.toTimerInfo().update() }.sortedBy { it.timerId })
+                cTimerId = tempList.last().timerId + 1
             }
         }
     }
@@ -59,7 +71,8 @@ class TimerViewModel @Inject constructor(
             }
         }
 
-        timerList = tempList
+        timerList.clear()
+        timerList.addAll(tempList)
     }
 
     private fun stopTimer(timerInfo: TimerInfo) {
@@ -72,26 +85,22 @@ class TimerViewModel @Inject constructor(
             }
         }
 
-        timerList = tempList
+        timerList.clear()
+        timerList.addAll(tempList)
     }
 
-    fun addTimer(time: Int, name: String): Int {
-        val tempList = timerList.toMutableList()
-
-        tempList.add(
+    fun addTimer(time: Int, name: String, step: Int): Int {
+        timerList.add(
             TimerInfo(
                 cTimerId++,
                 initTime = time,
                 leftTime = time,
                 isStart = false,
                 timeMillis = System.currentTimeMillis(),
-                title = name
+                title = name,
+                step = step
             )
         )
-
-        timerList = tempList
-
-        Log.d("로그", "TimerViewModel - addTimer() 호출됨 / ${timerList}")
 
         return timerList.size
     }
@@ -104,7 +113,47 @@ class TimerViewModel @Inject constructor(
 
     fun deleteTimerListDataStore() {
         viewModelScope.launch {
+            timerList.clear()
             fifPreferenceModule.removeTimerList()
+        }
+    }
+
+    fun updateTime() {
+        val tempList = timerList.toList()
+        timerList.clear()
+
+        tempList.forEach {
+            if (it.isStart) {
+                val newLeftTime = maxOf(0, it.leftTime - 1)
+
+                if (newLeftTime == 0) {
+                    timerList.add(
+                        it.copy(
+                            leftTime = it.initTime,
+                            isStart = false
+                        )
+                    )
+                } else {
+                    timerList.add(it.copy(leftTime = newLeftTime))
+                }
+            } else {
+                timerList.add(it)
+            }
+        }
+    }
+
+    fun resetTimer(timerInfo: TimerInfo) {
+        stopTimer(timerInfo)
+
+        val tempList = timerList.toList()
+        timerList.clear()
+
+        tempList.forEach {
+            if (it.timerId == timerInfo.timerId) {
+                timerList.add(it.copy(leftTime = it.initTime, isStart = false))
+            } else {
+                timerList.add(it)
+            }
         }
     }
 }

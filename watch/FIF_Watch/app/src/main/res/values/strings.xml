@@ -33,8 +33,10 @@
     <string name="btn_timer_done">타이머 완료 확인 버튼</string>
     <string name="notification_timer_done_title">타이머 완료</string>
     <string name="notification_timer_done_content">타이머가 완료되었습니다</string>
-    <string name="notification_recipe_step_title">레시피 단계 이동</string>
-    <string name="notification_recipe_step_content">레시피 단계가 이동되었습니다</string>
+    <string name="notification_recipe_connect_title">레시피 연동</string>
+    <string name="notification_recipe_connect_content">레시피 연동되었습니다</string>
     <string name="text_user_name">%1$s님</string>
     <string name="description_warning_ingredient_icon">위험 식재료 아이콘</string>
+    <string name="text_danger_ingredient">위험 식재료 알림</string>
+    <string name="text_danger_ingredient_body">방금 꺼내신 %1$s는 지병에 좋지 않아요</string>
 </resources>

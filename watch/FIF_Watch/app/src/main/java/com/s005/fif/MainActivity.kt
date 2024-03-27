@@ -147,9 +147,6 @@ class MainActivity : ComponentActivity() {
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             // POST_NOTIFICATIONS 권한을 요청합니다.
             requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
-        } else {
-            // 이미 권한이 있는 경우에 대한 처리
-            Toast.makeText(this, "이미 알림 권한이 허용되었습니다.", Toast.LENGTH_SHORT).show()
         }
     }
 

@@ -1,5 +1,8 @@
 package com.s005.fif.main.ui
 
+import android.app.Activity
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -50,6 +54,22 @@ fun MainScreen(
     val btnSpaceBy = ScreenSize.screenWidthDp.toDpSize(2)
 
     val isRecipeSelected = RecipeLiveData.recipeData != null
+
+    var backWait = 0L
+    val context = LocalContext.current
+
+    BackHandler {
+        if (System.currentTimeMillis() - backWait >= 2000) {
+            backWait = System.currentTimeMillis()
+            Toast.makeText(
+                context,
+                context.getText(R.string.exit_toast_message),
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            (context as? Activity)?.finish()
+        }
+    }
 
     Box(
         modifier = modifier

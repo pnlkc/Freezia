@@ -106,6 +106,8 @@ fun TimerDetailScreen(
             navigateToRecipeDetail = navigateToRecipeDetail,
             navigateToTimerList = navigateToTimerList,
             item = { timerViewModel.timerList[page] },
+            isFirst = page == 0,
+            isLast = page == (maxPages - 1),
             timerClicked = { isStart, timerInfo ->
                 timerViewModel.timerBtnClicked(isStart, context, timerInfo)
             },
@@ -125,6 +127,8 @@ fun TimerDetailBody(
     navigateToRecipeDetail: (Int) -> Unit,
     navigateToTimerList: () -> Unit,
     item: () -> TimerInfo,
+    isFirst: Boolean,
+    isLast: Boolean,
     timerClicked: (Boolean, TimerInfo) -> Unit,
     onResetBtnClicked: () -> Unit
 ) {
@@ -155,6 +159,8 @@ fun TimerDetailBody(
             navigateToRecipeDetail = navigateToRecipeDetail,
             navigateToTimerList = navigateToTimerList,
             item = item,
+            isFirst = isFirst,
+            isLast = isLast,
             timerClicked = {
                 timerClicked(!item().isStart, item())
             },
@@ -192,6 +198,8 @@ fun TimerDetailPage(
     navigateToRecipeDetail: (Int) -> Unit,
     navigateToTimerList: () -> Unit,
     item: () -> TimerInfo,
+    isFirst: Boolean,
+    isLast: Boolean,
     timerClicked: () -> Unit,
     onResetBtnClicked: () -> Unit
 ) {
@@ -234,7 +242,7 @@ fun TimerDetailPage(
                     .padding(ScreenSize.screenHeightDp.toDpSize(2)),
                 painter = painterResource(id = R.drawable.arrow_back),
                 contentDescription = stringResource(id = R.string.btn_timer_back),
-                tint = Color.White
+                tint = if (isFirst) Color.Transparent else Color.White
             )
 
             Column(
@@ -275,7 +283,7 @@ fun TimerDetailPage(
                     .padding(ScreenSize.screenHeightDp.toDpSize(2)),
                 painter = painterResource(id = R.drawable.arrow_forward),
                 contentDescription = stringResource(id = R.string.btn_timer_forward),
-                tint = Color.White
+                tint = if (isLast) Color.Transparent else Color.White
             )
         }
 

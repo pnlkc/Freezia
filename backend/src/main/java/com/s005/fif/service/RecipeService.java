@@ -401,7 +401,7 @@ public class RecipeService {
 		for (CompleteCook completeCook : completeCookList) {
 			List<IngredientSimpleDto> addIngredients = new ArrayList<>();
 			String addIngredient = completeCook.getAddIngredient();
-			if (!addIngredient.isEmpty()) {
+			if (addIngredient != null) {
 				for (String ingredient : addIngredient.split(",")) {
 					Ingredient findIngredient = ingredientRepository.findByName(ingredient)
 						.orElseThrow(() -> new CustomException(ExceptionType.INGREDIENTS_NOT_FOUND));
@@ -416,7 +416,7 @@ public class RecipeService {
 
 			List<IngredientSimpleDto> removeIngredients = new ArrayList<>();
 			String removeIngredient = completeCook.getRemoveIngredient();
-			if (!removeIngredient.isEmpty()) {
+			if (removeIngredient != null) {
 				for (String ingredient : removeIngredient.split(",")) {
 					Ingredient findIngredient = ingredientRepository.findByName(ingredient)
 						.orElseThrow(() -> new CustomException(ExceptionType.INGREDIENTS_NOT_FOUND));

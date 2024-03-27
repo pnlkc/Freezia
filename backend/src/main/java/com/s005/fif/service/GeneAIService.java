@@ -34,8 +34,7 @@ public class GeneAIService {
 
     @PostConstruct
     private void init() {
-//        webClient = WebClient.builder().baseUrl(sendUrl).build();
-        webClient = WebClient.builder().baseUrl("http://localhost:8000/api/ai").build();
+        webClient = WebClient.builder().baseUrl(sendUrl).build();
     }
 
     @Transactional

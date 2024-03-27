@@ -24,6 +24,10 @@ interface RecipeRepository {
         recipeId: Int,
         recipeCompleteRequest: RecipeCompleteRequest
     ): Response<DefaultResponse>
+
+    suspend fun moveRecipeStep(
+        step: Int
+    ) : Response<DefaultResponse>
 }
 
 class DefaultRecipeRepository @Inject constructor(
@@ -42,5 +46,9 @@ class DefaultRecipeRepository @Inject constructor(
         recipeCompleteRequest: RecipeCompleteRequest,
     ): Response<DefaultResponse> {
         return recipeService.addRecipeComplete(recipeId, recipeCompleteRequest)
+    }
+
+    override suspend fun moveRecipeStep(step: Int): Response<DefaultResponse> {
+        return recipeService.moveRecipeStep(step)
     }
 }

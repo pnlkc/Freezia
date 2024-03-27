@@ -7,6 +7,6 @@ data class IngredientItemResponse(
     val ingredientId: Int,
     val name: String,
     val image: String,
-    val amounts: Int,
+    val amounts: String,
     val unit: String
 )

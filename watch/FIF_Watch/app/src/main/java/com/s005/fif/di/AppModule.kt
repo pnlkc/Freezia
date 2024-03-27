@@ -199,18 +199,20 @@ object AppModule {
 
                             if (accessToken == newAccessToken) {
                                 fifPreference.setAccessToken(newAccessToken)
-
-                                val newRequest = request().newBuilder()
-                                    .apply {
-                                        addHeader(
-                                            AUTHORIZATION,
-                                            "Bearer $newAccessToken"
-                                        )
-                                    }
-                                    .build()
-
-                                response = chain.proceed(newRequest)
+                            } else {
+                                response.close()
                             }
+
+                            val newRequest = chain.request().newBuilder()
+                                .apply {
+                                    addHeader(
+                                        AUTHORIZATION,
+                                        "Bearer $newAccessToken"
+                                    )
+                                }
+                                .build()
+
+                            response = chain.proceed(newRequest)
                         }
                     }
                 }

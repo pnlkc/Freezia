@@ -26,4 +26,9 @@ interface RecipeService {
         @Path("recipeId") recipeId: Int,
         @Body recipeCompleteRequest: RecipeCompleteRequest
     ): Response<DefaultResponse>
+
+    @GET("recipes/steps/{step}")
+    suspend fun moveRecipeStep(
+        @Path("step") step: Int
+    ) : Response<DefaultResponse>
 }

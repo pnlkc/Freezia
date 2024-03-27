@@ -30,6 +30,7 @@ import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import androidx.wear.tooling.preview.devices.WearDevices
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
+import com.s005.fif.di.FIFPreferenceModule
 import com.s005.fif.fcm.RecipeLiveData
 import com.s005.fif.navigation.NavigationDestination
 import com.s005.fif.timer.ui.TimerViewModel
@@ -39,11 +40,14 @@ import com.s005.fif.utils.AlarmUtil.alarmManager
 import com.s005.fif.utils.ScreenSize.screenHeightDp
 import com.s005.fif.utils.ScreenSize.screenWidthDp
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val timerViewModel: TimerViewModel by viewModels()
+    @Inject lateinit var fifPreferenceModule: FIFPreferenceModule
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -55,6 +59,8 @@ class MainActivity : ComponentActivity() {
         getScreenSize(resources.displayMetrics)
 
         getFCMToken()
+
+        getRecipe()
 
         setContent {
             val navController = rememberSwipeDismissableNavController()
@@ -125,6 +131,17 @@ class MainActivity : ComponentActivity() {
 
             Log.d("로그", "MainActivity - getFCMToken() 호출됨 / 토큰 가져오기 성공 ${token}")
         })
+    }
+
+    private fun getRecipe() {
+        val recipeData = runBlocking {
+            fifPreferenceModule.recipeDataFlow.first()
+        }
+
+        if (recipeData != null) {
+            RecipeLiveData.recipeData = recipeData
+            RecipeLiveData.isRecipeConnected.value = true
+        }
     }
 
     override fun onStart() {

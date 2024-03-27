@@ -1,6 +1,7 @@
 package com.s005.fif.timer.ui
 
 import android.os.SystemClock
+import android.util.Log
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -66,6 +67,8 @@ fun TimerDetailScreen(
     navigateToRecipeDetail: () -> Unit,
     idx: Int
 ) {
+    Log.d("로그", " - TimerDetailScreen() 호출됨 / ${viewModel.timerList}")
+
     val context = LocalContext.current
     val maxPages = viewModel.timerList.size
     var selectedPage by remember { mutableIntStateOf(idx) }

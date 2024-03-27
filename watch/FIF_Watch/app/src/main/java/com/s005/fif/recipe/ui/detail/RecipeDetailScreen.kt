@@ -20,6 +20,7 @@ import androidx.wear.compose.material.ChipDefaults
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import com.s005.fif.components.BackgroundImage
+import com.s005.fif.fcm.RecipeLiveData
 import com.s005.fif.utils.ColorCombineTextUtil
 import com.s005.fif.utils.ScreenSize
 import com.s005.fif.utils.ScreenSize.toDpSize
@@ -34,7 +35,9 @@ fun RecipeDetailScreen(
         modifier = modifier
             .fillMaxSize()
     ) {
-        BackgroundImage()
+        BackgroundImage(
+            imgUrl = RecipeLiveData.recipeData!!.recipeInfo.imgUrl
+        )
 
         RecipeDetailBody(
             modifier = modifier,
@@ -63,7 +66,7 @@ fun RecipeDetailBody(
         Text(
             modifier = Modifier
                 .fillMaxWidth(),
-            text = "스팸 마요 김치 덮밥",
+            text = RecipeLiveData.recipeData!!.recipeInfo.name,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             fontSize = ScreenSize.screenHeightDp.toSpSize(9),

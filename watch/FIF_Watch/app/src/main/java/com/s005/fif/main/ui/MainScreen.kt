@@ -11,10 +11,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -31,6 +34,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.s005.fif.R
+import com.s005.fif.fcm.RecipeLiveData
 import com.s005.fif.utils.AlarmUtil
 import com.s005.fif.utils.NotificationUtil
 import com.s005.fif.utils.ScreenSize
@@ -54,8 +58,7 @@ fun MainScreen(
     val btnBottomPadding = ScreenSize.screenHeightDp.toDpSize(10)
     val btnSpaceBy = ScreenSize.screenWidthDp.toDpSize(2)
 
-    // TODO. 레시피가 선택되었는지 확인 필요
-    val isRecipeSelected = true
+    val isRecipeSelected = RecipeLiveData.recipeData != null
 
     MainBody(
         modifier = modifier,
@@ -101,7 +104,7 @@ fun MainBody(
             Text(
                 modifier = Modifier
                     .fillMaxWidth(),
-                text = if (isRecipeSelected) "알리오올리오 파스타" else stringResource(id = R.string.not_select_recipe),
+                text = if (isRecipeSelected) RecipeLiveData.recipeData!!.recipeInfo.name else stringResource(id = R.string.not_select_recipe),
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 fontSize = if (isRecipeSelected) ScreenSize.screenHeightDp.toSpSize(10) else ScreenSize.screenHeightDp.toSpSize(
@@ -165,9 +168,12 @@ fun ProfileImage(
 ) {
     if (!imgUrl.isNullOrBlank()) {
         GlideImage(
-            modifier = modifier.size(ScreenSize.screenHeightDp.toDpSize(15)),
+            modifier = modifier
+                .size(ScreenSize.screenHeightDp.toDpSize(15))
+                .clip(CircleShape),
             model = imgUrl,
             contentDescription = stringResource(id = R.string.profile_img_desc),
+            contentScale = ContentScale.Crop,
             loading = placeholder(R.drawable.account),
             failure = placeholder(R.drawable.account)
         )

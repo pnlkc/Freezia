@@ -25,7 +25,7 @@ import com.s005.fif.warning.ui.WarningScreen
 
 @Composable
 fun FIFWatchNavHost(
-    navController: NavHostController
+    navController: NavHostController,
 ) {
     SwipeDismissableNavHost(
         navController = navController,
@@ -80,6 +80,11 @@ fun FIFWatchNavHost(
             RecipeStepScreen(
                 navigateToMain = {
                     navController.popBackStack(route = Main.route, inclusive = false)
+                },
+                navigateToTimerDetail = { idx ->
+                    navController.navigate("${TimerDetail.route}/${idx}") {
+                        launchSingleTop = false
+                    }
                 },
                 step = step
             )

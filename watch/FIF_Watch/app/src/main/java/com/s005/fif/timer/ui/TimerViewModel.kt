@@ -1,6 +1,7 @@
 package com.s005.fif.timer.ui
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
@@ -73,7 +74,7 @@ class TimerViewModel @Inject constructor(
         timerList = tempList
     }
 
-    fun addTimer(time: Int, name: String) {
+    fun addTimer(time: Int, name: String): Int {
         val tempList = timerList.toMutableList()
 
         tempList.add(
@@ -88,6 +89,10 @@ class TimerViewModel @Inject constructor(
         )
 
         timerList = tempList
+
+        Log.d("로그", "TimerViewModel - addTimer() 호출됨 / ${timerList}")
+
+        return timerList.size
     }
 
     fun saveTimerListDataStore() {

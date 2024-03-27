@@ -34,6 +34,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.wear.compose.material.Chip
 import androidx.wear.compose.material.ChipDefaults
 import androidx.wear.compose.material.HorizontalPageIndicator
@@ -44,6 +46,9 @@ import androidx.wear.compose.material.Text
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.s005.fif.R
 import com.s005.fif.components.BackgroundImage
+import com.s005.fif.fcm.RecipeLiveData
+import com.s005.fif.recipe.ui.RecipeViewModel
+import com.s005.fif.timer.ui.TimerViewModel
 import com.s005.fif.utils.DummyImageUtil
 import com.s005.fif.utils.ScreenSize
 import com.s005.fif.utils.ScreenSize.toDpSize
@@ -51,14 +56,17 @@ import com.s005.fif.utils.ScreenSize.toSpSize
 import com.s005.fif.utils.TTSUtil
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalGlideComposeApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun RecipeStepScreen(
     modifier: Modifier = Modifier,
+    recipeViewModel: RecipeViewModel = hiltViewModel(),
+    timerViewModel: TimerViewModel = hiltViewModel(),
     navigateToMain: () -> Unit,
+    navigateToTimerDetail: (Int) -> Unit,
     step: Int
 ) {
-    val maxPages = 2
+    val maxPages = RecipeLiveData.recipeData!!.recipeSteps.size
     var selectedPage by remember { mutableIntStateOf(step - 1) }
     val pagerState = rememberPagerState(
         initialPage = selectedPage,
@@ -89,6 +97,8 @@ fun RecipeStepScreen(
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }.collect { page ->
             selectedPage = page
+
+//            recipeViewModel.moveRecipeStep(page + 1)
         }
     }
 
@@ -123,6 +133,9 @@ fun RecipeStepScreen(
                                 pagerState.animateScrollToPage(++selectedPage)
                             }
                         }
+                    },
+                    onTimerClicked = { time, name ->
+                        navigateToTimerDetail(timerViewModel.addTimer(time, name) - 1)
                     }
                 )
             } else {
@@ -134,13 +147,14 @@ fun RecipeStepScreen(
 
         if (pagerState.currentPage < maxPages) {
             HorizontalPageIndicator(
+                modifier = Modifier
+                    .padding(bottom = ScreenSize.screenHeightDp.toDpSize(2)),
                 pageIndicatorState = pageIndicatorState
             )
         }
     }
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun RecipeStepBody(
     modifier: Modifier = Modifier,
@@ -148,7 +162,10 @@ fun RecipeStepBody(
     maxPage: Int,
     goStepBack: () -> Unit,
     goStepForward: () -> Unit,
+    onTimerClicked: (Int, String) -> Unit
 ) {
+    val currentStep = RecipeLiveData.recipeData!!.recipeSteps[page]
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -170,7 +187,7 @@ fun RecipeStepBody(
         Text(
             modifier = Modifier
                 .fillMaxWidth(),
-            text = "${page + 1}. 재료를 손질합니다",
+            text = "${page + 1}. ${RecipeLiveData.recipeData!!.recipeSteps[page].descriptionWatch}",
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             fontSize = ScreenSize.screenHeightDp.toSpSize(9),
@@ -187,32 +204,37 @@ fun RecipeStepBody(
             ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Chip(
-                modifier = Modifier
-                    .height(ScreenSize.screenHeightDp.toDpSize(18)),
-                label = {
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        text = stringResource(id = R.string.use_timer),
-                        textAlign = TextAlign.Center,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = ScreenSize.screenHeightDp.toSpSize(8),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                },
-                colors = ChipDefaults.primaryChipColors(
-                    backgroundColor = MaterialTheme.colors.primary,
-                    contentColor = Color.White
-                ),
-                onClick = { },
-                shape = MaterialTheme.shapes.large
-            )
+            if (currentStep.timer != null) {
+                Chip(
+                    modifier = Modifier
+                        .height(ScreenSize.screenHeightDp.toDpSize(18)),
+                    label = {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            text = stringResource(id = R.string.use_timer),
+                            textAlign = TextAlign.Center,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = ScreenSize.screenHeightDp.toSpSize(8),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    },
+                    colors = ChipDefaults.chipColors(
+                        backgroundColor = MaterialTheme.colors.primary,
+                        contentColor = Color.White,
+                    ),
+                    onClick = {
+                        onTimerClicked(currentStep.timer, currentStep.descriptionWatch)
+                    },
+                    shape = MaterialTheme.shapes.large
+                )
+            }
 
             ControlBtnRow(
                 goStepBack = goStepBack,
-                goStepForward = goStepForward
+                goStepForward = goStepForward,
+                ttsText = RecipeLiveData.recipeData!!.recipeSteps[page].description
             )
         }
     }
@@ -223,6 +245,7 @@ fun ControlBtnRow(
     modifier: Modifier = Modifier,
     goStepBack: () -> Unit,
     goStepForward: () -> Unit,
+    ttsText: String
 ) {
     val btnSize = ScreenSize.screenHeightDp.toDpSize(15)
     val context = LocalContext.current
@@ -252,7 +275,7 @@ fun ControlBtnRow(
                 .clip(CircleShape)
                 .clickable {
                     val tts = TTSUtil()
-                    tts.speak(context = context, text = "TTS 테스트 입니다")
+                    tts.speak(context = context, text = ttsText)
                 }
                 .padding(ScreenSize.screenHeightDp.toDpSize(2)),
             painter = painterResource(id = R.drawable.speaker),

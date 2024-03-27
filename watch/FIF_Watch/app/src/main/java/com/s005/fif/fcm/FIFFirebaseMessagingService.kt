@@ -4,13 +4,19 @@ import android.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.s005.fif.di.FIFPreferenceModule
+import com.s005.fif.fcm.dto.FCMIngredientDTO
+import com.s005.fif.fcm.dto.FCMRecipeDataDTO
+import com.s005.fif.fcm.dto.FCMStepDTO
+import com.s005.fif.fcm.dto.toRecipeData
 import com.s005.fif.utils.NotificationUtil.showIngredientWarningNotification
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class FIFFirebaseMessagingService : FirebaseMessagingService() {
     @Inject lateinit var fifPreferenceModule: FIFPreferenceModule
 
@@ -22,23 +28,21 @@ class FIFFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
 
-        Log.d("로그", "MyFirebaseMessagingService - onMessageReceived() ${message.notification!!.title}")
-        Log.d("로그", "MyFirebaseMessagingService - onMessageReceived() ${message.notification!!.body}")
-
         when (message.data["type"]!!.toInt()) {
             1 -> { // 위험 식재료 알림
                 val title = message.notification?.title ?: ""
                 val content = message.notification?.body ?: ""
-                val ingredient = message.data["name"] ?: ""
+                val ingredient = Json.decodeFromString<FCMIngredientDTO>(message.data["json"]!!)
 
-                showIngredientWarningNotification(this, title, content, ingredient)
+                Log.d("로그", "FIFFirebaseMessagingService - onMessageReceived() 호출됨 / 위험 식재료 알림 : ${ingredient}")
+
+                showIngredientWarningNotification(this, title, content, ingredient.name)
             }
             2 -> { // 패널과 연동 알림
-                val recipeInfo = Json.decodeFromString<RecipeInfo>(message.data["recipeInfo"]!!)
-                val recipeSteps = Json.decodeFromString<List<RecipeStep>>(message.data["recipeSteps"]!!)
-                val recipeData = RecipeData(recipeInfo, recipeSteps)
+                Log.d("로그", "FIFFirebaseMessagingService - onMessageReceived() 호출됨 / 패널과 연동 알림 - ${message.data["json"]!!}")
+                val recipeData = Json.decodeFromString<FCMRecipeDataDTO>(message.data["json"]!!).toRecipeData()
 
-                Log.d("로그", "FIFFirebaseMessagingService - onMessageReceived() 호출됨 / recipeData : ${recipeData}")
+                Log.d("로그", "FIFFirebaseMessagingService - onMessageReceived() 호출됨 / 패널과 연동 알림 - recipeData : ${recipeData}")
 
                 CoroutineScope(Dispatchers.IO).launch {
                     fifPreferenceModule.setRecipeData(recipeData)
@@ -56,17 +60,12 @@ class FIFFirebaseMessagingService : FirebaseMessagingService() {
                 }
             }
             4 -> { // 레시피 단계 이동 알림
-                Log.d("로그", "FIFFirebaseMessagingService - onMessageReceived() 호출됨 / 레시피 단계 이동 알림")
+                val step = Json.decodeFromString<FCMStepDTO>(message.data["json"]!!)
 
-                val step = message.data["step"]?.toInt() ?: 1
+                Log.d("로그", "FIFFirebaseMessagingService - onMessageReceived() 호출됨 / 레시피 단계 이동 알림 : ${step.step}")
 
-                RecipeLiveData.recipeStep.postValue(step)
+                RecipeLiveData.recipeStep.postValue(step.step - 1)
             }
         }
-
-    }
-
-    companion object {
-        private const val TAG = "FIFFirebaseMsgService"
     }
 }

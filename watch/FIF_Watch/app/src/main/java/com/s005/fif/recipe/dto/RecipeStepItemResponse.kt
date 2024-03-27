@@ -10,5 +10,5 @@ data class RecipeStepItemResponse(
     val descriptionWatch: String,
     val type: Int,
     val tip: String,
-    val timer: Int
+    val timer: Int?
 )

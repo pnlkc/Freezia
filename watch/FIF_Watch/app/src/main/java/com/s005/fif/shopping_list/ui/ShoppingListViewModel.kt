@@ -38,6 +38,7 @@ class ShoppingListViewModel @Inject constructor(
         } else {
             val body =
                 Json.decodeFromString<ErrorResponse>(responseResult.errorBody()?.string()!!)
+
             Log.d("로그", "ShoppingListViewModel - getShoppingList() 호출됨 / 응답 실패 : ${body}")
         }
     }

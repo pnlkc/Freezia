@@ -1,12 +1,17 @@
-package com.s005.fif.fcm
+package com.s005.fif.fcm.dto
 
+import com.s005.fif.fcm.RecipeData
 import com.s005.fif.recipe.dto.RecipeInfoResponse
 import com.s005.fif.recipe.dto.RecipeStepItemResponse
-import com.s005.fif.recipe.dto.RecipeStepListResponse
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class RecipeData(
+data class FCMRecipeDataDTO(
+    val type: Int,
     val recipeInfo: RecipeInfoResponse,
     val recipeSteps: List<RecipeStepItemResponse>
+)
+
+fun FCMRecipeDataDTO.toRecipeData() = RecipeData(
+    recipeInfo, recipeSteps
 )

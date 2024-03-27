@@ -1,6 +1,5 @@
 package com.s005.fif.fcm.dto
 
-import com.s005.fif.fcm.RecipeData
 import com.s005.fif.recipe.dto.RecipeInfoResponse
 import com.s005.fif.recipe.dto.RecipeStepItemResponse
 import kotlinx.serialization.Serializable

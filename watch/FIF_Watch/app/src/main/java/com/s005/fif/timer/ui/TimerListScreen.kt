@@ -27,7 +27,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.ScalingLazyListState
 import androidx.wear.compose.foundation.lazy.itemsIndexed
@@ -47,7 +46,7 @@ import com.s005.fif.utils.TimeUtil.toTime
 fun TimerListScreen(
     modifier: Modifier = Modifier,
     navigateToTimerDetail: (Int) -> Unit,
-    viewModel: TimerViewModel = hiltViewModel(),
+    timerViewModel: TimerViewModel,
 ) {
     val scalingLazyListState = rememberScalingLazyListState()
     val context = LocalContext.current
@@ -60,9 +59,9 @@ fun TimerListScreen(
             modifier = modifier,
             scalingLazyListState = scalingLazyListState,
             navigateToTimerDetail = navigateToTimerDetail,
-            timerList = { viewModel.timerList },
+            timerList = { timerViewModel.timerList },
             timerBtnClicked = { isStart, timerInfo ->
-                viewModel.timerBtnClicked(isStart, context, timerInfo)
+                timerViewModel.timerBtnClicked(isStart, context, timerInfo)
             }
         )
 

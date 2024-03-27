@@ -47,7 +47,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val timerViewModel: TimerViewModel by viewModels()
-    @Inject lateinit var fifPreferenceModule: FIFPreferenceModule
+    @Inject
+    lateinit var fifPreferenceModule: FIFPreferenceModule
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -85,7 +86,7 @@ class MainActivity : ComponentActivity() {
             }
 
             RecipeLiveData.recipeStep.observe(this) { step ->
-                if (RecipeLiveData.isRecipeConnected.value!! && step != 0) {
+                if (RecipeLiveData.isRecipeConnected.value!! && step != -1 && RecipeLiveData.isFcmNotification) {
                     navController.navigate("${NavigationDestination.RecipeStep.route}/$step") {
                         launchSingleTop = true
                     }

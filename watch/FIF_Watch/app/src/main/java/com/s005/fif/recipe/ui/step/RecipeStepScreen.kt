@@ -1,7 +1,9 @@
 package com.s005.fif.recipe.ui.step
 
+import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -60,14 +62,15 @@ import kotlinx.coroutines.launch
 @Composable
 fun RecipeStepScreen(
     modifier: Modifier = Modifier,
-    recipeViewModel: RecipeViewModel = hiltViewModel(),
-    timerViewModel: TimerViewModel = hiltViewModel(),
+    recipeViewModel: RecipeViewModel,
+    timerViewModel: TimerViewModel,
     navigateToMain: () -> Unit,
     navigateToTimerDetail: (Int) -> Unit,
-    step: Int
+    step: Int,
 ) {
+    Log.d("로그", " - RecipeStepScreen() 호출됨 / step : $step")
     val maxPages = RecipeLiveData.recipeData!!.recipeSteps.size
-    var selectedPage by remember { mutableIntStateOf(step - 1) }
+    var selectedPage by remember { mutableIntStateOf(step) }
     val pagerState = rememberPagerState(
         initialPage = selectedPage,
         pageCount = { maxPages + 1 }
@@ -94,30 +97,41 @@ fun RecipeStepScreen(
 
     val coroutineScope = rememberCoroutineScope()
 
+    LaunchedEffect(key1 = step) {
+        if (pagerState.currentPage != step) {
+            pagerState.scrollToPage(step)
+        }
+    }
+
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }.collect { page ->
             selectedPage = page
 
-//            recipeViewModel.moveRecipeStep(page + 1)
+            if (RecipeLiveData.isFcmNotification) {
+                RecipeLiveData.isFcmNotification = false
+            } else {
+                recipeViewModel.moveRecipeStep(page + 1)
+            }
         }
     }
 
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-    ) {
-        BackgroundImage(
-            imgUrl = DummyImageUtil.list.random()
-        )
-
-        HorizontalPager(
-            modifier = Modifier
+    HorizontalPager(
+        modifier = Modifier
+            .fillMaxSize(),
+        state = pagerState
+    ) { page ->
+        Box(
+            modifier = modifier
                 .fillMaxSize()
-                .padding(ScreenSize.screenHeightDp.toDpSize(5)),
-            state = pagerState
-        ) { page ->
+        ) {
+            BackgroundImage(
+                imgUrl = DummyImageUtil.list[minOf(4, page)]
+            )
+
             if (page != maxPages) {
                 RecipeStepBody(
+                    modifier = Modifier
+                        .padding(ScreenSize.screenHeightDp.toDpSize(5)),
                     page = page,
                     maxPage = maxPages,
                     goStepBack = {
@@ -143,14 +157,14 @@ fun RecipeStepScreen(
                     navigateToMain = navigateToMain
                 )
             }
-        }
 
-        if (pagerState.currentPage < maxPages) {
-            HorizontalPageIndicator(
-                modifier = Modifier
-                    .padding(bottom = ScreenSize.screenHeightDp.toDpSize(2)),
-                pageIndicatorState = pageIndicatorState
-            )
+            if (pagerState.currentPage < maxPages) {
+                HorizontalPageIndicator(
+                    modifier = Modifier
+                        .padding(bottom = ScreenSize.screenHeightDp.toDpSize(2)),
+                    pageIndicatorState = pageIndicatorState
+                )
+            }
         }
     }
 }
@@ -162,7 +176,7 @@ fun RecipeStepBody(
     maxPage: Int,
     goStepBack: () -> Unit,
     goStepForward: () -> Unit,
-    onTimerClicked: (Int, String) -> Unit
+    onTimerClicked: (Int, String) -> Unit,
 ) {
     val currentStep = RecipeLiveData.recipeData!!.recipeSteps[page]
 
@@ -245,7 +259,7 @@ fun ControlBtnRow(
     modifier: Modifier = Modifier,
     goStepBack: () -> Unit,
     goStepForward: () -> Unit,
-    ttsText: String
+    ttsText: String,
 ) {
     val btnSize = ScreenSize.screenHeightDp.toDpSize(15)
     val context = LocalContext.current

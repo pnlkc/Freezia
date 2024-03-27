@@ -1,8 +1,6 @@
 package com.s005.fif.main.ui
 
-import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,14 +16,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.MaterialTheme
@@ -35,21 +31,14 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.s005.fif.R
 import com.s005.fif.fcm.RecipeLiveData
-import com.s005.fif.utils.AlarmUtil
-import com.s005.fif.utils.NotificationUtil
 import com.s005.fif.utils.ScreenSize
 import com.s005.fif.utils.ScreenSize.toDpSize
 import com.s005.fif.utils.ScreenSize.toSpSize
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.serialization.json.JsonNull.content
 
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
-    viewModel: MainViewModel = hiltViewModel(),
+    mainViewModel: MainViewModel,
     navigateToShoppingList: () -> Unit,
     navigateToRecipeDetail: () -> Unit,
     navigateToTimerList: () -> Unit,
@@ -69,7 +58,7 @@ fun MainScreen(
         navigateToShoppingList = navigateToShoppingList,
         navigateToRecipe = navigateToRecipeDetail,
         navigateToTimerList = navigateToTimerList,
-        mainUiState = { viewModel.mainUiState }
+        mainUiState = { mainViewModel.mainUiState }
     )
 }
 

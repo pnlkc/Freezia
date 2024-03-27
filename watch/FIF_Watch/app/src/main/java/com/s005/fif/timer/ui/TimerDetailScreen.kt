@@ -1,8 +1,6 @@
 package com.s005.fif.timer.ui
 
-import android.os.SystemClock
 import android.util.Log
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -24,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -49,28 +46,24 @@ import androidx.wear.compose.material.SwipeToDismissBox
 import androidx.wear.compose.material.Text
 import com.s005.fif.R
 import com.s005.fif.timer.entity.TimerInfo
-import com.s005.fif.utils.AlarmUtil
 import com.s005.fif.utils.ScreenSize
 import com.s005.fif.utils.ScreenSize.toDpSize
 import com.s005.fif.utils.ScreenSize.toSpSize
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TimerDetailScreen(
     modifier: Modifier = Modifier,
-    viewModel: TimerViewModel = hiltViewModel(),
+    timerViewModel: TimerViewModel,
     navigateUp: () -> Unit,
     navigateToRecipeDetail: () -> Unit,
     idx: Int
 ) {
-    Log.d("로그", " - TimerDetailScreen() 호출됨 / ${viewModel.timerList}")
+    Log.d("로그", " - TimerDetailScreen() 호출됨 / ${timerViewModel.timerList}")
 
     val context = LocalContext.current
-    val maxPages = viewModel.timerList.size
+    val maxPages = timerViewModel.timerList.size
     var selectedPage by remember { mutableIntStateOf(idx) }
     val pagerState = rememberPagerState(
         initialPage = selectedPage,
@@ -106,9 +99,9 @@ fun TimerDetailScreen(
             },
             navigateUp = navigateUp,
             navigateToRecipeDetail = navigateToRecipeDetail,
-            item = { viewModel.timerList[page] },
+            item = { timerViewModel.timerList[page] },
             timerClicked = { isStart, timerInfo ->
-                viewModel.timerBtnClicked(isStart, context, timerInfo)
+                timerViewModel.timerBtnClicked(isStart, context, timerInfo)
             }
         )
     }

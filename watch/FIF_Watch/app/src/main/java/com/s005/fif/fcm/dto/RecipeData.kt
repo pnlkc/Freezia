@@ -1,4 +1,4 @@
-package com.s005.fif.fcm
+package com.s005.fif.fcm.dto
 
 import com.s005.fif.recipe.dto.RecipeInfoResponse
 import com.s005.fif.recipe.dto.RecipeStepItemResponse

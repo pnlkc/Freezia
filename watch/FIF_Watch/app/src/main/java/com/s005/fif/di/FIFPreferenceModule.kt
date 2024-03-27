@@ -11,7 +11,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.s005.fif.di.FIFPreferenceModule.PreferenceKeys.KEY_ACCESS_TOKEN
 import com.s005.fif.di.FIFPreferenceModule.PreferenceKeys.KEY_RECIPE_DATA
 import com.s005.fif.di.FIFPreferenceModule.PreferenceKeys.KEY_TIMER_LIST
-import com.s005.fif.fcm.RecipeData
+import com.s005.fif.fcm.dto.RecipeData
 import com.s005.fif.timer.entity.TimerInfoEntity
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.catch

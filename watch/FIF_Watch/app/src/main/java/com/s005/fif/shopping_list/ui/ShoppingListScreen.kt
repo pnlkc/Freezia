@@ -37,7 +37,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun ShoppingListScreen(
     modifier: Modifier = Modifier,
-    viewModel: ShoppingListViewModel = hiltViewModel(),
+    shoppingListViewModel: ShoppingListViewModel,
 ) {
     val scalingLazyListState = rememberScalingLazyListState()
     val coroutineScope = rememberCoroutineScope()
@@ -51,10 +51,10 @@ fun ShoppingListScreen(
             scalingLazyListState = scalingLazyListState,
             itemClicked = { idx, id, isChecked ->
                 coroutineScope.launch {
-                    viewModel.checkShoppingListItem(idx, id, isChecked)
+                    shoppingListViewModel.checkShoppingListItem(idx, id, isChecked)
                 }
             },
-            shoppingList = { viewModel.shoppingList.value }
+            shoppingList = { shoppingListViewModel.shoppingList.value }
         )
 
         PositionIndicator(

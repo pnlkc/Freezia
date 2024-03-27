@@ -110,7 +110,8 @@ async def get_recipe_stream(ingredients, diseases, dislikeIngredients, prompt, t
                     # text인 경우에만 클라이언트에 전송
                     if content.type == 'text':
                         yield content.text.value
-                        await asyncio.sleep(0.2)
-
+                        await asyncio.sleep(0.05)
     except Exception as e:
         print(e)
+    finally:
+        client.beta.assistants.delete(assistant.id)

@@ -22,7 +22,9 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.s005.fif.common.exception.CustomException;
 import com.s005.fif.common.exception.ExceptionType;
 import com.s005.fif.dto.fcm.FcmMessageDto;
+import com.s005.fif.dto.fcm.FcmRecipeDto;
 import com.s005.fif.dto.fcm.FcmSendDto;
+import com.s005.fif.dto.fcm.FcmStepShiftingDto;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -85,6 +87,13 @@ public class FirebaseCloudMessageService {
 
 		Map<String, String> map = new HashMap<>();
 		map.put("json", om.registerModule(new JavaTimeModule()).writeValueAsString(fcmSendDto.getData()));
+
+		Object data = fcmSendDto.getData();
+		if (data instanceof FcmRecipeDto) {
+			map.put("type", ((FcmRecipeDto)data).getType().toString());
+		} else if (data instanceof FcmStepShiftingDto) {
+			map.put("type", ((FcmStepShiftingDto)data).getType().toString());
+		}
 
 		FcmMessageDto fcmMessageDto = FcmMessageDto.builder()
 			.message(FcmMessageDto.Message.builder()

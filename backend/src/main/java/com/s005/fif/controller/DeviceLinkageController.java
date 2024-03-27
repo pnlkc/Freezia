@@ -35,7 +35,7 @@ public class DeviceLinkageController {
 		return new Response(Response.MESSAGE, "연동이 종료되었습니다.");
 	}
 
-	@GetMapping("/api/recipes/step/{step}")
+	@GetMapping("/recipes/steps/{step}")
 	@Operation(summary = "워치&패널 레시피 단계 이동")
 	public Response moveToNextStep(@Parameter(hidden = true) MemberDto memberDto, @PathVariable Integer step) {
 		deviceLinkageService.moveToNextStep(memberDto.getMemberId(), step);

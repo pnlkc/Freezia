@@ -88,8 +88,8 @@ async def get_recipe_stream(ingredients, diseases, dislikeIngredients, prompt, t
         )
 
     # Thread 생성
-    thread = client.beta.threads.retrieve(thread_id=threadId)
-    # thread = client.beta.threads.create()
+    # thread = client.beta.threads.retrieve(thread_id=threadId)
+    thread = client.beta.threads.create()
 
     try:
         message = client.beta.threads.messages.create(
@@ -111,7 +111,6 @@ async def get_recipe_stream(ingredients, diseases, dislikeIngredients, prompt, t
                     if content.type == 'text':
                         yield content.text.value
                         await asyncio.sleep(0.05)
+        client.beta.assistants.delete(assistant.id)
     except Exception as e:
         print(e)
-    finally:
-        client.beta.assistants.delete(assistant.id)

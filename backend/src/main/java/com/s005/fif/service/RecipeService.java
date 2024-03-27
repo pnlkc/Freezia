@@ -369,8 +369,8 @@ public class RecipeService {
 
 		completeCookRepository.save(CompleteCook.builder()
 			.recipe(recipe)
-			.addIngredient(addIngredient.toString())
-			.removeIngredient(removeIngredient.toString())
+			.addIngredient(addIngredient.isEmpty() ? null : addIngredient.toString())
+			.removeIngredient(removeIngredient.isEmpty() ? null : removeIngredient.toString())
 			.memo(dto.getMemo())
 			.build());
 

@@ -25,7 +25,7 @@ import java.util.Map;
 @Slf4j
 public class GeneAIService {
 
-    @Value("${FASTAPI_SERVER_URL}")
+    @Value("${ai-server-base-url}")
     private String sendUrl;
 
     private final MemberRepository memberRepository;
@@ -49,6 +49,7 @@ public class GeneAIService {
             member.updateThreadId(getNewThreadId());
         }
 
+
         // api 요청
         Flux<String> eventStream = webClient.get()
                 .uri(uriBuilder ->
@@ -64,11 +65,6 @@ public class GeneAIService {
                 .retrieve()
                 .bodyToFlux(String.class);
 
-        eventStream.subscribe(
-//                content -> System.out.println("Received: " + content),
-//                error -> System.out.println("Error receiving SSE: " + error),
-//                () -> System.out.println("Completed!")
-        );
         return eventStream;
     }
 

@@ -43,7 +43,7 @@ def get_thread_and_assistant():
     try:
         # Thread 생성
         thread = client.beta.threads.create()
-        return json.loads({"threadId": thread.id})
+        return json.loads('{ "threadId" : "' + thread.id + '"}')
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

@@ -25,6 +25,7 @@ import com.s005.fif.dto.fcm.FcmMessageDto;
 import com.s005.fif.dto.fcm.FcmRecipeDto;
 import com.s005.fif.dto.fcm.FcmSendDto;
 import com.s005.fif.dto.fcm.FcmStepShiftingDto;
+import com.s005.fif.dto.response.CautionIngredientResponseDto;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -93,6 +94,8 @@ public class FirebaseCloudMessageService {
 			map.put("type", ((FcmRecipeDto)data).getType().toString());
 		} else if (data instanceof FcmStepShiftingDto) {
 			map.put("type", ((FcmStepShiftingDto)data).getType().toString());
+		} else if (data instanceof CautionIngredientResponseDto) {
+			map.put("type", ((CautionIngredientResponseDto)data).getType().toString());
 		}
 
 		FcmMessageDto fcmMessageDto = FcmMessageDto.builder()

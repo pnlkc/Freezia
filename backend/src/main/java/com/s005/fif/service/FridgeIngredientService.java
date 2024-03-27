@@ -97,6 +97,7 @@ public class FridgeIngredientService {
 				.title("위험 식재료 알림")
 				.body("방금 꺼내신 "+ingredient.getName()+"는 지병에 좋지 않아요.")
 				.data(CautionIngredientResponseDto.builder()
+					.type(1)
 					.name(ingredient.getName())
 					.description(cautionIngredients.get(i).getDescription())
 					.imgUrl(ingredient.getImgUrl())

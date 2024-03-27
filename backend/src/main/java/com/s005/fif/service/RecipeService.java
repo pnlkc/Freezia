@@ -369,8 +369,8 @@ public class RecipeService {
 
 		completeCookRepository.save(CompleteCook.builder()
 			.recipe(recipe)
-			.addIngredient(addIngredient.toString())
-			.removeIngredient(removeIngredient.toString())
+			.addIngredient(addIngredient.isEmpty() ? null : addIngredient.toString())
+			.removeIngredient(removeIngredient.isEmpty() ? null : removeIngredient.toString())
 			.memo(dto.getMemo())
 			.build());
 
@@ -400,27 +400,33 @@ public class RecipeService {
 		List<CompleteCook> completeCookList = completeCookRepository.findByRecipe(recipe);
 		for (CompleteCook completeCook : completeCookList) {
 			List<IngredientSimpleDto> addIngredients = new ArrayList<>();
-			for (String ingredient : completeCook.getAddIngredient().split(",")) {
-				Ingredient findIngredient = ingredientRepository.findByName(ingredient)
-					.orElseThrow(() -> new CustomException(ExceptionType.INGREDIENTS_NOT_FOUND));
+			String addIngredient = completeCook.getAddIngredient();
+			if (!addIngredient.isEmpty()) {
+				for (String ingredient : addIngredient.split(",")) {
+					Ingredient findIngredient = ingredientRepository.findByName(ingredient)
+						.orElseThrow(() -> new CustomException(ExceptionType.INGREDIENTS_NOT_FOUND));
 
-				addIngredients.add(IngredientSimpleDto.builder()
-					.ingredientId(findIngredient.getIngredientId())
-					.name(ingredient)
-					.image(findIngredient.getImgUrl())
-					.build());
+					addIngredients.add(IngredientSimpleDto.builder()
+						.ingredientId(findIngredient.getIngredientId())
+						.name(ingredient)
+						.image(findIngredient.getImgUrl())
+						.build());
+				}
 			}
 
 			List<IngredientSimpleDto> removeIngredients = new ArrayList<>();
-			for (String ingredient : completeCook.getRemoveIngredient().split(",")) {
-				Ingredient findIngredient = ingredientRepository.findByName(ingredient)
-					.orElseThrow(() -> new CustomException(ExceptionType.INGREDIENTS_NOT_FOUND));
+			String removeIngredient = completeCook.getRemoveIngredient();
+			if (!removeIngredient.isEmpty()) {
+				for (String ingredient : removeIngredient.split(",")) {
+					Ingredient findIngredient = ingredientRepository.findByName(ingredient)
+						.orElseThrow(() -> new CustomException(ExceptionType.INGREDIENTS_NOT_FOUND));
 
-				removeIngredients.add(IngredientSimpleDto.builder()
-					.ingredientId(findIngredient.getIngredientId())
-					.name(ingredient)
-					.image(findIngredient.getImgUrl())
-					.build());
+					removeIngredients.add(IngredientSimpleDto.builder()
+						.ingredientId(findIngredient.getIngredientId())
+						.name(ingredient)
+						.image(findIngredient.getImgUrl())
+						.build());
+				}
 			}
 
 			completeCookResponseDtoList.add(CompleteCookResponseDto.builder()

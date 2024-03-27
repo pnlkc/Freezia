@@ -91,4 +91,13 @@ public class Member {
 	}
 
 	public void updateThreadId(String threadId) { this.threadId = threadId; }
+
+	public void updateMobileToken(String mobileToken) {
+		this.mobileToken = mobileToken;
+	}
+
+	public void updateWatchToken(String watchToken) {
+		this.watchToken = watchToken;
+	}
+
 }

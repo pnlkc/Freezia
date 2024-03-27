@@ -153,7 +153,12 @@ fun RecipeStepScreen(
                 )
             } else {
                 RecipeDoneBody(
-                    navigateToMain = navigateToMain
+                    navigateToMain = navigateToMain,
+                    onDoneBtnClicked = {
+                        coroutineScope.launch {
+                            recipeViewModel.disconnectRecipe()
+                        }
+                    }
                 )
             }
 
@@ -313,13 +318,14 @@ fun ControlBtnRow(
 fun RecipeDoneBody(
     modifier: Modifier = Modifier,
     navigateToMain: () -> Unit,
+    onDoneBtnClicked: () -> Unit
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(
-                top = ScreenSize.screenHeightDp.toDpSize(20),
-                bottom = ScreenSize.screenHeightDp.toDpSize(7)
+                top = ScreenSize.screenHeightDp.toDpSize(30),
+                bottom = ScreenSize.screenHeightDp.toDpSize(20)
             ),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -352,25 +358,11 @@ fun RecipeDoneBody(
                 )
             },
             colors = ChipDefaults.primaryChipColors(
-                backgroundColor = MaterialTheme.colors.onSecondary,
+                backgroundColor = MaterialTheme.colors.primary,
                 contentColor = Color.White
             ),
-            onClick = { navigateToMain() },
+            onClick = { onDoneBtnClicked() },
             shape = MaterialTheme.shapes.large
-        )
-
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { navigateToMain() },
-            text = stringResource(id = R.string.record_panel),
-            textAlign = TextAlign.Center,
-            textDecoration = TextDecoration.Underline,
-            fontWeight = FontWeight.Bold,
-            fontSize = ScreenSize.screenHeightDp.toSpSize(6),
-            color = Color.White,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
         )
     }
 }

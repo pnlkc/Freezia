@@ -31,4 +31,9 @@ interface RecipeService {
     suspend fun moveRecipeStep(
         @Path("step") step: Int
     ) : Response<DefaultResponse>
+
+    @GET("recipes/{recipeId}/galaxy-watch")
+    suspend fun disconnectRecipe(
+        @Path("recipeId") recipeId: Int
+    ): Response<DefaultResponse>
 }

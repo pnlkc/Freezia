@@ -99,7 +99,10 @@ public class FirebaseCloudMessageService {
 			map.put("type", ((CautionIngredientResponseDto)data).getType().toString());
 		}
 
-		if (data instanceof CautionIngredientResponseDto) {
+		if (
+			data instanceof CautionIngredientResponseDto ||
+				(data instanceof FcmRecipeDto && (((FcmRecipeDto)data).getType() == 2 || ((FcmRecipeDto)data).getType() == 3))
+		) {
 			FcmMessageNotificationDto fcmMessageNotificationDto = FcmMessageNotificationDto.builder()
 				.message(FcmMessageNotificationDto.Message.builder()
 					.token(fcmSendDto.getToken())

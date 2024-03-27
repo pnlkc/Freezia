@@ -22,6 +22,7 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.s005.fif.common.exception.CustomException;
 import com.s005.fif.common.exception.ExceptionType;
 import com.s005.fif.dto.fcm.FcmMessageDto;
+import com.s005.fif.dto.fcm.FcmMessageNotificationDto;
 import com.s005.fif.dto.fcm.FcmRecipeDto;
 import com.s005.fif.dto.fcm.FcmSendDto;
 import com.s005.fif.dto.fcm.FcmStepShiftingDto;
@@ -96,6 +97,15 @@ public class FirebaseCloudMessageService {
 			map.put("type", ((FcmStepShiftingDto)data).getType().toString());
 		} else if (data instanceof CautionIngredientResponseDto) {
 			map.put("type", ((CautionIngredientResponseDto)data).getType().toString());
+		}
+
+		if (data instanceof CautionIngredientResponseDto) {
+			FcmMessageNotificationDto fcmMessageNotificationDto = FcmMessageNotificationDto.builder()
+				.message(FcmMessageNotificationDto.Message.builder()
+					.token(fcmSendDto.getToken())
+					.data(map)
+					.build()).validateOnly(false).build();
+			return om.writeValueAsString(fcmMessageNotificationDto);
 		}
 
 		FcmMessageDto fcmMessageDto = FcmMessageDto.builder()

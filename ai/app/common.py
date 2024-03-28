@@ -40,7 +40,7 @@ def send_request(instruction, content):
             time.sleep(2)
     
     response = client.beta.threads.messages.list(thread_id=thread.id).data[0].content[0].text.value
-    response_sub = re.sub(r'^```json\n|\n```$', '', response, flags=re.MULTILINE).strip()
+    response_sub = re.sub(r'^.*?({.*}).*$', r'\1', response, flags=re.DOTALL).strip()
     delete_connect(client, thread.id, assistant.id)
     return json.loads(response_sub)
 

@@ -3,12 +3,15 @@ package com.s005.fif.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.s005.fif.common.exception.CustomException;
 import com.s005.fif.common.exception.ExceptionType;
+import com.s005.fif.dto.fcm.DeviceType;
 import com.s005.fif.dto.fcm.FcmRecipeDto;
 import com.s005.fif.dto.fcm.FcmSendDto;
 import com.s005.fif.dto.fcm.FcmStepShiftingDto;
+import com.s005.fif.dto.fcm.FcmTokenDto;
 import com.s005.fif.dto.response.RecipeResponseDto;
 import com.s005.fif.dto.response.RecipeStepResponseDto;
 import com.s005.fif.entity.Member;
@@ -102,5 +105,19 @@ public class DeviceLinkageService {
 		// 웹으로 전송
 		fcmSendDto.setToken(webToken);
 		firebaseCloudMessageService.sendMessageTo(fcmSendDto);
+	}
+
+	@Transactional
+	public void saveToken(Integer memberId, FcmTokenDto fcmTokenDto) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new CustomException(ExceptionType.MEMBER_NOT_FOUND));
+
+		if (fcmTokenDto.getType().equals(DeviceType.MOBILE)) {
+			member.updateMobileToken(fcmTokenDto.getToken());
+		} else if (fcmTokenDto.getType().equals(DeviceType.WATCH)) {
+			member.updateWatchToken(fcmTokenDto.getToken());
+		}
+
+		memberRepository.save(member);
 	}
 }

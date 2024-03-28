@@ -1,8 +1,12 @@
 package com.s005.fif.controller;
 
+import com.s005.fif.common.auth.MemberDto;
 import com.s005.fif.common.response.Response;
 import com.s005.fif.dto.request.GeneAIPromptRequestDto;
 import com.s005.fif.service.GeneAIService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,46 +22,12 @@ public class GeneAIController {
 
     private final GeneAIService geneAIService;
 
-    @GetMapping("/websocket")
-    public Response getThreadAndAssistant() {
-        geneAIService.get();
-        return new Response("fridgeIngredients", 1);
-    }
-
     @GetMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<String> streamDataFromAI(GeneAIPromptRequestDto geneAIPromptRequestDto) {
+    @Operation(summary = "대화형 레시피 추천")
+    public Flux<String> streamDataFromAI(@Parameter(hidden = true) MemberDto memberDto, GeneAIPromptRequestDto geneAIPromptRequestDto) {
 
-        // FastAPI에서 SSE 스트림을 받는 로직
-        Flux<String> fastApiStream = geneAIService.getStreamDataFromAI(geneAIPromptRequestDto);
-
-        // 받아온 스트림을 그대로 클라이언트에 전송
-        return fastApiStream;
+        // FastAPI에서 받아온 스트림을 그대로 클라이언트에 전송
+        return geneAIService.getStreamDataFromAI(memberDto, geneAIPromptRequestDto);
     }
-
-//    @GetMapping
-//    public SseEmitter streamDataFromAI() throws IOException {
-//        SseEmitter emitter = new SseEmitter();
-//
-//        // FastAPI에서 SSE 스트림을 받는 로직
-//        Flux<String> fastApiStream = webClientService.getStreamDataFromAI();
-//
-//        fastApiStream.subscribe(
-//                // 데이터를 받을 때마다 클라이언트에 데이터 전송
-//                data -> {
-//                    try {
-//                        emitter.send(data);
-//                    } catch (IOException e) {
-//                        emitter.completeWithError(e);
-//                    }
-//                },
-//                // 에러 처리
-//                error -> emitter.completeWithError(error),
-//                // 스트림 완료 처리
-//                () -> emitter.complete()
-//        );
-//
-//        return emitter;
-//    }
-
 
 }

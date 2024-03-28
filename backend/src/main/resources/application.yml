@@ -11,6 +11,39 @@ ACCESS_TOKEN_EXPIRE_TIME_MILLI_SEC: 86400000 # 1일
 REFRESH_TOKEN_EXPIRE_TIME_MILLI_SEC: 86400000 # 1일
 REFRESH_TOKEN_NAME: refreshToken
 
+
+
+# Swagger
+springdoc:
+  swagger-ui:
+    path: /api/swagger-ui
+    persist-authorization: true
+  api-docs:
+    path: /api/api-docs
+
+# AWS
+cloud:
+  aws:
+    s3:
+      bucket: fridgeisfree
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+    credentials:
+      access-key: AKIA53BIDTSEZHDIZAL3
+      secret-key: 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
+
+# Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,logfile
+logging:
+  file:
+    name: "./target/logs/fif/202403.log"
+
 # AI 서버 설정
 AI_SERVER_HOST: "j10s005.p.ssafy.io"
 #AI_SERVER_HOST: 3887aec5-3573-4806-8a13-0307b17a0827.mock.pstmn.io

@@ -1,13 +1,19 @@
 package com.s005.fif.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.codec.binary.Base64;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import com.s005.fif.common.Constant;
+import com.s005.fif.common.CustomMultipartFile;
 import com.s005.fif.common.exception.CustomException;
 import com.s005.fif.common.exception.ExceptionType;
 import com.s005.fif.common.types.RecipeRecommendType;
@@ -46,6 +52,11 @@ public class RecipeService {
 	private final RecipeStepRepository recipeStepRepository;
 	private final CompleteCookRepository completeCookRepository;
 	private final MemberRepository memberRepository;
+
+	private final S3Service s3Service;
+
+	@Value("${ai-server-base-url}")
+	private String aiServerBaseUrl;
 
 	/**
 	 * 레시피 목록을 반환합니다.
@@ -360,8 +371,8 @@ public class RecipeService {
 
 		completeCookRepository.save(CompleteCook.builder()
 			.recipe(recipe)
-			.addIngredient(addIngredient.toString())
-			.removeIngredient(removeIngredient.toString())
+			.addIngredient(addIngredient.isEmpty() ? null : addIngredient.toString())
+			.removeIngredient(removeIngredient.isEmpty() ? null : removeIngredient.toString())
 			.memo(dto.getMemo())
 			.build());
 
@@ -391,27 +402,33 @@ public class RecipeService {
 		List<CompleteCook> completeCookList = completeCookRepository.findByRecipe(recipe);
 		for (CompleteCook completeCook : completeCookList) {
 			List<IngredientSimpleDto> addIngredients = new ArrayList<>();
-			for (String ingredient : completeCook.getAddIngredient().split(",")) {
-				Ingredient findIngredient = ingredientRepository.findByName(ingredient)
-					.orElseThrow(() -> new CustomException(ExceptionType.INGREDIENTS_NOT_FOUND));
+			String addIngredient = completeCook.getAddIngredient();
+			if (addIngredient != null) {
+				for (String ingredient : addIngredient.split(",")) {
+					Ingredient findIngredient = ingredientRepository.findByName(ingredient)
+						.orElseThrow(() -> new CustomException(ExceptionType.INGREDIENTS_NOT_FOUND));
 
-				addIngredients.add(IngredientSimpleDto.builder()
-					.ingredientId(findIngredient.getIngredientId())
-					.name(ingredient)
-					.image(findIngredient.getImgUrl())
-					.build());
+					addIngredients.add(IngredientSimpleDto.builder()
+						.ingredientId(findIngredient.getIngredientId())
+						.name(ingredient)
+						.image(findIngredient.getImgUrl())
+						.build());
+				}
 			}
 
 			List<IngredientSimpleDto> removeIngredients = new ArrayList<>();
-			for (String ingredient : completeCook.getRemoveIngredient().split(",")) {
-				Ingredient findIngredient = ingredientRepository.findByName(ingredient)
-					.orElseThrow(() -> new CustomException(ExceptionType.INGREDIENTS_NOT_FOUND));
+			String removeIngredient = completeCook.getRemoveIngredient();
+			if (removeIngredient != null) {
+				for (String ingredient : removeIngredient.split(",")) {
+					Ingredient findIngredient = ingredientRepository.findByName(ingredient)
+						.orElseThrow(() -> new CustomException(ExceptionType.INGREDIENTS_NOT_FOUND));
 
-				removeIngredients.add(IngredientSimpleDto.builder()
-					.ingredientId(findIngredient.getIngredientId())
-					.name(ingredient)
-					.image(findIngredient.getImgUrl())
-					.build());
+					removeIngredients.add(IngredientSimpleDto.builder()
+						.ingredientId(findIngredient.getIngredientId())
+						.name(ingredient)
+						.image(findIngredient.getImgUrl())
+						.build());
+				}
 			}
 
 			completeCookResponseDtoList.add(CompleteCookResponseDto.builder()
@@ -452,6 +469,69 @@ public class RecipeService {
 
 		return "요리 기록이 삭제되었습니다.";
 	}
+
+	/**
+	 * FastAPI 및 DALL-E를 통해 레시피의 이미지를 생성하고 저장합니다.
+	 * @param memberId 사용자 ID
+	 * @param recipeId 레시피 ID
+	 * @return S3 URL
+	 */
+	public String generateAndSaveImage(Integer memberId, Integer recipeId) throws IOException {
+		Recipe recipe = recipeRepository.findById(recipeId)
+			.orElseThrow(() -> new CustomException(ExceptionType.RECIPE_NOT_FOUND));
+
+		// [예외 처리] 본인의 레시피가 아닐 경우
+		if (!recipe.getMember().getMemberId().equals(memberId)) {
+			throw new CustomException(ExceptionType.RECIPE_NOT_ACCESSIBLE);
+		}
+
+		// recipe.getIngredients에서 식재료명만 파싱
+		StringBuilder ingredients = new StringBuilder();
+		for (String s : recipe.getIngredientList().split(",")) {
+			String ingredientName = s.split(":")[0];
+			ingredients.append(ingredientName).append(",");
+		}
+
+		if (!ingredients.isEmpty()) {
+			ingredients.deleteCharAt(ingredients.length() - 1);
+		}
+
+		// buffer 크기 제한 해제
+		ExchangeStrategies exchangeStrategies = ExchangeStrategies.builder()
+			.codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(-1))
+			.build();
+
+		// WebClient 기본 설정
+		WebClient webClient = WebClient.builder()
+			.baseUrl(aiServerBaseUrl)
+			.exchangeStrategies(exchangeStrategies)
+			.build();
+
+		// API 요청
+		String imgB64Json = webClient.get()
+			.uri(uriBuilder -> uriBuilder
+				.path("/image")
+				.queryParam("recipeName", recipe.getName())
+				.queryParam("ingredients", ingredients)
+				.queryParam("recipeTypes", recipe.getRecipeTypes())
+				.build())
+			.retrieve()
+			.bodyToMono(String.class)
+			.block();
+
+		if (imgB64Json != null) {
+			imgB64Json = imgB64Json.replaceAll("\"", "");
+		}
+
+		// B64 String -> byte[]
+		byte[] image = Base64.decodeBase64(imgB64Json);
+
+		// byte[] -> MultipartFile
+		CustomMultipartFile multipartFile = new CustomMultipartFile(image);
+
+		return s3Service.uploadFile(multipartFile);
+	}
+
 
 	/**
 	 * 생성된 레시피를 저장한다.

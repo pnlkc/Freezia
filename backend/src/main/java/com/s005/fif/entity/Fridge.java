@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -28,6 +29,7 @@ public class Fridge {
 	@Size(max = Constant.COMMON_TITLE_LENGTH)
 	private String name;
 
+	@Setter
 	@Size(max = Constant.FCM_TOKEN_LENGTH)
 	private String fridgeToken;
 }

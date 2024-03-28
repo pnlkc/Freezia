@@ -68,6 +68,9 @@ public class Member {
 	@Size(max = Constant.FCM_TOKEN_LENGTH)
 	private String watchToken;
 
+	@Size(max = Constant.COMMON_CONTENT_LENGTH)
+	private String threadId;
+
 	// TODO : createDatetime, updateDatetime 자동 적용 로직
 	private LocalDateTime createDatetime;
 
@@ -86,4 +89,15 @@ public class Member {
 	public void updatePreference(String preferMenu) {
 		this.preferMenu = preferMenu;
 	}
+
+	public void updateThreadId(String threadId) { this.threadId = threadId; }
+
+	public void updateMobileToken(String mobileToken) {
+		this.mobileToken = mobileToken;
+	}
+
+	public void updateWatchToken(String watchToken) {
+		this.watchToken = watchToken;
+	}
+
 }

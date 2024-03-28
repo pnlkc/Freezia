@@ -44,10 +44,6 @@ logging:
   file:
     name: "./target/logs/fif/202403.log"
 
-# AI 서버 설정
-AI_SERVER_HOST: "j10s005.p.ssafy.io"
-#AI_SERVER_HOST: 3887aec5-3573-4806-8a13-0307b17a0827.mock.pstmn.io
-
 # 스케줄링
 scheduler:
   use: true

@@ -38,13 +38,24 @@ public class GeneAIRecipeScheduler {
 	@Value("${scheduler.use}")
 	private boolean use;
 
+	/**
+	 * 스케줄링을 통해 레시피 생성 메서드 자동 호출
+	 */
 	@Scheduled(cron = "${scheduler.cron}")
-	public void generateRecipe() {
+	public void generateRecipeBySchedule() {
 
 		if (!use) {
 			log.info("레시피 생성 취소: " + LocalDateTime.now());
 			return;
 		}
+
+		generateRecipe();
+	}
+
+	/**
+	 * 레시피 생성 메서드
+	 */
+	public void generateRecipe() {
 
 		LocalDateTime startTime = LocalDateTime.now();
 		log.info("레시피 생성 시작: " + startTime);
@@ -159,6 +170,10 @@ public class GeneAIRecipeScheduler {
 		log.info("레시피 생성 개수: {}", cntNewRecipes);
 	}
 
+	/**
+	 * 존재하는 레시피를 불러와서 알맞는 이미지를 자동 생성하고 새로 저장
+	 * @param recipeIds 레시피 아이디 리스트
+	 */
 	private void makeRecipeImages(List<Integer> recipeIds) {
 		if (recipeIds == null)
 			throw new NullPointerException("레시피 아이디 목록을 받지 못했습니다.");

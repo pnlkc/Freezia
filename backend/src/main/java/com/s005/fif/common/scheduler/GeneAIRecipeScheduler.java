@@ -9,6 +9,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.s005.fif.common.types.RecipeRecommendType;
+import com.s005.fif.common.types.RecipeType;
+import com.s005.fif.dto.request.GeneAICategoryListRequestDto;
 import com.s005.fif.dto.request.GeneAIHealthRequestDto;
 import com.s005.fif.dto.response.FridgeIngredientResponseDto;
 import com.s005.fif.dto.response.GeneAIResponseRecipeDto;
@@ -65,7 +67,7 @@ public class GeneAIRecipeScheduler {
 		// 지병 조회
 		List<String> memberDislikeIngredientNames = memberService.getMemberDislikeIngredients(tmpMemberId);
 
-		log.info("레시피 생성 시작: 생체 정보 기반");
+		log.info("레시피 생성 시작: 추천 레시피");
 		for (RecipeRecommendType recommendType : RecipeRecommendType.values()) {
 			GeneAIResponseRecipeDto geneAIResponseRecipeDto;
 			String imgUrl = "example-image-url"; // TODO: 생성형 이미지로 변경
@@ -91,12 +93,38 @@ public class GeneAIRecipeScheduler {
 			cntNewRecipes++;
 		}
 
-		log.info("레시피 생성 시작: 카테고리 별 레시피 생성");
-		// TODO: 카테고리 별 레시피 생성
+		log.info("레시피 생성 시작: 카테고리 별 레시피");
 
-		// TODO: 카테고리 별 레시피 저장
+		for (RecipeType recipeType : RecipeType.values()) {
+			log.info("레시피 카테고리: {}", recipeType.getType());
+			List<GeneAIResponseRecipeDto> geneAIResponseRecipeDtoList;
+			String imgUrl = "example-image-url"; // TODO: 생성형 이미지로 변경
+			try {
+				GeneAICategoryListRequestDto req = GeneAICategoryListRequestDto.builder()
+					.ingredients(String.join(", ", fridgeIngredientNames))
+					.diseases(String.join(", ", memberDiseaseNames))
+					.dislikeIngredients(String.join(", ", memberDislikeIngredientNames))
+					.recipeTypes(recipeType.getType())
+					.build();
+				geneAIResponseRecipeDtoList = geneAIService.makeRecommendationRecipes(req, recipeType.getType());
+			} catch (Exception e) {
+				log.error("{} 레시피 생성 중 오류", recipeType.name(), e);
+				continue;
+			}
+
+			geneAIResponseRecipeDtoList.forEach((r) -> {
+				try {
+					recipeService.saveGeneratedRecipe(tmpMemberId, RecipeRecommendType.NONE, r, imgUrl);
+				} catch (Exception e) {
+					log.error("레시피 저장중 에러 발생: {}", r, e);
+				}
+			});
+
+			cntNewRecipes += geneAIResponseRecipeDtoList.size();
+		}
 
 		// TODO: 이전 레시피 삭제
+
 
 		LocalDateTime endTime = LocalDateTime.now();
 		log.info("레시피 생성 종료: {}" ,endTime);

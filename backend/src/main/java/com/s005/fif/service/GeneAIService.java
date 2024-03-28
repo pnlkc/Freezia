@@ -4,28 +4,18 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
-import org.springframework.http.codec.ServerSentEvent;
-import com.s005.fif.common.auth.MemberDto;
-import com.s005.fif.common.exception.CustomException;
-import com.s005.fif.common.exception.ExceptionType;
-import com.s005.fif.dto.request.GeneAIPromptRequestDto;
-import com.s005.fif.dto.response.ThreadIdResponseDto;
-import com.s005.fif.entity.Member;
-import com.s005.fif.repository.MemberRepository;
-import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.s005.fif.common.auth.MemberDto;
 import com.s005.fif.common.exception.CustomException;
 import com.s005.fif.common.exception.ExceptionType;
 import com.s005.fif.common.types.RecipeRecommendType;
@@ -33,19 +23,19 @@ import com.s005.fif.dto.request.GeneAICategoryListRequestDto;
 import com.s005.fif.dto.request.GeneAIHealthRequestDto;
 import com.s005.fif.dto.request.GeneAIPromptRequestDto;
 import com.s005.fif.dto.request.model.GeneAIBaseRequestDto;
+import com.s005.fif.dto.response.GeneAICategoryListResponseDto;
 import com.s005.fif.dto.response.GeneAIResponseRecipeDto;
 import com.s005.fif.dto.response.RecipeResponseDto;
+import com.s005.fif.dto.response.ThreadIdResponseDto;
 import com.s005.fif.entity.FridgeIngredient;
 import com.s005.fif.entity.Member;
 import com.s005.fif.repository.FridgeIngredientRepository;
 import com.s005.fif.repository.MemberRepository;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -118,13 +108,15 @@ public class GeneAIService {
 	 * @return 생성된 레시피 데이터
 	 */
 	public GeneAIResponseRecipeDto makeHealthRecipes(RecipeRecommendType recipeRecommendType, GeneAIHealthRequestDto healthRequestDto) {
+
+		UriComponents uri = UriComponentsBuilder.fromUriString(sendUrl).build();
 		String path = "/api/ai/health/" + recipeRecommendType.getName();
 
 		return restClient.get()
 			.uri(uriBuilder ->
 				uriBuilder
-					.scheme("https")
-					.host(HOST_PATH)
+					.scheme(uri.getScheme())
+					.host(uri.getHost())
 					.path(path)
 					.queryParam("ingredients", healthRequestDto.getIngredients())
 					.queryParam("diseases", healthRequestDto.getDiseases())
@@ -139,21 +131,81 @@ public class GeneAIService {
 						throw new IOException("레시피 데이터 응답 매핑 실패");
 					return geneAIResponseRecipeDto;
 				} catch (Exception e) {
-					log.error("레시피 생성 요청 실패: \n"
-						+ "Response - {}", new String(clientResponse.getBody().readAllBytes(), StandardCharsets.UTF_8));
+					log.error("레시피 생성 요청 실패: code - {}", clientResponse.getStatusCode());
 					throw e;
 				}
 			});
 	}
 
 
-	public List<RecipeResponseDto> makeRecommendationRecipes(GeneAICategoryListRequestDto categoryListRequestDto) {
-		String listUri = HOST_PATH + "/api/ai/category/list";
-		String recipeUri = HOST_PATH + "/api/ai/category/recipe";
+	public List<GeneAIResponseRecipeDto> makeRecommendationRecipes(GeneAICategoryListRequestDto categoryListRequestDto, String recipeTypes) {
 
-		List<RecipeResponseDto> recipeResponseDtoList = new ArrayList<>();
+		UriComponents uri = UriComponentsBuilder.fromUriString(sendUrl).build();
+		String listPath = "/api/ai/category/list";
+		String recipePath = "/api/ai/category/recipe";
 
-		return null;
+		List<GeneAIResponseRecipeDto> recipeResponseDtoList = new ArrayList<>();
+
+		GeneAICategoryListResponseDto listResponseDto = restClient.get()
+			.uri(uriBuilder ->
+				uriBuilder
+					.scheme(uri.getScheme())
+					.host(uri.getHost())
+					.path(listPath)
+					.queryParam("ingredients", categoryListRequestDto.getIngredients())
+					.queryParam("diseases", categoryListRequestDto.getDiseases())
+					.queryParam("dislikeIngredients", categoryListRequestDto.getDislikeIngredients())
+					.queryParam("recipe_types", recipeTypes)
+					.build()
+			)
+			.accept(MediaType.APPLICATION_JSON)
+			.exchange((clientRequest, clientResponse) -> {
+				try {
+					GeneAICategoryListResponseDto geneAICategoryListResponseDto = clientResponse.bodyTo(
+						GeneAICategoryListResponseDto.class);
+					if (geneAICategoryListResponseDto == null)
+						throw new IOException("레시피 데이터 응답 매핑 실패");
+					return geneAICategoryListResponseDto;
+				} catch (Exception e) {
+					log.error("레시피 생성 요청 실패: code - {}", clientResponse.getStatusCode());
+					throw e;
+				}
+			});
+
+		List<String> recipeList = listResponseDto.getRecipeList();
+
+		// for (int i = 0; i < recipeList.size(); i++) {
+		for (int i = 0; i < Math.min(5, recipeList.size()); i++) { // FIXME: 테스트를 위해 최대 5개만 생성
+			String recipeName = recipeList.get(i);
+			restClient.get()
+				.uri(uriBuilder ->
+					uriBuilder
+						.scheme(uri.getScheme())
+						.host(uri.getHost())
+						.path(recipePath)
+						.queryParam("ingredients", categoryListRequestDto.getIngredients())
+						.queryParam("diseases", categoryListRequestDto.getDiseases())
+						.queryParam("dislikeIngredients", categoryListRequestDto.getDislikeIngredients())
+						.queryParam("name", recipeName)
+						.build()
+				)
+				.accept(MediaType.APPLICATION_JSON)
+				.exchange((clientRequest, clientResponse) -> {
+					try {
+						GeneAIResponseRecipeDto geneAIResponseRecipeDto = clientResponse.bodyTo(
+							GeneAIResponseRecipeDto.class);
+						if (geneAIResponseRecipeDto == null || geneAIResponseRecipeDto.getRecipeList() == null)
+							throw new IOException("레시피 데이터 응답 매핑 실패");
+						recipeResponseDtoList.add(geneAIResponseRecipeDto);
+					} catch (Exception e) {
+						log.error("레시피 생성 요청 실패: code - {}", clientResponse.getStatusCode());
+						// throw e;
+					}
+					return "";
+				});
+		}
+
+		return recipeResponseDtoList;
 	}
 
 	public GeneAIBaseRequestDto getGeneAIBaseRequest(Integer memberId) {

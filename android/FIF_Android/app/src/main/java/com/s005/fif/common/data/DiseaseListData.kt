@@ -20,4 +20,6 @@ object DiseaseListData {
     )
 
     val map = list.associate { it.diseaseId to it.name }
+
+    val mapIdToItem = list.associateBy { it.diseaseId }
 }

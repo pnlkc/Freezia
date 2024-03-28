@@ -29,5 +29,7 @@ object LikeFoodListData {
         LikeFoodItemData(9, "국물요리"),
     )
 
+    val mapNameToItem = list.associateBy { it.name }
+
     val checkList = list.map { it.toLikeFoodCheckableItem() } + LikeFoodCheckableItem(10, "유통기한 임박", false)
 }

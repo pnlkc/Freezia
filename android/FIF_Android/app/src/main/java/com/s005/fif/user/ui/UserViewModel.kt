@@ -9,8 +9,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bumptech.glide.Glide.init
 import com.s005.fif.common.data.DiseaseItemData
+import com.s005.fif.common.data.DiseaseListData
+import com.s005.fif.common.data.DiseaseListData.mapIdToItem
 import com.s005.fif.common.data.IngredientItemData
+import com.s005.fif.common.data.IngredientListData
 import com.s005.fif.common.data.LikeFoodItemData
+import com.s005.fif.common.data.LikeFoodListData
 import com.s005.fif.common.dto.DefaultResponse
 import com.s005.fif.common.dto.ErrorResponse
 import com.s005.fif.di.FIFPreferenceModule
@@ -33,6 +37,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.GET
 import javax.inject.Inject
 
 @HiltViewModel
@@ -197,5 +203,29 @@ class UserViewModel @Inject constructor(
         }
 
         Log.d("로그", "UserViewModel - clickDiseaseItem() 호출됨 / ${onboardingState.diseases}")
+    }
+
+    fun getOnboardingData() {
+        onboardingState = onboardingState.copy(
+            preferMenu = memberInfo!!.preferMenu.split(", ").map { LikeFoodListData.mapNameToItem[it]!! },
+            dislikeIngredients = memberInfo!!.dislikeIngredients.map { IngredientListData.mapIdToItem[it]!! },
+            diseases = memberInfo!!.diseases.map { DiseaseListData.mapIdToItem[it]!! }
+        )
+    }
+
+    suspend fun editUserPreference() {
+        val responseResult: Response<DefaultResponse> = userRepository.editUserPreference(onboardingState.toOnboardingRequest())
+
+        if (responseResult.isSuccessful) {
+            Log.d("로그", "UserViewModel - editUserPreference() 호출됨 / 응답 성공")
+
+            getMemberInfo()
+        } else {
+            val body = Json.decodeFromString<ErrorResponse>(
+                responseResult.errorBody()?.string()!!
+            )
+
+            Log.d("로그", "UserViewModel - editUserPreference() 호출됨 / 응답 실패 : ${body}")
+        }
     }
 }

@@ -6,7 +6,10 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -42,11 +45,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.s005.fif.R
 import com.s005.fif.common.data.DiseaseListData
 import com.s005.fif.common.data.IngredientListData
-import com.s005.fif.recipe.ui.detail.IngredientListItem
 import com.s005.fif.ui.theme.Typography
 import com.s005.fif.user.dto.Member
 import com.s005.fif.user.ui.UserViewModel
@@ -55,23 +56,30 @@ import com.s005.fif.user.ui.onboarding.UserOnboardingBtn
 @Composable
 fun RecipePreferenceSettingScreen(
     modifier: Modifier = Modifier,
-    userViewModel: UserViewModel = hiltViewModel(),
+    userViewModel: UserViewModel,
     navigateToUserProfile: () -> Unit,
-    navigateUp: () -> Unit
+    navigateUp: () -> Unit,
+    navigateToUserOnboarding: () -> Unit,
+    navigateToRecipeHistory: () -> Unit
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 10.dp)
-            .background(MaterialTheme.colorScheme.background)
+            .background(colorScheme.background)
     ) {
         UserProfileTopBar(
             navigateUp = navigateUp,
-            memberInfo = userViewModel.memberInfo
+            memberInfo = userViewModel.memberInfo,
+            navigateToRecipeHistory = navigateToRecipeHistory
         )
 
         RecipePreferenceSettingBody(
-            memberInfo = userViewModel.memberInfo
+            memberInfo = userViewModel.memberInfo,
+            navigateToUserOnboarding = {
+                userViewModel.getOnboardingData()
+                navigateToUserOnboarding()
+            }
         )
     }
 }
@@ -79,7 +87,8 @@ fun RecipePreferenceSettingScreen(
 @Composable
 fun RecipePreferenceSettingBody(
     modifier: Modifier = Modifier,
-    memberInfo: Member?
+    memberInfo: Member?,
+    navigateToUserOnboarding: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -97,8 +106,8 @@ fun RecipePreferenceSettingBody(
 
         UserOnboardingBtn(
             modifier = Modifier,
-            onClick = {  },
-            text = stringResource(id = R.string.text_btn_save)
+            onClick = navigateToUserOnboarding,
+            text = stringResource(id = R.string.text_btn_edit)
         )
     }
 }
@@ -131,8 +140,7 @@ fun RecipePreferenceSettingColumn(
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
                 RecipePreferenceSettingRow(
-                    modifier = Modifier.clickable {  },
-                    hintText = stringResource(id = R.string.text_like_food_setting_hint),
+                    text = stringResource(id = R.string.text_like_food_setting_hint),
                     list = memberInfo?.preferMenu?.split(", ") ?: listOf()
                 )
 
@@ -143,7 +151,7 @@ fun RecipePreferenceSettingColumn(
                 )
 
                 RecipePreferenceSettingRow(
-                    hintText = stringResource(id = R.string.text_dislike_ingredient_setting_hint),
+                    text = stringResource(id = R.string.text_dislike_ingredient_setting_hint),
                     list = memberInfo?.dislikeIngredients?.map { IngredientListData.map[it]!! } ?: listOf()
                 )
 
@@ -154,7 +162,7 @@ fun RecipePreferenceSettingColumn(
                 )
 
                 RecipePreferenceSettingRow(
-                    hintText = stringResource(id = R.string.text_illness_setting_hint),
+                    text = stringResource(id = R.string.text_illness_setting_hint),
                     list = memberInfo?.diseases?.map { DiseaseListData.map[it]!! } ?: listOf()
                 )
             }
@@ -162,37 +170,33 @@ fun RecipePreferenceSettingColumn(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun RecipePreferenceSettingRow(
     modifier: Modifier = Modifier,
-    hintText: String,
+    text: String,
     list: List<String>,
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+        verticalArrangement = Arrangement.spacedBy(15.dp)
     ) {
-        RecipePreferenceSettingTextField(
-            content = "",
-            setContent = {  },
-            hintText = hintText,
-            onClick = {  }
+        Text(
+            modifier = Modifier
+                .fillMaxWidth(),
+            text = text,
+            style = Typography.titleSmall,
+            color = Color.Black
         )
 
-        LazyRow(
+        FlowRow(
             modifier = Modifier,
             horizontalArrangement = Arrangement.spacedBy(5.dp)
         ) {
-            itemsIndexed(
-                items = list,
-                key = { _, item ->
-                    item
-                }
-            ) { _, item ->
+            list.forEach { item ->
                 RecipePreferenceSettingLazyRowItem(
                     item = item,
-                    onClick = {  }
                 )
             }
         }
@@ -203,103 +207,20 @@ fun RecipePreferenceSettingRow(
 fun RecipePreferenceSettingLazyRowItem(
     modifier: Modifier = Modifier,
     item: String,
-    onClick: () -> Unit
 ) {
-    Row(
+    Box(
         modifier = modifier
             .clip(RoundedCornerShape(50.dp))
             .background(colorScheme.primary)
-            .clickable { onClick() }
             .padding(vertical = 5.dp, horizontal = 10.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(3.dp)
     ) {
         Text(
             modifier = modifier
                 .clip(RoundedCornerShape(50.dp))
-                .background(MaterialTheme.colorScheme.primary),
+                .background(colorScheme.primary),
             text = item,
             style = Typography.bodyMedium,
             color = colorScheme.onPrimary
-        )
-
-        Image(
-            modifier = modifier
-                .size(15.dp)
-                .clip(CircleShape),
-            painter = painterResource(id = R.drawable.close),
-            contentDescription = stringResource(id = R.string.description_icon_remove),
-            colorFilter = ColorFilter.tint(Color.White),
-            contentScale = ContentScale.Fit
-        )
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun RecipePreferenceSettingTextField(
-    modifier: Modifier = Modifier,
-    content: String,
-    setContent: (String) -> Unit,
-    hintText: String,
-    onClick: () -> Unit
-) {
-    // TODO. 진짜 텍스트로 변경 필요
-    val text = remember {
-        mutableStateOf("")
-    }
-    val interactionSource = remember {
-        MutableInteractionSource()
-    }
-
-    BasicTextField(
-        value = text.value,
-        onValueChange = { text.value = it },
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.Transparent)
-            .border(1.dp, colorScheme.primary, RoundedCornerShape(30.dp)),
-        interactionSource = interactionSource,
-        enabled = true,
-        textStyle = Typography.bodyMedium,
-        singleLine = true,
-        cursorBrush = SolidColor(colorScheme.primary)
-    ) {
-        TextFieldDefaults.DecorationBox(
-            value = text.value,
-            innerTextField = it,
-            enabled = true,
-            singleLine = true,
-            interactionSource = interactionSource,
-            visualTransformation = VisualTransformation.None,
-            trailingIcon = {
-                Image(
-                    modifier = modifier
-                        .size(20.dp)
-                        .clip(CircleShape)
-                        .background(colorScheme.primary)
-                        .clickable { onClick() },
-                    painter = painterResource(id = R.drawable.add),
-                    contentDescription = stringResource(id = R.string.description_icon_add),
-                    colorFilter = ColorFilter.tint(colorScheme.onPrimary),
-                    contentScale = ContentScale.Fit
-                )
-            },
-            placeholder = {
-                Text(
-                    text = hintText,
-                    style = Typography.bodyMedium,
-                    color = colorScheme.onSecondary
-                )
-            },
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                cursorColor = MaterialTheme.colorScheme.primary,
-            ),
-            contentPadding = PaddingValues(start = 15.dp)
         )
     }
 }

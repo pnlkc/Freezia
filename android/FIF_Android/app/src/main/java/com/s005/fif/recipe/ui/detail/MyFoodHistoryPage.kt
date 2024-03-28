@@ -1,6 +1,7 @@
 package com.s005.fif.recipe.ui.detail
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,8 +32,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -44,29 +47,43 @@ import com.s005.fif.recipe.dto.CompleteRecipeRecordItem
 import com.s005.fif.recipe.dto.RecipeListItem
 import com.s005.fif.recipe.ui.RecipeViewModel
 import com.s005.fif.ui.theme.Typography
+import com.s005.fif.utils.ScreenSizeUtil
+import com.s005.fif.utils.ScreenSizeUtil.toDpSize
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun MyFoodHistoryPage(
     modifier: Modifier = Modifier,
-    recipeViewModel: RecipeViewModel = hiltViewModel()
+    recipeViewModel: RecipeViewModel,
 ) {
-    LazyColumn(
-        modifier = modifier
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(20.dp),
-        contentPadding = PaddingValues(3.dp)
-    ) {
-        itemsIndexed(
-            items = recipeViewModel.completeRecipeRecordList.toList(),
-            key = { _, item ->
-                item.completeCookId
+    if (recipeViewModel.completeRecipeRecordList.toList().isEmpty()) {
+        Text(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = ScreenSizeUtil.widthDp.toDpSize(30)),
+            text = stringResource(id = R.string.text_no_recipe_history),
+            textAlign = TextAlign.Center,
+            style = Typography.bodyLarge,
+            color = Color.Black
+        )
+    } else {
+        LazyColumn(
+            modifier = modifier
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
+            contentPadding = PaddingValues(3.dp)
+        ) {
+            itemsIndexed(
+                items = recipeViewModel.completeRecipeRecordList.toList(),
+                key = { _, item ->
+                    item.completeCookId
+                }
+            ) { _, item ->
+                MyFoodHistoryItem(
+                    modifier = Modifier,
+                    item = item
+                )
             }
-        ) { _, item ->
-            MyFoodHistoryItem(
-                modifier = Modifier,
-                item = item
-            )
         }
     }
 }
@@ -74,7 +91,7 @@ fun MyFoodHistoryPage(
 @Composable
 fun MyFoodHistoryItem(
     modifier: Modifier = Modifier,
-    item: CompleteRecipeRecordItem
+    item: CompleteRecipeRecordItem,
 ) {
     Card(
         modifier = modifier
@@ -123,7 +140,7 @@ fun MyFoodHistoryItem(
                     text = stringResource(id = R.string.text_remove_ingredient),
                     img = painterResource(id = R.drawable.remove_circle),
                     desc = stringResource(id = R.string.description_remove_ingredient),
-                    list = item.removeIngredient
+                    list = item.removeIngredients
                 )
             }
         }
@@ -136,7 +153,7 @@ fun MyFoodHistoryIngredientList(
     text: String,
     img: Painter,
     desc: String,
-    list: List<CompleteRecipeRecordIngredient>
+    list: List<CompleteRecipeRecordIngredient>,
 ) {
     Column(
         modifier = modifier,
@@ -191,8 +208,9 @@ fun MyFoodHistoryIngredientItem(
                 .size(30.dp),
             model = item.image,
             contentDescription = stringResource(id = R.string.description_ingredient_img),
-            loading = placeholder(R.drawable.add_circle),
-            failure = placeholder(R.drawable.add_circle)
+            contentScale = ContentScale.Crop,
+            loading = placeholder(R.drawable.basic_ingredient),
+            failure = placeholder(R.drawable.basic_ingredient)
         )
 
         Text(

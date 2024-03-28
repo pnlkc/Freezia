@@ -76,12 +76,13 @@ enum class RecipeDetailType {
 @Composable
 fun RecipeDetailScreen(
     modifier: Modifier = Modifier,
-    recipeViewModel: RecipeViewModel = hiltViewModel(),
+    recipeViewModel: RecipeViewModel,
     recipeId: Int,
     navigateUp: () -> Unit,
-    navigateToRecipeStep: () -> Unit,
+    navigateToRecipeStep: (Int) -> Unit,
 ) {
-    val recipe = if (recipeViewModel.recipeListItem.isNotEmpty()) recipeViewModel.recipeListItem.first { it.recipeId == recipeId } else null
+    val recipe = recipeViewModel.getRecipe(recipeId = recipeId)
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = true) {
         recipeViewModel.getCompleteRecipeRecord(recipeId)
@@ -109,8 +110,14 @@ fun RecipeDetailScreen(
 
             RecipeDetailBody(
                 modifier = Modifier,
+                recipeViewModel = recipeViewModel,
                 navigateUp = navigateUp,
-                navigateToRecipeStep = navigateToRecipeStep,
+                navigateToRecipeStep = {
+                    coroutineScope.launch {
+                        recipeViewModel.getRecipeStep(recipeId)
+                        navigateToRecipeStep(recipeId)
+                    }
+                },
                 recipe = recipe
             )
 
@@ -130,7 +137,8 @@ fun RecipeDetailTopBar(
     modifier: Modifier = Modifier,
     navigateUp: () -> Unit,
     isExpanded: Boolean,
-    recipe: RecipeListItem?
+    recipe: RecipeListItem?,
+    onRecipeSaveBtnClicked: () -> Unit
 ) {
     Row(
         modifier = modifier
@@ -167,10 +175,10 @@ fun RecipeDetailTopBar(
             modifier = Modifier
                 .clip(CircleShape)
                 .size(25.dp)
-                .clickable { },
-            painter = painterResource(id = R.drawable.bookmark),
+                .clickable { onRecipeSaveBtnClicked() },
+            painter = if (recipe!!.saveYn) painterResource(id = R.drawable.bookmark_fill) else painterResource(id = R.drawable.bookmark),
             contentDescription = stringResource(id = R.string.description_btn_bookmark),
-            tint = Color.White
+            tint = if (recipe!!.saveYn) colorScheme.primary else Color.White
         )
     }
 }
@@ -179,14 +187,16 @@ fun RecipeDetailTopBar(
 @Composable
 fun RecipeDetailBody(
     modifier: Modifier = Modifier,
+    recipeViewModel: RecipeViewModel,
     navigateUp: () -> Unit,
     navigateToRecipeStep: () -> Unit,
-    recipe: RecipeListItem?
+    recipe: RecipeListItem?,
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState()
     var isExpanded by remember {
         mutableStateOf(false)
     }
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = scaffoldState.bottomSheetState.currentValue) {
         isExpanded = when (scaffoldState.bottomSheetState.currentValue) {
@@ -214,13 +224,19 @@ fun RecipeDetailBody(
                     .padding(horizontal = 10.dp),
                 navigateUp = { navigateUp() },
                 isExpanded = isExpanded,
-                recipe = recipe
+                recipe = recipe,
+                onRecipeSaveBtnClicked = {
+                    coroutineScope.launch {
+                        recipeViewModel.saveRecipe(recipe!!.recipeId)
+                    }
+                }
             )
         },
         sheetContent = {
             RecipeDetailBottomSheetColumn(
                 modifier = Modifier
                     .height((heightDp - statusBarHeightDp - 45).dp),
+                recipeViewModel = recipeViewModel,
                 navigateToRecipeStep = navigateToRecipeStep,
                 recipe = recipe
             )
@@ -303,8 +319,9 @@ fun RecipeDetailFoodTag(
 @Composable
 fun RecipeDetailBottomSheetColumn(
     modifier: Modifier = Modifier,
+    recipeViewModel: RecipeViewModel,
     navigateToRecipeStep: () -> Unit,
-    recipe: RecipeListItem?
+    recipe: RecipeListItem?,
 ) {
     Column(
         modifier = modifier
@@ -322,7 +339,8 @@ fun RecipeDetailBottomSheetColumn(
         )
 
         RecipeDetailPager(
-            recipe = recipe
+            recipe = recipe,
+            recipeViewModel = recipeViewModel
         )
     }
 }
@@ -411,7 +429,8 @@ fun RecipeDetailBtn(
 @Composable
 fun RecipeDetailPager(
     modifier: Modifier = Modifier,
-    recipe: RecipeListItem?
+    recipeViewModel: RecipeViewModel,
+    recipe: RecipeListItem?,
 ) {
     val pagerState = rememberPagerState(pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope()
@@ -464,12 +483,15 @@ fun RecipeDetailPager(
             when (page) {
                 0 -> {
                     IngredientListPage(
-                        recipe = recipe
+                        recipe = recipe,
+                        recipeViewModel = recipeViewModel
                     )
                 }
 
                 1 -> {
-                    MyFoodHistoryPage()
+                    MyFoodHistoryPage(
+                        recipeViewModel = recipeViewModel
+                    )
                 }
             }
         }

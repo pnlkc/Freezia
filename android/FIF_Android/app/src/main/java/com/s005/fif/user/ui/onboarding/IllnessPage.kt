@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -49,17 +48,14 @@ import com.s005.fif.common.data.DiseaseItemData
 import com.s005.fif.common.data.DiseaseListData
 import com.s005.fif.ui.theme.Typography
 import com.s005.fif.user.ui.UserViewModel
-import kotlinx.coroutines.launch
 
 @Composable
 fun IllnessPage(
     modifier: Modifier = Modifier,
-    viewModel: UserViewModel = hiltViewModel(),
+    userViewModel: UserViewModel,
     goPrevPage: () -> Unit,
     goNextPage: () -> Unit,
 ) {
-    val coroutineScope = rememberCoroutineScope()
-
     BackHandler {
         goPrevPage()
     }
@@ -69,14 +65,14 @@ fun IllnessPage(
             .fillMaxSize(),
         goPrevPage = goPrevPage,
         goNextPage = goNextPage,
-        inputText = viewModel.diseaseInputText,
+        inputText = userViewModel.diseaseInputText,
         inputTextChange = {
-            viewModel.diseaseInputText = it
+            userViewModel.diseaseInputText = it
         },
         onItemClicked = { isAdd, item ->
-            viewModel.clickDiseaseItem(isAdd, item)
+            userViewModel.clickDiseaseItem(isAdd, item)
         },
-        checkedDiseaseList = viewModel.onboardingState.diseases
+        checkedDiseaseList = userViewModel.onboardingState.diseases
     )
 }
 
@@ -267,6 +263,7 @@ fun UserProfileTextField(
     content: String,
     setContent: (String) -> Unit,
     hintText: String,
+    hasTopPadding: Boolean = true
 ) {
     val interactionSource = remember {
         MutableInteractionSource()
@@ -277,7 +274,7 @@ fun UserProfileTextField(
         onValueChange = { setContent(it) },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 30.dp)
+            .padding(top = if (hasTopPadding) 30.dp else 0.dp)
             .clip(RoundedCornerShape(50.dp))
             .background(Color.Transparent)
             .border(2.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(50.dp)),

@@ -9,8 +9,8 @@ import kotlinx.serialization.Serializable
 data class CompleteRecipeRecordItemResponse(
     val completeCookId: Int,
     val addIngredients: List<CompleteRecipeRecordIngredientResponse>,
-    val removeIngredient: List<CompleteRecipeRecordIngredientResponse>,
-    val memo: String,
+    val removeIngredients: List<CompleteRecipeRecordIngredientResponse>,
+    val memo: String?,
     @Serializable(with = LocalDateIso8601Serializer::class)
     val completeDate: LocalDate,
 )
@@ -18,7 +18,7 @@ data class CompleteRecipeRecordItemResponse(
 data class CompleteRecipeRecordItem(
     val completeCookId: Int,
     val addIngredients: List<CompleteRecipeRecordIngredient>,
-    val removeIngredient: List<CompleteRecipeRecordIngredient>,
+    val removeIngredients: List<CompleteRecipeRecordIngredient>,
     val memo: String,
     val completeDate: java.time.LocalDate,
 )
@@ -26,7 +26,7 @@ data class CompleteRecipeRecordItem(
 fun CompleteRecipeRecordItemResponse.toCompleteRecipeRecordItem() = CompleteRecipeRecordItem(
     completeCookId,
     addIngredients.map { it.toCompleteRecipeRecordIngredient() },
-    removeIngredient.map { it.toCompleteRecipeRecordIngredient() },
-    memo,
+    removeIngredients.map { it.toCompleteRecipeRecordIngredient() },
+    memo ?: "",
     completeDate.toJavaLocalDate()
 )

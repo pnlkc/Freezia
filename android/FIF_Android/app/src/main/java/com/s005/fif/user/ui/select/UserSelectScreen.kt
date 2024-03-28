@@ -44,7 +44,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun UserSelectScreen(
     modifier: Modifier = Modifier,
-    viewModel: UserViewModel = hiltViewModel(),
+    userViewModel: UserViewModel,
     navigateToUserOnboarding: () -> Unit,
     navigateToMain: () -> Unit
 ) {
@@ -55,17 +55,18 @@ fun UserSelectScreen(
             .fillMaxSize(),
         userClicked = { memberId ->
             coroutineScope.launch {
-                viewModel.getAccessToken(memberId)
-                viewModel.getMemberInfo()
+                userViewModel.getAccessToken(memberId)
+                userViewModel.getMemberInfo()
 
-                if (viewModel.memberInfo!!.onboardYn) {
+                if (userViewModel.memberInfo!!.onboardYn) {
                     navigateToMain()
                 } else {
+                    userViewModel.clearOnboarding()
                     navigateToUserOnboarding()
                 }
             }
         },
-        userList = { viewModel.userList }
+        userList = { userViewModel.userList }
     )
 }
 

@@ -1,11 +1,21 @@
 package com.s005.fif.common.data
 
+import com.s005.fif.recipe.dto.IngredientItem
+
 data class IngredientItemData(
     val ingredientId: Int,
     val name: String,
     val imgUrl: String,
     val seasoningYn: Boolean,
     val expirationPeriod: Int
+)
+
+fun IngredientItemData.toIngredientItem() = IngredientItem(
+    ingredientId = ingredientId,
+    name = name,
+    image = imgUrl,
+    amounts = "1",
+    unit = "개"
 )
 
 object IngredientListData {
@@ -106,4 +116,6 @@ object IngredientListData {
     val map = list.associate { it.ingredientId to it.name }
 
     val nameMap = list.associate { it.name to it.imgUrl }
+
+    val mapIdToItem = list.associateBy { it.ingredientId }
 }

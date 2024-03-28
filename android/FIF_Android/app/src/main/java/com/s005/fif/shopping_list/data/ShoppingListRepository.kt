@@ -1,11 +1,13 @@
 package com.s005.fif.shopping_list.data
 
 import com.s005.fif.common.dto.DefaultResponse
+import com.s005.fif.shopping_list.dto.AddShoppingListRequest
 import com.s005.fif.shopping_list.dto.ShoppingListCheckRequest
 import com.s005.fif.shopping_list.dto.ShoppingListCheckResponse
 import com.s005.fif.shopping_list.dto.ShoppingListResponse
 import com.s005.fif.shopping_list.network.ShoppingListService
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.Path
 import javax.inject.Inject
 
@@ -19,6 +21,10 @@ interface ShoppingListRepository {
 
     suspend fun deleteShoppingListItem(
         shoppingListId: Int
+    ): Response<DefaultResponse>
+
+    suspend fun addShoppingListItem(
+        addShoppingListRequest: AddShoppingListRequest
     ): Response<DefaultResponse>
 }
 
@@ -38,5 +44,9 @@ class DefaultShoppingListRepository @Inject constructor(
 
     override suspend fun deleteShoppingListItem(shoppingListId: Int): Response<DefaultResponse> {
         return shoppingListService.deleteShoppingListItem(shoppingListId)
+    }
+
+    override suspend fun addShoppingListItem(addShoppingListRequest: AddShoppingListRequest): Response<DefaultResponse> {
+        return shoppingListService.addShoppingListItem(addShoppingListRequest)
     }
 }

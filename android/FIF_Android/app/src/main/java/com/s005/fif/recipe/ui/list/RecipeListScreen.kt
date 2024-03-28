@@ -42,7 +42,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.s005.fif.R
@@ -59,11 +58,12 @@ import kotlinx.coroutines.delay
 @Composable
 fun RecipeListScreen(
     modifier: Modifier = Modifier,
-    userViewModel: UserViewModel = hiltViewModel(),
-    recipeViewModel: RecipeViewModel = hiltViewModel(),
+    userViewModel: UserViewModel,
+    recipeViewModel: RecipeViewModel,
     navigateUp: () -> Unit,
     navigateToRecipeChat: () -> Unit,
     navigateToRecipeDetail: (Int) -> Unit,
+    navigateToRecipeHistory: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -74,13 +74,17 @@ fun RecipeListScreen(
     ) {
         UserProfileTopBar(
             navigateUp = { navigateUp() },
-            memberInfo = userViewModel.memberInfo
+            memberInfo = userViewModel.memberInfo,
+            navigateToRecipeHistory = navigateToRecipeHistory
         )
 
         RecipeListBody(
             navigateToRecipeChat = navigateToRecipeChat,
-            navigateToRecipeDetail = navigateToRecipeDetail,
-            recipeListItem = recipeViewModel.recipeListItem.toList(),
+            navigateToRecipeDetail = {
+                recipeViewModel.clearIngredientList()
+                navigateToRecipeDetail(it)
+            },
+            recipeListItem = recipeViewModel.recipeList.toList(),
             recipeTypeList = recipeViewModel.recipeTypeList,
             onItemClicked = { name, isChecked ->
                 recipeViewModel.checkRecipeType(name, isChecked)
@@ -217,7 +221,7 @@ fun RecipeListLazyGrid(
                 modifier = Modifier
                     .animateItemPlacement(),
                 item = item,
-                onClick = { navigateToRecipeDetail(item.recipeId) }
+                onItemClicked = { navigateToRecipeDetail(item.recipeId) }
             )
         }
     }

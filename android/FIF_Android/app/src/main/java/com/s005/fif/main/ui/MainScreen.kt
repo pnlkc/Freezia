@@ -56,12 +56,13 @@ import com.s005.fif.user.ui.profile.UserProfileColumnText
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
-    userViewModel: UserViewModel = hiltViewModel(),
-    mainViewModel: MainViewModel = hiltViewModel(),
+    userViewModel: UserViewModel,
+    mainViewModel: MainViewModel,
     navigateToUserProfile: () -> Unit,
     navigateToRecipeList: () -> Unit,
     navigateToRecipeChat: () -> Unit,
     navigateToRecipeDetail: (Int) -> Unit,
+    navigateToRecipeHistory: () -> Unit,
 ) {
     var backWait = 0L
     val context = LocalContext.current
@@ -84,7 +85,8 @@ fun MainScreen(
             .background(colorScheme.background)
     ) {
         MainTopBar(
-            memberInfo = userViewModel.memberInfo
+            memberInfo = userViewModel.memberInfo,
+            navigateToRecipeHistory = navigateToRecipeHistory
         )
 
         MainBody(
@@ -103,6 +105,7 @@ fun MainScreen(
 fun MainTopBar(
     modifier: Modifier = Modifier,
     memberInfo: Member?,
+    navigateToRecipeHistory: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -115,7 +118,7 @@ fun MainTopBar(
         Text(
             modifier = Modifier
                 .padding(start = 5.dp),
-            text = "Fridge is Free",
+            text = stringResource(id = R.string.app_name),
             style = Typography.bodyLarge,
             color = colorScheme.primary,
             fontWeight = FontWeight.Bold
@@ -129,7 +132,7 @@ fun MainTopBar(
                 modifier = Modifier
                     .clip(CircleShape)
                     .size(25.dp)
-                    .clickable { },
+                    .clickable { navigateToRecipeHistory() },
                 painter = painterResource(id = R.drawable.bookmark),
                 contentDescription = stringResource(id = R.string.description_btn_bookmark)
             )

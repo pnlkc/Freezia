@@ -60,11 +60,12 @@ import com.s005.fif.utils.AnnotatedStringUtil
 @Composable
 fun UserProfileScreen(
     modifier: Modifier = Modifier,
-    userViewModel: UserViewModel = hiltViewModel(),
+    userViewModel: UserViewModel,
     navigateToRecipePreferenceSetting: () -> Unit,
     navigateUp: () -> Unit,
     navigateToSavedRecipe: () -> Unit,
-    navigationToShoppingList: () -> Unit
+    navigationToShoppingList: () -> Unit,
+    navigateToRecipeHistory: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -74,7 +75,8 @@ fun UserProfileScreen(
     ) {
         UserProfileTopBar(
             navigateUp = navigateUp,
-            memberInfo = userViewModel.memberInfo
+            memberInfo = userViewModel.memberInfo,
+            navigateToRecipeHistory = navigateToRecipeHistory
         )
 
         UserProfileBody(
@@ -91,7 +93,8 @@ fun UserProfileScreen(
 fun UserProfileTopBar(
     modifier: Modifier = Modifier,
     navigateUp: () -> Unit,
-    memberInfo: Member?
+    memberInfo: Member?,
+    navigateToRecipeHistory: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -118,7 +121,7 @@ fun UserProfileTopBar(
                 modifier = Modifier
                     .clip(CircleShape)
                     .size(25.dp)
-                    .clickable { },
+                    .clickable { navigateToRecipeHistory() },
                 painter = painterResource(id = R.drawable.bookmark),
                 contentDescription = stringResource(id = R.string.description_btn_bookmark)
             )

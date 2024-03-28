@@ -297,7 +297,7 @@ fun GPTRecipeLazyRow(
                 modifier = modifier
                     .widthIn(max = ScreenSizeUtil.widthDp.toDpSize(35)),
                 item = item,
-                onClick = {  }
+                onItemClicked = {  }
             )
         }
     }

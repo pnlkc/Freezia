@@ -16,9 +16,12 @@ data class IngredientItem(
     val name: String,
     val image: String,
     val unit: String,
-    val amounts: String
+    val amounts: String,
+    var isChecked: Boolean = false
 )
 
 fun IngredientItemResponse.toIngredientItem() = IngredientItem(
     ingredientId, name, image, unit, amounts
 )
+
+fun IngredientItem.toAddRecipeHistoryRequest() = AddRecipeHistoryIngredientRequest(name)

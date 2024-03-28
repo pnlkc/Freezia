@@ -58,9 +58,11 @@ import kotlinx.coroutines.launch
 @Composable
 fun ShoppingListScreen(
     modifier: Modifier = Modifier,
-    userViewModel: UserViewModel = hiltViewModel(),
-    shoppingListViewModel: ShoppingListViewModel = hiltViewModel(),
+    userViewModel: UserViewModel,
+    shoppingListViewModel: ShoppingListViewModel,
     navigateUp: () -> Unit,
+    navigateToRecipeHistory: () -> Unit,
+    navigateToShoppingListAdd: () -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
 
@@ -73,7 +75,8 @@ fun ShoppingListScreen(
     ) {
         UserProfileTopBar(
             navigateUp = navigateUp,
-            memberInfo = userViewModel.memberInfo
+            memberInfo = userViewModel.memberInfo,
+            navigateToRecipeHistory = navigateToRecipeHistory
         )
 
         ShoppingListBody(
@@ -87,6 +90,10 @@ fun ShoppingListScreen(
                 coroutineScope.launch {
                     shoppingListViewModel.deleteShoppingListItem()
                 }
+            },
+            navigateToShoppingListAdd = {
+                shoppingListViewModel.initIngredientCheckList()
+                navigateToShoppingListAdd()
             }
         )
     }
@@ -98,7 +105,8 @@ fun ShoppingListBody(
     modifier: Modifier = Modifier,
     shoppingList: List<ShoppingListItem>,
     isCheckedChanged: (Int, Boolean) -> Unit,
-    onDeleteBtnClicked: () -> Unit
+    onDeleteBtnClicked: () -> Unit,
+    navigateToShoppingListAdd: () -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -140,7 +148,8 @@ fun ShoppingListBody(
             ) {
                 item {
                     UncheckedItem(
-                        cnt = shoppingList.filter { !it.checkYn }.size
+                        cnt = shoppingList.filter { !it.checkYn }.size,
+                        navigateToShoppingListAdd = navigateToShoppingListAdd
                     )
                 }
 
@@ -201,7 +210,7 @@ fun ShoppingListBody(
 @Composable
 fun CheckedItemTitle(
     modifier: Modifier = Modifier,
-    onDeleteBtnClicked: () -> Unit
+    onDeleteBtnClicked: () -> Unit,
 ) {
     Row(
         modifier = modifier
@@ -239,6 +248,7 @@ fun CheckedItemTitle(
 fun UncheckedItem(
     modifier: Modifier = Modifier,
     cnt: Int,
+    navigateToShoppingListAdd: () -> Unit,
 ) {
     Row(
         modifier = modifier
@@ -256,7 +266,7 @@ fun UncheckedItem(
             modifier = Modifier
                 .clip(CircleShape)
                 .size(25.dp)
-                .clickable { },
+                .clickable { navigateToShoppingListAdd() },
             painter = painterResource(id = R.drawable.edit),
             contentDescription = stringResource(id = R.string.description_shopping_list_icon),
             tint = Color.Black
@@ -271,7 +281,7 @@ fun ShoppingListLazyColumnItem(
     item: ShoppingListItem,
     isDone: Boolean,
     isChecked: Boolean,
-    isCheckedChanged: (Int) -> Unit
+    isCheckedChanged: (Int) -> Unit,
 ) {
     Row(
         modifier = modifier

@@ -66,26 +66,34 @@ enum class RecipeHistoryType {
 @Composable
 fun RecipeHistoryScreen(
     modifier: Modifier = Modifier,
-    userViewModel: UserViewModel = hiltViewModel(),
-    recipeHistoryViewModel: RecipeHistoryViewModel = hiltViewModel(),
+    userViewModel: UserViewModel,
+    recipeHistoryViewModel: RecipeHistoryViewModel,
+    mode: RecipeHistoryType,
     navigateUp: () -> Unit,
-    mode: RecipeHistoryType
+    navigateToRecipeDetail: (Int) -> Unit
 ) {
+    LaunchedEffect(key1 = true) {
+        recipeHistoryViewModel.getSavedRecipeList()
+        recipeHistoryViewModel.getCompletedRecipeList()
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 10.dp)
-            .background(MaterialTheme.colorScheme.background)
+            .background(colorScheme.background)
     ) {
         UserProfileTopBar(
             navigateUp = navigateUp,
-            memberInfo = userViewModel.memberInfo
+            memberInfo = userViewModel.memberInfo,
+            navigateToRecipeHistory = {  }
         )
 
         SavedRecipeBody(
             mode = mode,
             savedRecipeList = recipeHistoryViewModel.savedRecipeList,
-            completedRecipeList = recipeHistoryViewModel.completedRecipeList
+            completedRecipeList = recipeHistoryViewModel.completedRecipeList,
+            navigateToRecipeDetail = navigateToRecipeDetail
         )
     }
 }
@@ -96,7 +104,8 @@ fun SavedRecipeBody(
     modifier: Modifier = Modifier,
     mode: RecipeHistoryType,
     savedRecipeList: List<RecipeHistoryItem>,
-    completedRecipeList: List<RecipeHistoryItem>
+    completedRecipeList: List<RecipeHistoryItem>,
+    navigateToRecipeDetail: (Int) -> Unit
 ) {
     var selected by remember { mutableStateOf(mode) }
     val pagerState = rememberPagerState(
@@ -148,13 +157,15 @@ fun SavedRecipeBody(
                 0 -> {
                     // TODO. 실제 리스트로 변경 필요
                     RecipeHistoryPagerItem(
-                        list = savedRecipeList
+                        list = savedRecipeList,
+                        onItemClicked = navigateToRecipeDetail
                     )
                 }
                 1 -> {
                     // TODO. 실제 리스트로 변경 필요
                     RecipeHistoryPagerItem(
-                        list = completedRecipeList
+                        list = completedRecipeList,
+                        onItemClicked = navigateToRecipeDetail
                     )
                 }
             }
@@ -242,7 +253,8 @@ fun SavedRecipeTitleItem(
 @Composable
 fun RecipeHistoryPagerItem(
     modifier: Modifier = Modifier,
-    list: List<RecipeHistoryItem>
+    list: List<RecipeHistoryItem>,
+    onItemClicked: (Int) -> Unit
 ) {
     LazyVerticalGrid(
         modifier = modifier
@@ -260,25 +272,25 @@ fun RecipeHistoryPagerItem(
         ) { _, item ->
             RecipeHistoryLazyVerticalGridItem(
                 item = item,
-                onClick = {  }
+                onItemClicked = onItemClicked
             )
         }
     }
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun RecipeHistoryLazyVerticalGridItem(
     modifier: Modifier = Modifier,
     item: RecipeHistoryItem,
-    onClick: () -> Unit
+    onItemClicked: (Int) -> Unit
 ) {
     RecipeHistoryLazyVerticalGridItemBox(
         modifier = modifier,
+        recipeId = item.recipeId,
         imgUrl = item.imgUrl,
         name = item.name,
         cookTime = item.cookTime,
-        onClick = onClick
+        onItemClicked = onItemClicked
     )
 }
 
@@ -286,14 +298,15 @@ fun RecipeHistoryLazyVerticalGridItem(
 fun RecipeHistoryLazyVerticalGridItem(
     modifier: Modifier = Modifier,
     item: RecipeListItem,
-    onClick: () -> Unit
+    onItemClicked: (Int) -> Unit
 ) {
     RecipeHistoryLazyVerticalGridItemBox(
         modifier = modifier,
+        recipeId =item.recipeId,
         imgUrl = item.imgUrl,
         name = item.name,
         cookTime = item.cookTime,
-        onClick = onClick
+        onItemClicked = onItemClicked
     )
 }
 
@@ -301,17 +314,18 @@ fun RecipeHistoryLazyVerticalGridItem(
 @Composable
 fun RecipeHistoryLazyVerticalGridItemBox(
     modifier: Modifier = Modifier,
+    recipeId: Int,
     imgUrl: String,
     name: String,
     cookTime: Int,
-    onClick: () -> Unit
+    onItemClicked: (Int) -> Unit
 ) {
     Box(
         modifier = modifier
             .fillMaxWidth()
             .height((ScreenSizeUtil.heightDp / 5).dp)
             .clip(RoundedCornerShape(10.dp))
-            .clickable { onClick() }
+            .clickable { onItemClicked(recipeId) }
     ) {
         GlideImage(
             modifier = Modifier

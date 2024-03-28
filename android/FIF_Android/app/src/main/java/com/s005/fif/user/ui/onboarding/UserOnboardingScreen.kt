@@ -38,25 +38,41 @@ import com.s005.fif.ui.theme.Typography
 import com.s005.fif.user.ui.UserViewModel
 import kotlinx.coroutines.launch
 
+enum class UserOnboardingMode {
+    INIT, EDIT
+}
+
 @Composable
 fun UserOnboardingScreen(
     modifier: Modifier = Modifier,
-    viewModel: UserViewModel = hiltViewModel(),
+    userViewModel: UserViewModel,
+    mode: UserOnboardingMode,
     navigateToUserSelect: () -> Unit,
-    navigateToMain: () -> Unit
+    navigateToMain: () -> Unit,
+    navigateUp: () -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
 
     UserOnboardingBody(
         modifier = modifier
             .fillMaxSize(),
+        userViewModel = userViewModel,
+        mode = mode,
         navigateToUserSelect = navigateToUserSelect,
         navigateToMain = {
             coroutineScope.launch {
-                viewModel.sendOnboarding()
+                userViewModel.sendOnboarding()
             }
 
             navigateToMain()
+        },
+        navigateUp = navigateUp,
+        saveAndNavigateUp = {
+            coroutineScope.launch {
+                userViewModel.editUserPreference()
+            }
+
+            navigateUp()
         }
     )
 }
@@ -65,8 +81,12 @@ fun UserOnboardingScreen(
 @Composable
 fun UserOnboardingBody(
     modifier: Modifier = Modifier,
+    mode: UserOnboardingMode,
+    userViewModel: UserViewModel,
     navigateToUserSelect: () -> Unit,
-    navigateToMain: () -> Unit
+    navigateToMain: () -> Unit,
+    navigateUp: () -> Unit,
+    saveAndNavigateUp: () -> Unit
 ) {
     val pagerState = rememberPagerState(pageCount = { 3 })
     val coroutineScope = rememberCoroutineScope()
@@ -80,10 +100,15 @@ fun UserOnboardingBody(
         )
 
         UserOnboardingPager(
+            userViewModel = userViewModel,
             pagerState = pagerState,
             goPrevPage = {
                 if (pagerState.currentPage == 0) {
-                    navigateToUserSelect()
+                    if (mode == UserOnboardingMode.INIT) {
+                        navigateToUserSelect()
+                    } else {
+                        navigateUp()
+                    }
                 } else {
                     coroutineScope.launch {
                         pagerState.animateScrollToPage(pagerState.currentPage - 1)
@@ -92,7 +117,11 @@ fun UserOnboardingBody(
             },
             goNextPage = {
                 if (pagerState.currentPage == 2) {
-                    navigateToMain()
+                    if (mode == UserOnboardingMode.INIT) {
+                        navigateToMain()
+                    } else {
+                        saveAndNavigateUp()
+                    }
                 } else {
                     coroutineScope.launch {
                         pagerState.animateScrollToPage(pagerState.currentPage + 1)
@@ -182,11 +211,13 @@ fun UserOnboardingControlBar(
 @Composable
 fun UserOnboardingPager(
     modifier: Modifier = Modifier,
+    userViewModel: UserViewModel,
     pagerState: PagerState,
     goPrevPage: () -> Unit,
     goNextPage: () -> Unit,
 ) {
     HorizontalPager(
+        modifier = modifier,
         state = pagerState,
         userScrollEnabled = false,
         pageSpacing = 20.dp
@@ -194,6 +225,7 @@ fun UserOnboardingPager(
         when (page) {
             0 -> {
                 LikeFoodPage(
+                    userViewModel = userViewModel,
                     goPrevPage = goPrevPage,
                     goNextPage = goNextPage
                 )
@@ -201,6 +233,7 @@ fun UserOnboardingPager(
 
             1 -> {
                 DislikeIngredientPage(
+                    userViewModel = userViewModel,
                     goPrevPage = goPrevPage,
                     goNextPage = goNextPage
                 )
@@ -208,6 +241,7 @@ fun UserOnboardingPager(
 
             2 -> {
                 IllnessPage(
+                    userViewModel = userViewModel,
                     goPrevPage = goPrevPage,
                     goNextPage = goNextPage
                 )

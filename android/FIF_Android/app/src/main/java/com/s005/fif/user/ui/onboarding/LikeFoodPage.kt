@@ -1,5 +1,6 @@
 package com.s005.fif.user.ui.onboarding
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,15 +19,12 @@ import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.s005.fif.R
 import com.s005.fif.common.data.LikeFoodItemData
 import com.s005.fif.common.data.LikeFoodListData
@@ -36,14 +34,15 @@ import com.s005.fif.user.ui.UserViewModel
 @Composable
 fun LikeFoodPage(
     modifier: Modifier = Modifier,
-    viewModel: UserViewModel = hiltViewModel(),
+    userViewModel: UserViewModel,
     goPrevPage: () -> Unit,
     goNextPage: () -> Unit,
 ) {
     BackHandler {
-        viewModel.clearOnboarding()
         goPrevPage()
     }
+
+    Log.d("로그", " - LikeFoodBody() 호출됨 / ${userViewModel.onboardingState}")
 
     LikeFoodBody(
         modifier = modifier
@@ -52,9 +51,9 @@ fun LikeFoodPage(
         goNextPage = goNextPage,
         likeFoodList = LikeFoodListData.list,
         onItemClicked = { isChecked, item ->
-            viewModel.checkLikeFood(isChecked, item)
+            userViewModel.checkLikeFood(isChecked, item)
         },
-        checkedItemList = viewModel.onboardingState.preferMenu
+        checkedItemList = userViewModel.onboardingState.preferMenu
     )
 }
 
@@ -96,7 +95,7 @@ fun LikeFoodBody(
                 LikeFoodCheckBox(
                     item = item,
                     onItemClicked = onItemClicked,
-                    isChecked = if (checkedItemList.contains(item)) true else false
+                    isChecked = checkedItemList.contains(item)
                 )
             }
         }

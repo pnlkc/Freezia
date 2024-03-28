@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.integration.compose.placeholder
 import com.s005.fif.R
 import com.s005.fif.common.data.IngredientItemData
 import com.s005.fif.common.data.IngredientListData
@@ -44,7 +45,7 @@ import com.s005.fif.user.ui.UserViewModel
 @Composable
 fun DislikeIngredientPage(
     modifier: Modifier = Modifier,
-    viewModel: UserViewModel = hiltViewModel(),
+    userViewModel: UserViewModel,
     goPrevPage: () -> Unit,
     goNextPage: () -> Unit,
 ) {
@@ -57,13 +58,13 @@ fun DislikeIngredientPage(
             .fillMaxSize(),
         goPrevPage = goPrevPage,
         goNextPage = goNextPage,
-        inputText = viewModel.dislikeInputText,
+        inputText = userViewModel.dislikeInputText,
         inputTextChange = {
-            viewModel.dislikeInputText = it
+            userViewModel.dislikeInputText = it
         },
-        dislikeIngredientList = viewModel.onboardingState.dislikeIngredients,
+        dislikeIngredientList = userViewModel.onboardingState.dislikeIngredients,
         onItemClicked = { isAdd, item ->
-            viewModel.clickDislikeIngredientItem(isAdd, item)
+            userViewModel.clickDislikeIngredientItem(isAdd, item)
         }
     )
 }
@@ -177,7 +178,9 @@ fun DislikeIngredientSearchResultItem(
                     .size(30.dp),
                 model = item.imgUrl,
                 contentDescription = stringResource(id = R.string.description_ingredient_img),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
+                loading = placeholder(R.drawable.basic_ingredient),
+                failure = placeholder(R.drawable.basic_ingredient)
             )
 
             Text(

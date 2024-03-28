@@ -24,7 +24,7 @@ import com.s005.fif.user.ui.UserViewModel
 @Composable
 fun SplashScreen(
     modifier: Modifier = Modifier,
-    userViewModel: UserViewModel = hiltViewModel(),
+    userViewModel: UserViewModel,
     navigateToMain: () -> Unit,
     navigateToUserSelect: () -> Unit
 ) {

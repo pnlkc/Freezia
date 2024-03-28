@@ -13,6 +13,6 @@ public interface RecipeRepository extends JpaRepository<Recipe, Integer> {
 	List<Recipe> findAllByMemberAndSaveYn(Member member, boolean saveYn);
 	List<Recipe> findAllByMemberAndCompleteYn(Member member, boolean completeYn);
 	List<Recipe> findByMemberAndRecommendTypeOrderByCreateDateDesc(Member member, Integer recommendType);
-	// @Query("DELETE FROM Recipe r WHERE r. < :date")
-	// void deleteOldRecipes();
+	List<Recipe> findAllByCompleteYnAndSaveYn(Boolean completeYn, Boolean saveYn);
+	void deleteAllByCompleteYnAndSaveYn(Boolean completeYn, Boolean saveYn);
 }

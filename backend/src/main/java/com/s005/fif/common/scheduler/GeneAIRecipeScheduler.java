@@ -35,11 +35,11 @@ public class GeneAIRecipeScheduler {
 	private final GeneAIService geneAIService;
 	private final RecipeService recipeService;
 
+	// @Value("${scheduler.cron}")
+	// private final String cron;
+
 	@Value("${scheduler.use}")
 	private boolean use;
-
-	@Value("${scheduler.cron}")
-	private String cron;
 
 	// @Scheduled(cron = cron)
 	@Scheduled(fixedDelay = 24 * 60 * 1000) // 테스트용
@@ -143,8 +143,13 @@ public class GeneAIRecipeScheduler {
 			cntNewRecipes += geneAIResponseRecipeDtoList.size();
 		}
 
-		// TODO: 이전 레시피 삭제
-
+		log.info("이전 레시피 삭제");
+		try {
+			int cnt = recipeService.deleteOldRecipes();
+			log.info("삭제된 레시피 개수: {}", cnt);
+		} catch (Exception e) {
+			log.info("이전 레시피 삭제 실패", e);
+		}
 
 		LocalDateTime endTime = LocalDateTime.now();
 		log.info("레시피 생성 종료: {}" ,endTime);

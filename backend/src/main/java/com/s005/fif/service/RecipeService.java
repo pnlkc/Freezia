@@ -30,12 +30,16 @@ import com.s005.fif.entity.CompleteCook;
 import com.s005.fif.entity.Ingredient;
 import com.s005.fif.entity.Member;
 import com.s005.fif.entity.Recipe;
+import com.s005.fif.entity.RecipeDeleted;
 import com.s005.fif.entity.RecipeStep;
+import com.s005.fif.entity.RecipeStepDeleted;
 import com.s005.fif.repository.CompleteCookRepository;
 import com.s005.fif.repository.IngredientRepository;
 import com.s005.fif.repository.MemberRepository;
 import com.s005.fif.dto.response.RecipeRecommendationResponseDto;
+import com.s005.fif.repository.RecipeDeletedRepository;
 import com.s005.fif.repository.RecipeRepository;
+import com.s005.fif.repository.RecipeStepDeletedRepository;
 import com.s005.fif.repository.RecipeStepRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -52,6 +56,8 @@ public class RecipeService {
 	private final RecipeStepRepository recipeStepRepository;
 	private final CompleteCookRepository completeCookRepository;
 	private final MemberRepository memberRepository;
+	private final RecipeDeletedRepository recipeDeletedRepository;
+	private final RecipeStepDeletedRepository recipeStepDeletedRepository;
 
 	private final S3Service s3Service;
 
@@ -588,11 +594,40 @@ public class RecipeService {
 		return savedRecipes.stream().map(Recipe::getRecipeId).toList();
 	}
 
+	/**
+	 * 레시피 이미지 업데이트
+	 * @param recipeId 업데이트할 레시피 아이디
+	 * @param imgUrl 새로 저장할 이미지 주소
+	 */
 	public void updateRecipeImage(Integer recipeId, String imgUrl) {
 		Recipe recipe = recipeRepository.findById(recipeId)
 			.orElseThrow(() -> new CustomException(ExceptionType.RECIPE_NOT_FOUND));
 		recipe.updateImgUrl(imgUrl);
 		recipeRepository.save(recipe);
+	}
+
+	/**
+	 * 완료된 적 없고 저장하지 않은 레시피들 삭제, 삭제된 레시피는 더미 테이블에 저장.
+	 */
+	public int deleteOldRecipes() {
+		List<Recipe> oldRecipes = recipeRepository.findAllByCompleteYnAndSaveYn(false, false);
+
+		List<RecipeDeleted> recipeDeletedList = new ArrayList<>();
+		List<RecipeStepDeleted> recipeStepDeletedList = new ArrayList<>();
+
+		oldRecipes.forEach((recipe) -> {
+			recipeDeletedList.add(RecipeDeleted.fromRecipe(recipe, recipe.getMember().getMemberId()));
+			recipeStepRepository.findByRecipeOrderByStepNumberAsc(recipe).forEach((recipeStep -> {
+				recipeStepDeletedList.add(RecipeStepDeleted.fromRecipeStep(recipeStep, recipe.getRecipeId()));
+			}));
+		});
+
+		recipeDeletedRepository.saveAll(recipeDeletedList);
+		recipeStepDeletedRepository.saveAll(recipeStepDeletedList);
+
+		recipeRepository.deleteAllByCompleteYnAndSaveYn(false, false);
+
+		return recipeDeletedList.size() + recipeStepDeletedList.size();
 	}
 
 }

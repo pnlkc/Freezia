@@ -35,14 +35,10 @@ public class GeneAIRecipeScheduler {
 	private final GeneAIService geneAIService;
 	private final RecipeService recipeService;
 
-	// @Value("${scheduler.cron}")
-	// private final String cron;
-
 	@Value("${scheduler.use}")
 	private boolean use;
 
-	// @Scheduled(cron = cron)
-	@Scheduled(fixedDelay = 24 * 60 * 1000) // 테스트용
+	@Scheduled(cron = "${scheduler.cron}")
 	public void generateRecipe() {
 
 		if (!use) {

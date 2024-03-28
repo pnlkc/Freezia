@@ -490,7 +490,8 @@ fun RecipeDetailPager(
 
                 1 -> {
                     MyFoodHistoryPage(
-                        recipeViewModel = recipeViewModel
+                        recipeViewModel = recipeViewModel,
+                        recipeId = recipe!!.recipeId
                     )
                 }
             }

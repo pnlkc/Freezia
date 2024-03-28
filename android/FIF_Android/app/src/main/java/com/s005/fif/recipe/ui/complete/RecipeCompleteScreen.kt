@@ -315,8 +315,8 @@ fun RecipeCompleteIngredientItem(
                     model = item.image,
                     contentDescription = stringResource(id = R.string.description_ingredient_img),
                     contentScale = ContentScale.Crop,
-                    loading = placeholder(R.drawable.add_circle),
-                    failure = placeholder(R.drawable.add_circle)
+                    loading = placeholder(R.drawable.basic_ingredient),
+                    failure = placeholder(R.drawable.basic_ingredient)
                 )
 
                 Text(

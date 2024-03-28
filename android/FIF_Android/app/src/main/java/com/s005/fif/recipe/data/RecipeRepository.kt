@@ -31,6 +31,10 @@ interface RecipeRepository {
         recipeId: Int,
         addRecipeHistoryRequest: AddRecipeHistoryRequest
     ): Response<DefaultResponse>
+
+    suspend fun deleteRecipeHistory(
+        completeCookId: Int,
+    ): Response<DefaultResponse>
 }
 
 class DefaultRecipeRepository @Inject constructor(
@@ -57,5 +61,9 @@ class DefaultRecipeRepository @Inject constructor(
         addRecipeHistoryRequest: AddRecipeHistoryRequest,
     ): Response<DefaultResponse> {
         return recipeService.addRecipeHistory(recipeId, addRecipeHistoryRequest)
+    }
+
+    override suspend fun deleteRecipeHistory(completeCookId: Int): Response<DefaultResponse> {
+        return recipeService.deleteRecipeHistory(completeCookId)
     }
 }

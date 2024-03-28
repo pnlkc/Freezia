@@ -11,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import com.s005.fif.common.data.IngredientItemData
 import com.s005.fif.common.data.LikeFoodListData
 import com.s005.fif.common.data.toIngredientItem
+import com.s005.fif.common.dto.DefaultResponse
 import com.s005.fif.common.dto.ErrorResponse
 import com.s005.fif.recipe.data.RecipeRepository
 import com.s005.fif.recipe.dto.AddRecipeHistoryRequest
@@ -25,6 +26,7 @@ import com.s005.fif.recipe.dto.toRecipeStepItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
+import retrofit2.Response
 import javax.inject.Inject
 
 @HiltViewModel
@@ -94,7 +96,7 @@ class RecipeViewModel @Inject constructor(
 
         if (responseResult.isSuccessful) {
             completeRecipeRecordList.clear()
-            completeRecipeRecordList.addAll(responseResult.body()!!.completeCooks.map { it.toCompleteRecipeRecordItem() })
+            completeRecipeRecordList.addAll(responseResult.body()!!.completeCooks.map { it.toCompleteRecipeRecordItem() }.reversed())
 
             Log.d(
                 "로그",
@@ -226,6 +228,24 @@ class RecipeViewModel @Inject constructor(
             )
 
             Log.d("로그", "RecipeViewModel - addRecipeHistory() 호출됨 / 응답 실패 : ${body}")
+        }
+    }
+
+    suspend fun deleteRecipeHistory(completeCookId: Int, recipeId: Int) {
+        val responseResult = recipeRepository.deleteRecipeHistory(completeCookId)
+
+        if (responseResult.isSuccessful) {
+            val body = responseResult.body()!!
+
+            getCompleteRecipeRecord(recipeId)
+
+            Log.d("로그", "RecipeViewModel - deleteRecipeHistory() 호출됨 / 응답 성공 : ${body}")
+        } else {
+            val body = Json.decodeFromString<ErrorResponse>(
+                responseResult.errorBody()?.string()!!
+            )
+
+            Log.d("로그", "RecipeViewModel - deleteRecipeHistory() 호출됨 / 응답 실패 : ${body}")
         }
     }
 }

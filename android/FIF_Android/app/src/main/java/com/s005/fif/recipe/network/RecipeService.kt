@@ -7,6 +7,7 @@ import com.s005.fif.recipe.dto.RecipeListResponse
 import com.s005.fif.recipe.dto.RecipeStepListResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
@@ -35,5 +36,10 @@ interface RecipeService {
     suspend fun addRecipeHistory(
         @Path("recipeId") recipeId: Int,
         @Body addRecipeHistoryRequest: AddRecipeHistoryRequest
+    ): Response<DefaultResponse>
+
+    @DELETE("recipes/complete/{completeCookId}")
+    suspend fun deleteRecipeHistory(
+        @Path("completeCookId") completeCookId: Int,
     ): Response<DefaultResponse>
 }

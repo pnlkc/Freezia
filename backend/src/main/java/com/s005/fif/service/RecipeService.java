@@ -532,6 +532,17 @@ public class RecipeService {
 		return s3Service.uploadFile(multipartFile);
 	}
 
+	/**
+	 * FastAPI 및 DALL-E를 통해 레시피의 이미지를 생성하고 저장합니다.
+	 * @param recipeId 레시피 ID
+	 * @return S3 URL
+	 */
+	public String generateAndSaveImage(Integer recipeId) throws IOException {
+		Recipe recipe = recipeRepository.findById(recipeId)
+			.orElseThrow(() -> new CustomException(ExceptionType.RECIPE_NOT_FOUND));
+		return generateAndSaveImage(recipe.getMember().getMemberId(), recipeId);
+	}
+
 
 	/**
 	 * 생성된 레시피를 저장한다.
@@ -539,8 +550,9 @@ public class RecipeService {
 	 * @param recommendType 추천 유형
 	 * @param geneAIResponseRecipeDto 생성된 레시피 데이터
 	 * @param imgUrl 생성된 이미지 Url
+	 * @return 저장된 레시피 엔티티들의 ID
 	 */
-	public void saveGeneratedRecipe(Integer memberId, RecipeRecommendType recommendType,GeneAIResponseRecipeDto geneAIResponseRecipeDto, String imgUrl) {
+	public List<Integer> saveGeneratedRecipe(Integer memberId, RecipeRecommendType recommendType,GeneAIResponseRecipeDto geneAIResponseRecipeDto, String imgUrl) {
 
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new CustomException(ExceptionType.MEMBER_NOT_FOUND));
@@ -570,9 +582,17 @@ public class RecipeService {
 			}
 		});
 
-		recipeRepository.saveAll(recipes);
+		List<Recipe> savedRecipes = recipeRepository.saveAll(recipes);
 		recipeStepRepository.saveAll(recipeSteps);
 
+		return savedRecipes.stream().map(Recipe::getRecipeId).toList();
+	}
+
+	public void updateRecipeImage(Integer recipeId, String imgUrl) {
+		Recipe recipe = recipeRepository.findById(recipeId)
+			.orElseThrow(() -> new CustomException(ExceptionType.RECIPE_NOT_FOUND));
+		recipe.updateImgUrl(imgUrl);
+		recipeRepository.save(recipe);
 	}
 
 }

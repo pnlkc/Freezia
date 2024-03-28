@@ -167,7 +167,7 @@ public class GeneAIService {
 						throw new IOException("레시피 데이터 응답 매핑 실패");
 					return geneAICategoryListResponseDto;
 				} catch (Exception e) {
-					log.error("레시피 생성 요청 실패: code - {}", clientResponse.getStatusCode());
+					log.error("카테고리 레시피 목록 생성 요청 실패: code - {}", clientResponse.getStatusCode());
 					throw e;
 				}
 			});
@@ -198,7 +198,7 @@ public class GeneAIService {
 							throw new IOException("레시피 데이터 응답 매핑 실패");
 						recipeResponseDtoList.add(geneAIResponseRecipeDto);
 					} catch (Exception e) {
-						log.error("레시피 생성 요청 실패: code - {}", clientResponse.getStatusCode());
+						log.error("카테고리 레시피 단일 생성 요청 실패: code - {}", clientResponse.getStatusCode(), e);
 						// throw e;
 					}
 					return "";

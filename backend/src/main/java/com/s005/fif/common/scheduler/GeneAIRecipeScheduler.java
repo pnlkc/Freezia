@@ -1,5 +1,6 @@
 package com.s005.fif.common.scheduler;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.s005.fif.common.Constant;
 import com.s005.fif.common.types.RecipeRecommendType;
 import com.s005.fif.common.types.RecipeType;
 import com.s005.fif.dto.request.GeneAICategoryListRequestDto;
@@ -69,8 +71,9 @@ public class GeneAIRecipeScheduler {
 
 		log.info("레시피 생성 시작: 추천 레시피");
 		for (RecipeRecommendType recommendType : RecipeRecommendType.values()) {
+			if (RecipeRecommendType.NONE.equals(recommendType))
+				continue;
 			GeneAIResponseRecipeDto geneAIResponseRecipeDto;
-			String imgUrl = "example-image-url"; // TODO: 생성형 이미지로 변경
 			try {
 				GeneAIHealthRequestDto req = GeneAIHealthRequestDto.builder()
 					.ingredients(String.join(", ", fridgeIngredientNames))
@@ -84,10 +87,19 @@ public class GeneAIRecipeScheduler {
 				continue;
 			}
 
+			List<Integer> savedRecipeIds = null;
 			try {
-				recipeService.saveGeneratedRecipe(tmpMemberId, recommendType, geneAIResponseRecipeDto, imgUrl);
+				savedRecipeIds = recipeService.saveGeneratedRecipe(tmpMemberId, recommendType,
+					geneAIResponseRecipeDto, Constant.DEFAULT_RECIPE_IMG_URL);
 			} catch (Exception e) {
 				log.error("레시피 저장중 에러 발생: {}", geneAIResponseRecipeDto, e);
+			}
+
+			log.info("{} 레시피 이미지 생성", recommendType.name());
+			try {
+				makeRecipeImages(savedRecipeIds);
+			} catch (Exception e) {
+				log.error("레시피 이미지 생성 및 저장중 에러 발생", e);
 			}
 
 			cntNewRecipes++;
@@ -98,7 +110,6 @@ public class GeneAIRecipeScheduler {
 		for (RecipeType recipeType : RecipeType.values()) {
 			log.info("레시피 카테고리: {}", recipeType.getType());
 			List<GeneAIResponseRecipeDto> geneAIResponseRecipeDtoList;
-			String imgUrl = "example-image-url"; // TODO: 생성형 이미지로 변경
 			try {
 				GeneAICategoryListRequestDto req = GeneAICategoryListRequestDto.builder()
 					.ingredients(String.join(", ", fridgeIngredientNames))
@@ -113,11 +124,20 @@ public class GeneAIRecipeScheduler {
 			}
 
 			geneAIResponseRecipeDtoList.forEach((r) -> {
+				List<Integer> savedRecipeIds = null;
 				try {
-					recipeService.saveGeneratedRecipe(tmpMemberId, RecipeRecommendType.NONE, r, imgUrl);
+					savedRecipeIds = recipeService.saveGeneratedRecipe(tmpMemberId, RecipeRecommendType.NONE, r, Constant.DEFAULT_RECIPE_IMG_URL);
 				} catch (Exception e) {
 					log.error("레시피 저장중 에러 발생: {}", r, e);
 				}
+				// 레시피 이미지 생성
+				log.info("{} 레시피 이미지 생성", recipeType.getType());
+				try {
+					makeRecipeImages(savedRecipeIds);
+				} catch (Exception e) {
+					log.error("레시피 이미지 생성 및 저장중 에러 발생", e);
+				}
+
 			});
 
 			cntNewRecipes += geneAIResponseRecipeDtoList.size();
@@ -131,6 +151,19 @@ public class GeneAIRecipeScheduler {
 		Duration between = Duration.between(startTime, endTime);
 		log.info("레시피 생성 소요 시간: {}", between.toMillis() + "ms");
 		log.info("레시피 생성 개수: {}", cntNewRecipes);
+	}
+
+	private void makeRecipeImages(List<Integer> recipeIds) {
+		if (recipeIds == null)
+			throw new NullPointerException("레시피 아이디 목록을 받지 못했습니다.");
+		recipeIds.forEach((recipeId) -> {
+			try {
+				String imgUrl = recipeService.generateAndSaveImage(recipeId);
+				recipeService.updateRecipeImage(recipeId, imgUrl);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		});
 	}
 
 }

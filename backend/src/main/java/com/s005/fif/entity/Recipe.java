@@ -119,4 +119,8 @@ public class Recipe {
 		return parseIngredients(this.seasoningList);
 	}
 
+	public void updateImgUrl(String imgUrl) {
+		this.imgUrl = imgUrl;
+	}
+
 }

@@ -1,8 +1,9 @@
-package com.s005.fif.recipe.ui
+package com.s005.fif.recipe.ui.step
 
 import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,10 +28,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -38,6 +36,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.wear.compose.material.Chip
 import androidx.wear.compose.material.ChipDefaults
 import androidx.wear.compose.material.HorizontalPageIndicator
@@ -46,25 +46,30 @@ import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.PageIndicatorState
 import androidx.wear.compose.material.Text
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
 import com.s005.fif.R
 import com.s005.fif.components.BackgroundImage
+import com.s005.fif.fcm.RecipeLiveData
+import com.s005.fif.recipe.ui.RecipeViewModel
+import com.s005.fif.timer.ui.TimerViewModel
 import com.s005.fif.utils.DummyImageUtil
 import com.s005.fif.utils.ScreenSize
 import com.s005.fif.utils.ScreenSize.toDpSize
 import com.s005.fif.utils.ScreenSize.toSpSize
 import com.s005.fif.utils.TTSUtil
-import com.s005.fif.utils.VibrateUtil
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalGlideComposeApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun RecipeDetailScreen(
+fun RecipeStepScreen(
     modifier: Modifier = Modifier,
+    recipeViewModel: RecipeViewModel,
+    timerViewModel: TimerViewModel,
     navigateToMain: () -> Unit,
+    navigateToTimerDetail: (Int) -> Unit,
+    step: Int,
 ) {
-    val maxPages = 2
-    var selectedPage by remember { mutableIntStateOf(0) }
+    val maxPages = RecipeLiveData.recipeData!!.recipeSteps.size
+    var selectedPage by remember { mutableIntStateOf(step) }
     val pagerState = rememberPagerState(
         initialPage = selectedPage,
         pageCount = { maxPages + 1 }
@@ -91,28 +96,41 @@ fun RecipeDetailScreen(
 
     val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(pagerState) {
-        snapshotFlow { pagerState.currentPage }.collect { page ->
-            selectedPage = page
+    LaunchedEffect(key1 = step) {
+        if (pagerState.currentPage != step) {
+            pagerState.scrollToPage(step)
         }
     }
 
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-    ) {
-        BackgroundImage(
-            imgUrl = DummyImageUtil.list.random()
-        )
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }.collect { page ->
+            selectedPage = page
 
-        HorizontalPager(
-            modifier = Modifier
+            if (RecipeLiveData.isFcmNotification) {
+                RecipeLiveData.isFcmNotification = false
+            } else if (page <= maxPages) {
+                recipeViewModel.moveRecipeStep(page + 1)
+            }
+        }
+    }
+
+    HorizontalPager(
+        modifier = Modifier
+            .fillMaxSize(),
+        state = pagerState
+    ) { page ->
+        Box(
+            modifier = modifier
                 .fillMaxSize()
-                .padding(ScreenSize.screenHeightDp.toDpSize(5)),
-            state = pagerState
-        ) { page ->
+        ) {
+            BackgroundImage(
+                imgUrl = DummyImageUtil.list[minOf(4, page)]
+            )
+
             if (page != maxPages) {
-                RecipeDetailBody(
+                RecipeStepBody(
+                    modifier = Modifier
+                        .padding(ScreenSize.screenHeightDp.toDpSize(5)),
                     page = page,
                     maxPage = maxPages,
                     goStepBack = {
@@ -128,32 +146,44 @@ fun RecipeDetailScreen(
                                 pagerState.animateScrollToPage(++selectedPage)
                             }
                         }
+                    },
+                    onTimerClicked = { time, name ->
+                        navigateToTimerDetail(timerViewModel.addTimer(time, name, page) - 1)
                     }
                 )
             } else {
                 RecipeDoneBody(
-                    navigateToMain = navigateToMain
+                    navigateToMain = navigateToMain,
+                    onDoneBtnClicked = {
+                        coroutineScope.launch {
+                            recipeViewModel.disconnectRecipe()
+                        }
+                    }
                 )
             }
-        }
 
-        if (pagerState.currentPage < maxPages) {
-            HorizontalPageIndicator(
-                pageIndicatorState = pageIndicatorState
-            )
+            if (pagerState.currentPage < maxPages) {
+                HorizontalPageIndicator(
+                    modifier = Modifier
+                        .padding(bottom = ScreenSize.screenHeightDp.toDpSize(2)),
+                    pageIndicatorState = pageIndicatorState
+                )
+            }
         }
     }
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun RecipeDetailBody(
+fun RecipeStepBody(
     modifier: Modifier = Modifier,
     page: Int,
     maxPage: Int,
     goStepBack: () -> Unit,
     goStepForward: () -> Unit,
+    onTimerClicked: (Int, String) -> Unit,
 ) {
+    val currentStep = RecipeLiveData.recipeData!!.recipeSteps[page]
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -175,7 +205,7 @@ fun RecipeDetailBody(
         Text(
             modifier = Modifier
                 .fillMaxWidth(),
-            text = "${page + 1}. 재료를 손질합니다",
+            text = "${page + 1}. ${RecipeLiveData.recipeData!!.recipeSteps[page].descriptionWatch}",
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             fontSize = ScreenSize.screenHeightDp.toSpSize(9),
@@ -192,32 +222,37 @@ fun RecipeDetailBody(
             ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Chip(
-                modifier = Modifier
-                    .height(ScreenSize.screenHeightDp.toDpSize(18)),
-                label = {
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        text = stringResource(id = R.string.use_timer),
-                        textAlign = TextAlign.Center,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = ScreenSize.screenHeightDp.toSpSize(8),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                },
-                colors = ChipDefaults.primaryChipColors(
-                    backgroundColor = MaterialTheme.colors.primary,
-                    contentColor = Color.White
-                ),
-                onClick = { },
-                shape = MaterialTheme.shapes.large
-            )
+            if (currentStep.timer != null) {
+                Chip(
+                    modifier = Modifier
+                        .height(ScreenSize.screenHeightDp.toDpSize(18)),
+                    label = {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            text = stringResource(id = R.string.use_timer),
+                            textAlign = TextAlign.Center,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = ScreenSize.screenHeightDp.toSpSize(8),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    },
+                    colors = ChipDefaults.chipColors(
+                        backgroundColor = MaterialTheme.colors.primary,
+                        contentColor = Color.White,
+                    ),
+                    onClick = {
+                        onTimerClicked(currentStep.timer, currentStep.descriptionWatch)
+                    },
+                    shape = MaterialTheme.shapes.large
+                )
+            }
 
             ControlBtnRow(
                 goStepBack = goStepBack,
-                goStepForward = goStepForward
+                goStepForward = goStepForward,
+                ttsText = RecipeLiveData.recipeData!!.recipeSteps[page].description
             )
         }
     }
@@ -228,6 +263,7 @@ fun ControlBtnRow(
     modifier: Modifier = Modifier,
     goStepBack: () -> Unit,
     goStepForward: () -> Unit,
+    ttsText: String,
 ) {
     val btnSize = ScreenSize.screenHeightDp.toDpSize(15)
     val context = LocalContext.current
@@ -257,7 +293,7 @@ fun ControlBtnRow(
                 .clip(CircleShape)
                 .clickable {
                     val tts = TTSUtil()
-                    tts.speak(context = context, text = "TTS 테스트 입니다")
+                    tts.speak(context = context, text = ttsText)
                 }
                 .padding(ScreenSize.screenHeightDp.toDpSize(2)),
             painter = painterResource(id = R.drawable.speaker),
@@ -282,13 +318,14 @@ fun ControlBtnRow(
 fun RecipeDoneBody(
     modifier: Modifier = Modifier,
     navigateToMain: () -> Unit,
+    onDoneBtnClicked: () -> Unit
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(
-                top = ScreenSize.screenHeightDp.toDpSize(20),
-                bottom = ScreenSize.screenHeightDp.toDpSize(7)
+                top = ScreenSize.screenHeightDp.toDpSize(30),
+                bottom = ScreenSize.screenHeightDp.toDpSize(20)
             ),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -321,25 +358,11 @@ fun RecipeDoneBody(
                 )
             },
             colors = ChipDefaults.primaryChipColors(
-                backgroundColor = MaterialTheme.colors.onSecondary,
+                backgroundColor = MaterialTheme.colors.primary,
                 contentColor = Color.White
             ),
-            onClick = { navigateToMain() },
+            onClick = { onDoneBtnClicked() },
             shape = MaterialTheme.shapes.large
-        )
-
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { navigateToMain() },
-            text = stringResource(id = R.string.record_panel),
-            textAlign = TextAlign.Center,
-            textDecoration = TextDecoration.Underline,
-            fontWeight = FontWeight.Bold,
-            fontSize = ScreenSize.screenHeightDp.toSpSize(6),
-            color = Color.White,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
         )
     }
 }

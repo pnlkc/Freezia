@@ -1,4 +1,4 @@
-package com.s005.fif.recipe.ui
+package com.s005.fif.recipe.ui.detail
 
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Box
@@ -20,32 +20,34 @@ import androidx.wear.compose.material.ChipDefaults
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import com.s005.fif.components.BackgroundImage
+import com.s005.fif.fcm.RecipeLiveData
 import com.s005.fif.utils.ColorCombineTextUtil
 import com.s005.fif.utils.ScreenSize
 import com.s005.fif.utils.ScreenSize.toDpSize
 import com.s005.fif.utils.ScreenSize.toSpSize
-import com.s005.fif.utils.VibrateUtil
 
 @Composable
-fun RecipeScreen(
+fun RecipeDetailScreen(
     modifier: Modifier = Modifier,
-    navigateToRecipeDetail: () -> Unit
+    navigateToRecipeStep: () -> Unit
 ) {
     Box(
         modifier = modifier
             .fillMaxSize()
     ) {
-        BackgroundImage()
+        BackgroundImage(
+            imgUrl = RecipeLiveData.recipeData!!.recipeInfo.imgUrl
+        )
 
-        RecipeBody(
+        RecipeDetailBody(
             modifier = modifier,
-            navigateToRecipeDetail = navigateToRecipeDetail
+            navigateToRecipeDetail = navigateToRecipeStep
         )
     }
 }
 
 @Composable
-fun RecipeBody(
+fun RecipeDetailBody(
     modifier: Modifier = Modifier,
     navigateToRecipeDetail: () -> Unit
 ) {
@@ -64,7 +66,7 @@ fun RecipeBody(
         Text(
             modifier = Modifier
                 .fillMaxWidth(),
-            text = "스팸 마요 김치 덮밥",
+            text = RecipeLiveData.recipeData!!.recipeInfo.name,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             fontSize = ScreenSize.screenHeightDp.toSpSize(9),

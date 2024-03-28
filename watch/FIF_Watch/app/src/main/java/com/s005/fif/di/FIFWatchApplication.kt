@@ -8,15 +8,4 @@ import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
 class FIFWatchApplication : Application() {
-    override fun onCreate() {
-        super.onCreate()
-        val channel = NotificationChannel(
-            "1",
-            "High priority notifications",
-            NotificationManager.IMPORTANCE_HIGH
-        )
-
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel)
-    }
 }

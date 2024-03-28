@@ -4,7 +4,6 @@ import android.app.Activity
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,17 +12,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.Icon
@@ -31,56 +32,65 @@ import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.integration.compose.placeholder
 import com.s005.fif.R
-import com.s005.fif.ui.theme.FIF_WatchTheme
+import com.s005.fif.components.BackgroundImage
+import com.s005.fif.fcm.RecipeLiveData
+import com.s005.fif.recipe.ui.RecipeViewModel
 import com.s005.fif.utils.ScreenSize
 import com.s005.fif.utils.ScreenSize.toDpSize
 import com.s005.fif.utils.ScreenSize.toSpSize
-import com.s005.fif.utils.VibrateUtil
 
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
+    mainViewModel: MainViewModel,
     navigateToShoppingList: () -> Unit,
-    navigateToRecipe: () -> Unit,
+    navigateToRecipeDetail: () -> Unit,
     navigateToTimerList: () -> Unit,
-    navigateToWarning: () -> Unit
-) {
-    MainBody(
-        modifier = modifier,
-        navigateToShoppingList = navigateToShoppingList,
-        navigateToRecipe = navigateToRecipe,
-        navigateToTimerList = navigateToTimerList,
-        navigateToWarning = navigateToWarning
-    )
-}
-
-@Composable
-fun MainBody(
-    modifier: Modifier = Modifier,
-    navigateToShoppingList: () -> Unit,
-    navigateToRecipe: () -> Unit,
-    navigateToTimerList: () -> Unit,
-    navigateToWarning: () -> Unit
 ) {
     val btnSize = ScreenSize.screenHeightDp.toDpSize(22)
     val btnBottomPadding = ScreenSize.screenHeightDp.toDpSize(10)
     val btnSpaceBy = ScreenSize.screenWidthDp.toDpSize(2)
 
-    // TODO. 실제 데이터로 변경 필요
-    var isRecipeSelected = true
+    val isRecipeSelected = RecipeLiveData.recipeData != null
 
-    MainBody(
-        modifier = modifier,
-        btnSize = btnSize,
-        btnBottomPadding = btnBottomPadding,
-        btnSpaceBy = btnSpaceBy,
-        isRecipeSelected = isRecipeSelected,
-        navigateToShoppingList = navigateToShoppingList,
-        navigateToRecipe = navigateToRecipe,
-        navigateToTimerList = navigateToTimerList,
-        navigateToWarning = navigateToWarning
-    )
+    var backWait = 0L
+    val context = LocalContext.current
+
+    BackHandler {
+        if (System.currentTimeMillis() - backWait >= 2000) {
+            backWait = System.currentTimeMillis()
+            Toast.makeText(
+                context,
+                context.getText(R.string.exit_toast_message),
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            (context as? Activity)?.finish()
+        }
+    }
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+    ) {
+        BackgroundImage(
+            imgUrl = RecipeLiveData.recipeData?.recipeInfo?.imgUrl ?: ""
+        )
+
+        MainBody(
+            modifier = Modifier,
+            btnSize = btnSize,
+            btnBottomPadding = btnBottomPadding,
+            btnSpaceBy = btnSpaceBy,
+            isRecipeSelected = isRecipeSelected,
+            navigateToShoppingList = navigateToShoppingList,
+            navigateToRecipe = navigateToRecipeDetail,
+            navigateToTimerList = navigateToTimerList,
+            mainUiState = { mainViewModel.mainUiState }
+        )
+    }
 }
 
 @Composable
@@ -93,7 +103,7 @@ fun MainBody(
     navigateToShoppingList: () -> Unit,
     navigateToRecipe: () -> Unit,
     navigateToTimerList: () -> Unit,
-    navigateToWarning: () -> Unit
+    mainUiState: () -> MainUiState,
 ) {
     Box(
         modifier = modifier
@@ -107,17 +117,19 @@ fun MainBody(
             verticalArrangement = Arrangement.spacedBy(ScreenSize.screenHeightDp.toDpSize(11))
         ) {
             ProfileColumn(
-                modifier = modifier
-                    .clickable { navigateToWarning() }
+                modifier = Modifier,
+                mainUiState = mainUiState
             )
 
             Text(
                 modifier = Modifier
                     .fillMaxWidth(),
-                text = if (isRecipeSelected) "알리오올리오 파스타" else stringResource(id = R.string.not_select_recipe),
+                text = if (isRecipeSelected) RecipeLiveData.recipeData!!.recipeInfo.name else stringResource(id = R.string.not_select_recipe),
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
-                fontSize = if (isRecipeSelected) ScreenSize.screenHeightDp.toSpSize(10) else ScreenSize.screenHeightDp.toSpSize(8),
+                fontSize = if (isRecipeSelected) ScreenSize.screenHeightDp.toSpSize(10) else ScreenSize.screenHeightDp.toSpSize(
+                    8
+                ),
                 color = Color.White,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -141,17 +153,23 @@ fun MainBody(
 @Composable
 fun ProfileColumn(
     modifier: Modifier = Modifier,
+    mainUiState: () -> MainUiState,
 ) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ProfileImage(imgUrl = "")
+        ProfileImage(
+            imgUrl = mainUiState().member?.imgUrl
+        )
 
         Text(
             modifier = Modifier
                 .fillMaxWidth(),
-            text = "OOO님",
+            text = stringResource(
+                id = R.string.text_user_name,
+                mainUiState().member?.name ?: "닉네임"
+            ),
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             fontSize = ScreenSize.screenHeightDp.toSpSize(7.5f),
@@ -166,17 +184,22 @@ fun ProfileColumn(
 @Composable
 fun ProfileImage(
     modifier: Modifier = Modifier,
-    imgUrl: String?
+    imgUrl: String?,
 ) {
-    if (imgUrl == null) {
+    if (!imgUrl.isNullOrBlank()) {
         GlideImage(
-            modifier = Modifier.size(ScreenSize.screenHeightDp.toDpSize(15)),
+            modifier = modifier
+                .size(ScreenSize.screenHeightDp.toDpSize(15))
+                .clip(CircleShape),
             model = imgUrl,
-            contentDescription = stringResource(id = R.string.profile_img_desc)
+            contentDescription = stringResource(id = R.string.profile_img_desc),
+            contentScale = ContentScale.Crop,
+            loading = placeholder(R.drawable.account),
+            failure = placeholder(R.drawable.account)
         )
     } else {
         Icon(
-            modifier = Modifier.size(ScreenSize.screenHeightDp.toDpSize(15)),
+            modifier = modifier.size(ScreenSize.screenHeightDp.toDpSize(15)),
             painter = painterResource(id = R.drawable.account),
             contentDescription = stringResource(id = R.string.profile_img_desc),
             tint = Color.White
@@ -193,7 +216,7 @@ fun MainBtnRow(
     isRecipeSelected: Boolean,
     navigateToShoppingList: () -> Unit,
     navigateToRecipe: () -> Unit,
-    navigateToTimerList: () -> Unit
+    navigateToTimerList: () -> Unit,
 ) {
     Row(
         modifier = modifier,

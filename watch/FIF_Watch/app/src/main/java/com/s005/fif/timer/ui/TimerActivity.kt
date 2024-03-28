@@ -45,6 +45,9 @@ class TimerActivity : ComponentActivity() {
 
         VibrateUtil.vibrateTimerDone(this)
 
+        val title = intent.getStringExtra("title") ?: ""
+        val initTime = intent.getIntExtra("initTime", 0)
+
         setContent {
             FIF_WatchTheme {
                 Box(
@@ -54,7 +57,8 @@ class TimerActivity : ComponentActivity() {
                     contentAlignment = Alignment.Center
                 ) {
                     TimerDoneScreen(
-                        text = "끓이기"
+                        text = title,
+                        initTime = initTime
                     )
                 }
             }
@@ -84,7 +88,7 @@ class TimerActivity : ComponentActivity() {
                     contentAlignment = Alignment.Center
                 ) {
                     TimerDoneScreen(
-                        text = "${++cnt}개의 타이머"
+                        text = "${++cnt}개의 타이머",
                     )
                 }
             }

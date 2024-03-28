@@ -28,16 +28,18 @@ import com.s005.fif.timer.ui.TimerActivity
 import java.util.Timer
 
 object AlarmUtil {
-    val pendingIntentMap = mutableMapOf<Int, PendingIntent>()
+    private val pendingIntentMap = mutableMapOf<Int, PendingIntent>()
     var alarmManager: AlarmManager? = null
 
     @SuppressLint("ScheduleExactAlarm")
-    fun setAlarm(context: Context, delayMillis: Long, id: Int) {
+    fun setAlarm(context: Context, delayMillis: Long, id: Int, title: String, initTime: Int) {
         if (alarmManager != null) {
-            Log.d("로그", "AlarmUtil - setAlarm() 호출됨")
+            Log.d("로그", "AlarmUtil - setAlarm() 호출됨 / $delayMillis")
             val alarmIntent = Intent(context, TimerReceiver::class.java).apply {
-                action = "TimerActivity" // BroadcastReceiver에서 구별할 액션
+                action = "TimerActivity + ${id}" // BroadcastReceiver에서 구별할 액션
                 putExtra("id", id)
+                putExtra("title", title)
+                putExtra("initTime", initTime)
             }
 
             val pendingIntent = PendingIntent.getBroadcast(
@@ -49,16 +51,11 @@ object AlarmUtil {
 
             pendingIntentMap[id] = pendingIntent
 
-//            alarmManager!!.setExactAndAllowWhileIdle(
-//                AlarmManager.ELAPSED_REALTIME_WAKEUP,
-//                SystemClock.elapsedRealtime() + delayMillis,
-//                pendingIntent
-//            )
-
             val alarmClock = AlarmManager.AlarmClockInfo(
-                SystemClock.elapsedRealtime() + delayMillis,
+                System.currentTimeMillis() + delayMillis,
                 pendingIntent
             )
+
             alarmManager!!.setAlarmClock(alarmClock, pendingIntent)
         }
     }

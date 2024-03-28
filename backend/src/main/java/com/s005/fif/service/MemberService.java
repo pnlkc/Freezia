@@ -81,6 +81,26 @@ public class MemberService {
 		return MemberDetailResponseDto.fromEntity(member, diseaseIds, dislikeIngredientIds);
 	}
 
+	public List<String> getMemberDiseases(Integer memberId) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new CustomException(ExceptionType.MEMBER_NOT_FOUND));
+
+		return memberDiseaseRepository.findAllByMember(member)
+			.stream()
+			.map((md) -> md.getDisease().getName())
+			.toList();
+	}
+
+	public List<String> getMemberDislikeIngredients(Integer memberId) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new CustomException(ExceptionType.MEMBER_NOT_FOUND));
+
+		return dislikeIngredientRepository.findAllByMember(member)
+			.stream()
+			.map((di) -> di.getIngredient().getName())
+			.toList();
+	}
+
 	public void setMemberInfo(Integer memberId,
 		MemberOnboardingRequestDto memberOnboardingRequestDto,
 		boolean isOnboarding

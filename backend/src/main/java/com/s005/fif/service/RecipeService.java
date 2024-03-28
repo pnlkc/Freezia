@@ -16,9 +16,11 @@ import com.s005.fif.common.Constant;
 import com.s005.fif.common.CustomMultipartFile;
 import com.s005.fif.common.exception.CustomException;
 import com.s005.fif.common.exception.ExceptionType;
+import com.s005.fif.common.types.RecipeRecommendType;
 import com.s005.fif.dto.request.CompleteCookRequestDto;
 import com.s005.fif.dto.request.model.IngredientNameDto;
 import com.s005.fif.dto.response.CompleteCookResponseDto;
+import com.s005.fif.dto.response.GeneAIResponseRecipeDto;
 import com.s005.fif.dto.response.RecipeResponseDto;
 import com.s005.fif.dto.response.RecipeSimpleResponseDto;
 import com.s005.fif.dto.response.RecipeStepResponseDto;
@@ -28,12 +30,16 @@ import com.s005.fif.entity.CompleteCook;
 import com.s005.fif.entity.Ingredient;
 import com.s005.fif.entity.Member;
 import com.s005.fif.entity.Recipe;
+import com.s005.fif.entity.RecipeDeleted;
 import com.s005.fif.entity.RecipeStep;
+import com.s005.fif.entity.RecipeStepDeleted;
 import com.s005.fif.repository.CompleteCookRepository;
 import com.s005.fif.repository.IngredientRepository;
 import com.s005.fif.repository.MemberRepository;
-import com.s005.fif.repository.RecipeRecommendationResponseDto;
+import com.s005.fif.dto.response.RecipeRecommendationResponseDto;
+import com.s005.fif.repository.RecipeDeletedRepository;
 import com.s005.fif.repository.RecipeRepository;
+import com.s005.fif.repository.RecipeStepDeletedRepository;
 import com.s005.fif.repository.RecipeStepRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -50,6 +56,8 @@ public class RecipeService {
 	private final RecipeStepRepository recipeStepRepository;
 	private final CompleteCookRepository completeCookRepository;
 	private final MemberRepository memberRepository;
+	private final RecipeDeletedRepository recipeDeletedRepository;
+	private final RecipeStepDeletedRepository recipeStepDeletedRepository;
 
 	private final S3Service s3Service;
 
@@ -529,4 +537,97 @@ public class RecipeService {
 
 		return s3Service.uploadFile(multipartFile);
 	}
+
+	/**
+	 * FastAPI 및 DALL-E를 통해 레시피의 이미지를 생성하고 저장합니다.
+	 * @param recipeId 레시피 ID
+	 * @return S3 URL
+	 */
+	public String generateAndSaveImage(Integer recipeId) throws IOException {
+		Recipe recipe = recipeRepository.findById(recipeId)
+			.orElseThrow(() -> new CustomException(ExceptionType.RECIPE_NOT_FOUND));
+		return generateAndSaveImage(recipe.getMember().getMemberId(), recipeId);
+	}
+
+
+	/**
+	 * 생성된 레시피를 저장한다.
+	 * @param memberId 사용자 아이디
+	 * @param recommendType 추천 유형
+	 * @param geneAIResponseRecipeDto 생성된 레시피 데이터
+	 * @param imgUrl 생성된 이미지 Url
+	 * @return 저장된 레시피 엔티티들의 ID
+	 */
+	public List<Integer> saveGeneratedRecipe(Integer memberId, RecipeRecommendType recommendType,GeneAIResponseRecipeDto geneAIResponseRecipeDto, String imgUrl) {
+
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new CustomException(ExceptionType.MEMBER_NOT_FOUND));
+
+		List<Recipe> recipes = new ArrayList<>();
+		List<RecipeStep> recipeSteps = new ArrayList<>();
+
+		geneAIResponseRecipeDto.getRecipeList().forEach((r) -> {
+			Recipe newRecipe;
+			try {
+				newRecipe = GeneAIResponseRecipeDto.GeneAIRecipeDto.toEntity(r, member, imgUrl, geneAIResponseRecipeDto.getReply(), recommendType.getNumber());
+				recipes.add(newRecipe);
+			} catch (Exception e) {
+				log.error("생성된 레시피 세부 정보 매핑 중 에러 발생 - 생성된 레시피: {}", r, e);
+				return;
+			}
+
+			List<GeneAIResponseRecipeDto.GeneAIRecipeStepDto> geneAIRecipeStepDtoList = r.getRecipeSteps();
+			for (int i = 0; i < geneAIRecipeStepDtoList.size(); i++) {
+				GeneAIResponseRecipeDto.GeneAIRecipeStepDto geneAIRecipeStepDto = geneAIRecipeStepDtoList.get(i);
+				try {
+					RecipeStep newRecipeStep = GeneAIResponseRecipeDto.GeneAIRecipeStepDto.toEntity(geneAIRecipeStepDto, newRecipe, i + 1);
+					recipeSteps.add(newRecipeStep);
+				} catch (Exception e) {
+					log.error("생성된 레시피 단계 정보 매핑 중 에러 발생 - 생성된 레시피: {}", r, e);
+				}
+			}
+		});
+
+		List<Recipe> savedRecipes = recipeRepository.saveAll(recipes);
+		recipeStepRepository.saveAll(recipeSteps);
+
+		return savedRecipes.stream().map(Recipe::getRecipeId).toList();
+	}
+
+	/**
+	 * 레시피 이미지 업데이트
+	 * @param recipeId 업데이트할 레시피 아이디
+	 * @param imgUrl 새로 저장할 이미지 주소
+	 */
+	public void updateRecipeImage(Integer recipeId, String imgUrl) {
+		Recipe recipe = recipeRepository.findById(recipeId)
+			.orElseThrow(() -> new CustomException(ExceptionType.RECIPE_NOT_FOUND));
+		recipe.updateImgUrl(imgUrl);
+		recipeRepository.save(recipe);
+	}
+
+	/**
+	 * 완료된 적 없고 저장하지 않은 레시피들 삭제, 삭제된 레시피는 더미 테이블에 저장.
+	 */
+	public int deleteOldRecipes() {
+		List<Recipe> oldRecipes = recipeRepository.findAllByCompleteYnAndSaveYn(false, false);
+
+		List<RecipeDeleted> recipeDeletedList = new ArrayList<>();
+		List<RecipeStepDeleted> recipeStepDeletedList = new ArrayList<>();
+
+		oldRecipes.forEach((recipe) -> {
+			recipeDeletedList.add(RecipeDeleted.fromRecipe(recipe, recipe.getMember().getMemberId()));
+			recipeStepRepository.findByRecipeOrderByStepNumberAsc(recipe).forEach((recipeStep -> {
+				recipeStepDeletedList.add(RecipeStepDeleted.fromRecipeStep(recipeStep, recipe.getRecipeId()));
+			}));
+		});
+
+		recipeDeletedRepository.saveAll(recipeDeletedList);
+		recipeStepDeletedRepository.saveAll(recipeStepDeletedList);
+
+		recipeRepository.deleteAllByCompleteYnAndSaveYn(false, false);
+
+		return recipeDeletedList.size() + recipeStepDeletedList.size();
+	}
+
 }

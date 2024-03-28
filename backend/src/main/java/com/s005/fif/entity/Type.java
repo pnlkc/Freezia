@@ -16,4 +16,15 @@ public enum Type {
 		this.title = title;
 		this.code = code;
 	}
+
+	public static Type from(String title) {
+		Type type = Type.values()[0];
+		for (Type t : Type.values()) {
+			if (t.title.equals(title)) {
+				type = t;
+				break;
+			}
+		}
+		return type;
+	}
 }

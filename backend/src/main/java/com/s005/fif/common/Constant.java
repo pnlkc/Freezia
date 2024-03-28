@@ -2,6 +2,8 @@ package com.s005.fif.common;
 
 public class Constant {
 
+	public static final String DEFAULT_RECIPE_IMG_URL = "default_image.png";
+
 	public static final String DEFAULT_INGREDIENT_IMG_URL = "default_image.png";
 	public static final int DEFAULT_INGREDIENT_EXPIRATION_PERIOD = 7;
 

@@ -3,10 +3,7 @@ spring:
     include:
       - deploy
 
-#  # 사용자 인증: 필터 bean 재등록
-#  main:
-#    allow-bean-definition-overriding: true
-
+# 인증 관련
 AUTHORIZATION_HEADER_NAME: Authorization
 AUTHORIZATION_TYPE: Bearer
 JWT_SECRET_KEY: FridgeIsFreeIsFridgeFridgeIsFreeIsFridgeFridgeIsFreeIsFridgeSecret
@@ -23,7 +20,7 @@ springdoc:
     persist-authorization: true
   api-docs:
     path: /api/api-docs
-  
+
 # AWS
 cloud:
   aws:
@@ -46,3 +43,8 @@ management:
 logging:
   file:
     name: "./target/logs/fif/202403.log"
+
+# 스케줄링
+scheduler:
+  use: true
+  cron: "0 0 4,10,16 * * *"

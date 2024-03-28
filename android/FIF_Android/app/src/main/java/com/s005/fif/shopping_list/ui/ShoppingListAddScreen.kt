@@ -167,7 +167,7 @@ fun ShoppingListAddBody(
                 UserOnboardingBtn(
                     modifier = Modifier,
                     onClick = { onEditBtnClicked() },
-                    text = stringResource(id = R.string.text_btn_add)
+                    text = stringResource(id = R.string.text_btn_edit)
                 )
             }
         }

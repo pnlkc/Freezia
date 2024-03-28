@@ -15,10 +15,10 @@ import com.s005.fif.common.auth.MemberDto;
 import com.s005.fif.common.response.Response;
 import com.s005.fif.dto.request.CompleteCookRequestDto;
 import com.s005.fif.dto.response.CompleteCookResponseDto;
+import com.s005.fif.dto.response.RecipeRecommendationResponseDto;
 import com.s005.fif.dto.response.RecipeResponseDto;
 import com.s005.fif.dto.response.RecipeSimpleResponseDto;
 import com.s005.fif.dto.response.RecipeStepResponseDto;
-import com.s005.fif.repository.RecipeRecommendationResponseDto;
 import com.s005.fif.service.RecipeService;
 
 import io.swagger.v3.oas.annotations.Operation;

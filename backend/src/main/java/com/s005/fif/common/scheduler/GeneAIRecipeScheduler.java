@@ -56,91 +56,96 @@ public class GeneAIRecipeScheduler {
 		int cntNewRecipes = 0;
 
 		// TODO: 모든 사용자에 대해 생성
-		int tmpMemberId = 1;
+		int[] memberIds = {1, 2};
 
-		MemberDetailResponseDto memberDetail = memberService.getMemberDetail(tmpMemberId);
+		for (int memberId : memberIds) {
+			MemberDetailResponseDto memberDetail = memberService.getMemberDetail(memberId);
 
-		// 냉장고 속 식재료 조회
-		List<FridgeIngredientResponseDto> fridgeIngredients = fridgeIngredientService.getAllGredients(
-			memberDetail.getFridgeId());
-		List<String> fridgeIngredientNames = fridgeIngredients.stream().map(FridgeIngredientResponseDto::getName).toList();
-		// 기피 식재료 조회
-		List<String> memberDiseaseNames = memberService.getMemberDiseases(tmpMemberId);
-		// 지병 조회
-		List<String> memberDislikeIngredientNames = memberService.getMemberDislikeIngredients(tmpMemberId);
+			// 냉장고 속 식재료 조회
+			List<FridgeIngredientResponseDto> fridgeIngredients = fridgeIngredientService.getAllGredients(
+				memberDetail.getFridgeId());
+			List<String> fridgeIngredientNames = fridgeIngredients.stream()
+				.map(FridgeIngredientResponseDto::getName)
+				.toList();
+			// 기피 식재료 조회
+			List<String> memberDiseaseNames = memberService.getMemberDiseases(memberId);
+			// 지병 조회
+			List<String> memberDislikeIngredientNames = memberService.getMemberDislikeIngredients(memberId);
 
-		log.info("레시피 생성 시작: 추천 레시피");
-		for (RecipeRecommendType recommendType : RecipeRecommendType.values()) {
-			if (RecipeRecommendType.NONE.equals(recommendType))
-				continue;
-			GeneAIResponseRecipeDto geneAIResponseRecipeDto;
-			try {
-				GeneAIHealthRequestDto req = GeneAIHealthRequestDto.builder()
-					.ingredients(String.join(", ", fridgeIngredientNames))
-					.diseases(String.join(", ", memberDiseaseNames))
-					.dislikeIngredients(String.join(", ", memberDislikeIngredientNames))
-					.build();
-				geneAIResponseRecipeDto = geneAIService.makeHealthRecipes(recommendType, req);
+			log.info("레시피 생성 시작: 추천 레시피");
+			for (RecipeRecommendType recommendType : RecipeRecommendType.values()) {
+				if (RecipeRecommendType.NONE.equals(recommendType))
+					continue;
+				GeneAIResponseRecipeDto geneAIResponseRecipeDto;
+				try {
+					GeneAIHealthRequestDto req = GeneAIHealthRequestDto.builder()
+						.ingredients(String.join(", ", fridgeIngredientNames))
+						.diseases(String.join(", ", memberDiseaseNames))
+						.dislikeIngredients(String.join(", ", memberDislikeIngredientNames))
+						.build();
+					geneAIResponseRecipeDto = geneAIService.makeHealthRecipes(recommendType, req);
 
-			} catch (Exception e) {
-				log.error("{} 레시피 생성 중 오류", recommendType.name(), e);
-				continue;
-			}
+				} catch (Exception e) {
+					log.error("{} 레시피 생성 중 오류", recommendType.name(), e);
+					continue;
+				}
 
-			List<Integer> savedRecipeIds = null;
-			try {
-				savedRecipeIds = recipeService.saveGeneratedRecipe(tmpMemberId, recommendType,
-					geneAIResponseRecipeDto, Constant.DEFAULT_RECIPE_IMG_URL);
-			} catch (Exception e) {
-				log.error("레시피 저장중 에러 발생: {}", geneAIResponseRecipeDto, e);
-			}
-
-			log.info("{} 레시피 이미지 생성", recommendType.name());
-			try {
-				makeRecipeImages(savedRecipeIds);
-			} catch (Exception e) {
-				log.error("레시피 이미지 생성 및 저장중 에러 발생", e);
-			}
-
-			cntNewRecipes++;
-		}
-
-		log.info("레시피 생성 시작: 카테고리 별 레시피");
-
-		for (RecipeType recipeType : RecipeType.values()) {
-			log.info("레시피 카테고리: {}", recipeType.getType());
-			List<GeneAIResponseRecipeDto> geneAIResponseRecipeDtoList;
-			try {
-				GeneAICategoryListRequestDto req = GeneAICategoryListRequestDto.builder()
-					.ingredients(String.join(", ", fridgeIngredientNames))
-					.diseases(String.join(", ", memberDiseaseNames))
-					.dislikeIngredients(String.join(", ", memberDislikeIngredientNames))
-					.recipeTypes(recipeType.getType())
-					.build();
-				geneAIResponseRecipeDtoList = geneAIService.makeRecommendationRecipes(req, recipeType.getType());
-			} catch (Exception e) {
-				log.error("{} 레시피 생성 중 오류", recipeType.name(), e);
-				continue;
-			}
-
-			geneAIResponseRecipeDtoList.forEach((r) -> {
 				List<Integer> savedRecipeIds = null;
 				try {
-					savedRecipeIds = recipeService.saveGeneratedRecipe(tmpMemberId, RecipeRecommendType.NONE, r, Constant.DEFAULT_RECIPE_IMG_URL);
+					savedRecipeIds = recipeService.saveGeneratedRecipe(memberId, recommendType,
+						geneAIResponseRecipeDto, Constant.DEFAULT_RECIPE_IMG_URL);
 				} catch (Exception e) {
-					log.error("레시피 저장중 에러 발생: {}", r, e);
+					log.error("레시피 저장중 에러 발생: {}", geneAIResponseRecipeDto, e);
 				}
-				// 레시피 이미지 생성
-				log.info("{} 레시피 이미지 생성", recipeType.getType());
+
+				log.info("{} 레시피 이미지 생성", recommendType.name());
 				try {
 					makeRecipeImages(savedRecipeIds);
 				} catch (Exception e) {
 					log.error("레시피 이미지 생성 및 저장중 에러 발생", e);
 				}
 
-			});
+				cntNewRecipes++;
+			}
 
-			cntNewRecipes += geneAIResponseRecipeDtoList.size();
+			log.info("레시피 생성 시작: 카테고리 별 레시피");
+
+			for (RecipeType recipeType : RecipeType.values()) {
+				log.info("레시피 카테고리: {}", recipeType.getType());
+				List<GeneAIResponseRecipeDto> geneAIResponseRecipeDtoList;
+				try {
+					GeneAICategoryListRequestDto req = GeneAICategoryListRequestDto.builder()
+						.ingredients(String.join(", ", fridgeIngredientNames))
+						.diseases(String.join(", ", memberDiseaseNames))
+						.dislikeIngredients(String.join(", ", memberDislikeIngredientNames))
+						.recipeTypes(recipeType.getType())
+						.build();
+					geneAIResponseRecipeDtoList = geneAIService.makeRecommendationRecipes(req, recipeType.getType());
+				} catch (Exception e) {
+					log.error("{} 레시피 생성 중 오류", recipeType.name(), e);
+					continue;
+				}
+
+				geneAIResponseRecipeDtoList.forEach((r) -> {
+					List<Integer> savedRecipeIds = null;
+					try {
+						savedRecipeIds = recipeService.saveGeneratedRecipe(memberId, RecipeRecommendType.NONE, r,
+							Constant.DEFAULT_RECIPE_IMG_URL);
+					} catch (Exception e) {
+						log.error("레시피 저장중 에러 발생: {}", r, e);
+					}
+					// 레시피 이미지 생성
+					log.info("{} 레시피 이미지 생성", recipeType.getType());
+					try {
+						makeRecipeImages(savedRecipeIds);
+					} catch (Exception e) {
+						log.error("레시피 이미지 생성 및 저장중 에러 발생", e);
+					}
+
+				});
+
+				cntNewRecipes += geneAIResponseRecipeDtoList.size();
+			}
 		}
 
 		log.info("이전 레시피 삭제");
@@ -152,7 +157,7 @@ public class GeneAIRecipeScheduler {
 		}
 
 		LocalDateTime endTime = LocalDateTime.now();
-		log.info("레시피 생성 종료: {}" ,endTime);
+		log.info("레시피 생성 종료: {}", endTime);
 		Duration between = Duration.between(startTime, endTime);
 		log.info("레시피 생성 소요 시간: {}", between.toMillis() + "ms");
 		log.info("레시피 생성 개수: {}", cntNewRecipes);

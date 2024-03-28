@@ -1,0 +1,149 @@
+.recipe-insert-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: white;
+}
+
+.recipe-insert-back-button {
+  width: 100%;
+  padding: 0.5vw 1vw;
+  cursor: pointer;
+}
+
+.recipe-insert-box {
+  width: 100%;
+  height: calc(100% - 14vw);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 4vw;
+}
+
+.recipe-insert-box-separator {
+  width: 85%;
+  opacity: 0.1;
+  height: 0.1vw;
+  border-bottom: 0.1vw solid black;
+  margin-bottom: 1vw;
+}
+
+.recipe-insert-search-input {
+  position: absolute;
+  width: 100%;
+  height: 2.6vw;
+  border-radius: 1.3vw;
+  border: 1px solid var(--primary-color);
+  padding: 0.2vw 1vw;
+  font-size: 1.1vw;
+}
+
+.recipe-insert-search-icon {
+  position: absolute;
+  height: 1.4vw;
+  top: 0.6vw;
+  right: 0.8vw;
+}
+
+.component-insert-list-menu {
+  width: 90%;
+}
+
+.recipe-insert-search-wrapper {
+  position: relative;
+  width: 85%;
+  height: 2.6vw;
+  margin: 2vw;
+}
+
+.recipe-insert-complete-button {
+  width: 80%;
+  position: absolute;
+  bottom: 2.5vw;
+  padding: 0.6vw 0;
+  border-radius: 1vw;
+  text-align: center;
+  color: white;
+  background-color: var(--primary-color);
+}
+
+.recipe-insert-search-result {
+  position: relative;
+  width: 100%;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: scroll;
+  margin-top: 1vw;
+}
+
+.recipe-insert-item {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 0.6vw 0;
+  padding: 0 2.5vw;
+  padding-left: 3vw;
+  cursor: pointer;
+}
+
+.recipe-insert-item-image {
+  height: 2vw;
+  width: 2vw;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.recipe-insert-item-name {
+  margin-left: 1vw;
+  opacity: 0.7;
+}
+
+.recipe-insert-item-button {
+  height: 1.5vw;
+  margin-left: auto;
+}
+
+.recipe-insert-components-list {
+  width: 80%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  /* overflow-y: scroll; */
+}
+
+.recipe-insert-components-list::-webkit-scrollbar {
+  display: none;
+}
+
+.recipe-insert-components-item {
+  display: flex;
+  height: 2.4vw;
+  flex-direction: row;
+  align-items: center;
+  padding: 0.3vw 0.5vw;
+  margin-right: 0.5vw;
+  margin-bottom: 0.4vw;
+  border-radius: 3vw;
+  border: 0.05vw solid rgba(0, 0, 0, 0.24);
+  cursor: pointer;
+}
+
+.recipe-insert-components-item-name {
+  margin: 0 0.5vw;
+  opacity: 0.7;
+}
+
+.recipe-insert-components-item-image {
+  height: 1.5vw;
+  width: 1.5vw;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.recipe-insert-components-item-delete {
+  height: 0.8vw;
+}

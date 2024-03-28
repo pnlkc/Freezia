@@ -6,6 +6,7 @@
   border-radius: 1vw;
   background-color: white;
   padding: 1.5vw;
+  border: var(--box-border);
 }
 
 .user-health-info-profile {
@@ -58,7 +59,7 @@
 
 .user-health-data-progress::-webkit-progress-bar {
   height: 1.5vw;
-  border: 0.06vw solid black;
+  border: 0.06vw solid rgba(0, 0, 0, 0.3);
   border-radius: 1vw;
   background-color: #fcfcfc;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 3px 8px;

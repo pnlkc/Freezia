@@ -6,9 +6,23 @@
   --screen-background-color: #ddd8d0;
   --cooking-background-colr: #f6f1ec;
   --widget-background-color: #f2f1ee;
+  --recipe-history-box-background-color: #f6f1ec;
+  --user-chat-color: #fe9838c2;
+  --reply-chat-color: #ffb638b9;
+  --background-filter-gradient: linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 1) 30%,
+    rgba(128, 128, 128, 1) 51%,
+    rgba(245, 245, 245, 1) 100%
+  );
+  --box-border: 0.05vw solid rgba(0, 0, 0, 0.158);
+
   --red: #f24405;
   --blue: #0524f2;
   --green: #66f205;
+  --white: #fcfcfc;
+  --grey: #dbdbdb;
+  --dark-grey: #aca9a9;
 
   --application-icon-size: 3vw;
   --application-width: 5vw;
@@ -20,6 +34,7 @@
   margin: 0;
   padding: 0;
   font-family: 'SamsungOne';
+  user-select: none;
 }
 
 body {
@@ -110,6 +125,10 @@ body {
   font-size: 2vw;
 }
 
+.o-3 {
+  opacity: 0.3;
+}
+
 .o-5 {
   opacity: 0.5;
 }
@@ -124,4 +143,33 @@ body {
 
 .regular {
   font-weight: 400;
+}
+
+.mt-0 {
+  margin-top: 0.2vw;
+}
+
+.c-p {
+  color: var(--primary-color);
+}
+
+.c-b {
+  color: black;
+}
+
+.link {
+  text-decoration: none;
+}
+
+*::-webkit-scrollbar {
+  width: 0.7vw;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #fe9838a1;
+  border-radius: 0.35vw;
+  margin-right: 0.2vw;
+
+  background-clip: padding-box;
+  border: 0.2vw solid transparent;
 }

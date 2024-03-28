@@ -1,26 +1,29 @@
 import '../../assets/styles/cooking/userprofile.css';
+import { profileImageErrorHaner } from '../../utils/imageErrorHandler';
 
 export default function UserProfile() {
+  const userInfo = JSON.parse(sessionStorage.getItem('profile'));
+
   const healthData = [
     {
       name: '스트레스',
-      value: 80,
-      maxValue: 100,
-      id: 1,
+      value: userInfo.stress,
+      maxValue: 10,
+      id: 'stress',
       color: 'progress-red',
     },
     {
       name: '수면시간',
-      value: 20,
-      maxValue: 100,
-      id: 2,
+      value: userInfo.sleep,
+      maxValue: 10,
+      id: 'sleep',
       color: 'progress-blue',
     },
     {
       name: '혈중산소',
-      value: 30,
+      value: userInfo.bloodOxygen,
       maxValue: 100,
-      id: 3,
+      id: 'bloodOxgen',
       color: 'progress-green',
     },
   ];
@@ -29,7 +32,7 @@ export default function UserProfile() {
     <div className="user-profile-container">
       <div className="user-profile-title f-2 bold">
         <span className="o-7 regular">안녕하세요 </span>
-        김핑구
+        {userInfo.name}
         <span className="o-7 regular">님</span>
       </div>
       <div className="user-health-info-box box-shadow">
@@ -38,8 +41,9 @@ export default function UserProfile() {
           <div className="user-profile-image-wrapper">
             <img
               className="user-profile-image"
-              src="/images/profile/1.png"
+              src={userInfo.imgUrl}
               alt="사용자"
+              onError={profileImageErrorHaner}
             />
           </div>
         </div>

@@ -1,0 +1,85 @@
+.recipe-history-list-container {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: scroll;
+  padding-top: 1vw;
+}
+
+.recipe-history-list-container::-webkit-scrollbar {
+  display: none;
+}
+
+.history-list-box {
+  width: 85%;
+  border-radius: 2vw;
+  padding: 1vw 1.5vw;
+  background-color: var(--recipe-history-box-background-color);
+  margin: 1vw 0;
+}
+
+.history-ingredient-list {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  margin-top: 2vw;
+}
+
+.history-ingredient-add-list,
+.history-ingredient-remove-list {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.histroy-ingredient-list-type {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1vw;
+}
+
+.list-type-icon {
+  height: 0.9vw;
+}
+
+.list-type-title {
+  margin-left: 0.5vw;
+  font-size: 0.8vw;
+}
+
+.history-ingredient-add-item,
+.history-ingredient-remove-item {
+  width: 100%;
+  padding: 0.5vw 2vw;
+  display: flex;
+  flex-direction: row;
+  font-size: 0.7vw;
+  align-items: center;
+}
+
+.add-item-image,
+.remove-item-image {
+  height: 1.7vw;
+  width: 1.7vw;
+  border-radius: 50%;
+}
+
+.add-item-name,
+.remove-item-name {
+  margin-left: 0.5vw;
+}
+
+.add-item-amount,
+.remove-item-amount {
+  margin-left: auto;
+}
+
+.add-item-unit,
+.remove-item-unit {
+  margin-left: 0.1vw;
+}

@@ -21,12 +21,21 @@
 
 .cooking-header-icon {
   height: 1.2vw;
-  margin: 0 0.4vw;
+  margin: 0 0.7vw;
   opacity: 0.5;
   cursor: pointer;
 }
 
 .cooking-header-profile {
-  height: 2.5vw;
+  height: 2vw;
+  width: 2vw;
+  border-radius: 50%;
+  background-color: white;
+  cursor: pointer;
+  object-fit: cover;
+}
+
+.header-back-button {
+  opacity: 0.5;
   cursor: pointer;
 }

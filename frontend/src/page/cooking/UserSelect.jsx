@@ -1,12 +1,24 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import '../../assets/styles/userselect.css';
+import { getMemberList, selectUser } from '../../apis/user';
+import { profileImageErrorHaner } from '../../utils/imageErrorHandler';
 
 export default function UserSelect() {
-  const userList = [
-    { url: '/images/profile/1.svg', name: '김싸피', id: 1 },
-    { url: '/images/profile/1.svg', name: '이싸피', id: 2 },
-    { url: '/images/profile/1.svg', name: '김핑구', id: 3 },
-  ];
+  const [userList, setUserList] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    getMemberList().then((memberList) => {
+      setUserList(memberList);
+    });
+  }, []);
+
+  const login = (memberId) => {
+    selectUser(memberId).then(() => {
+      navigate('main');
+    });
+  };
 
   return (
     <div className="user-select-container">
@@ -20,11 +32,22 @@ export default function UserSelect() {
           />
           <div className="user-profile-name">사용자 추가</div>
         </div>
-        {userList.map(({ url, name, id }) => (
-          <Link to="/Cooking/main" className="user-profile-box" key={id}>
-            <img className="user-profile-image" src={url} alt="사용자 사진" />
+        {userList.map(({ imgUrl, name, memberId }) => (
+          <div
+            className="user-profile-box"
+            key={memberId}
+            onClick={() => {
+              login(memberId);
+            }}
+          >
+            <img
+              className="user-profile-image"
+              src={imgUrl}
+              alt="사용자 사진"
+              onError={profileImageErrorHaner}
+            />
             <div className="user-profile-name">{name}</div>
-          </Link>
+          </div>
         ))}
       </div>
     </div>

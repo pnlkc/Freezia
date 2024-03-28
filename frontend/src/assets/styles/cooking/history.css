@@ -1,0 +1,86 @@
+.profile-history-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-history-content-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5vw;
+  padding-top: 0.5vw;
+  align-items: center;
+}
+
+.profile-history-select-box {
+  display: flex;
+  width: 90%;
+  border-radius: 0.6vw 0.6vw 0 0;
+  border: 0.05vw solid var(--primary-color);
+  overflow: hidden;
+  height: 3vw;
+}
+
+.profile-history-select-icon {
+  height: 1vw;
+}
+
+.profile-history-select {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+  height: 100%;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.history-seleceted {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.profile-history-select-title {
+  margin-left: 0.7vw;
+  margin-right: 0.3vw;
+  font-weight: 600;
+}
+
+.profile-history-select-count {
+  font-size: 0.8vw;
+}
+
+.profile-history-list-box {
+  display: flex;
+  flex-direction: row;
+  width: calc(200%);
+  height: calc(100% - 8.5vw);
+  overflow: hidden;
+  transition: all 0.3s;
+}
+
+.history-recipe-list {
+  width: 49%;
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 1.3vw 0.8vw 1.3vw 1.5vw;
+  overflow-y: scroll;
+  flex-shrink: 0;
+}
+
+.history-recipe-list:first-child {
+  margin-right: 0.5%;
+}
+
+.history-recipe-list:last-child {
+  margin-left: 0.5%;
+}
+
+.history-recipe-list::-webkit-scrollbar {
+  display: none;
+}

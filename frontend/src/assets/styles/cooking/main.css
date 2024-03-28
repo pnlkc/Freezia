@@ -1,11 +1,49 @@
 .cooking-main-container {
   padding: 0 !important;
   display: flex;
+  height: calc(100% - 2.8vw);
   flex-direction: column;
+  overflow-y: scroll;
+}
+
+.cooking-main-container::-webkit-scrollbar {
+  display: none;
 }
 
 .cooking-main-content-box {
   width: 100%;
   flex-grow: 1;
-  padding: 1.5vw;
+  padding: 0 1.5vw;
+}
+
+.cooking-main-button-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 1.5vw;
+}
+
+.cooking-main-button {
+  width: 47%;
+  height: 7.2vw;
+  border-radius: 1vw;
+  cursor: pointer;
+  background-size: cover;
+}
+
+.cooking-main-button-text {
+  line-height: 7.2vw;
+  text-align: center;
+  color: white;
+  border-radius: 1vw;
+  /* backdrop-filter: contrast(30%); */
+  backdrop-filter: brightness(55%) contrast(65%);
+}
+
+.thumbnail-list {
+  background-image: url('/images/cooking/thumbnail/thumbnail_list.svg');
+}
+
+.thumbnail-create {
+  background-image: url('/images/cooking/thumbnail/thumbnail_create.svg');
 }

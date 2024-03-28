@@ -1,0 +1,90 @@
+.recipe-create-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: calc(100% - 3vw);
+}
+
+.reipce-create-back-button {
+  width: 100%;
+  padding: 0.5vw 1vw;
+  cursor: pointer;
+}
+
+.recipe-create-input-wrapper {
+  width: 85%;
+  position: relative;
+  display: flex;
+  height: 2.2vw;
+  margin-top: auto;
+}
+
+.recipe-create-chat-container {
+  width: 100%;
+  height: calc(100% - 2.2vw);
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+}
+
+.recipe-create-input {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  resize: none;
+  overflow-y: hidden;
+  border-radius: 1.1vw;
+  padding: 0.6vw 1vw;
+  padding-right: 2.5vw;
+  border: 0.05vw solid rgba(0, 0, 0, 0.349);
+  outline: none;
+}
+
+.recipe-create-send-icon {
+  width: 1vw;
+  position: absolute;
+  bottom: 1.3vw;
+  transform: translateY(50%);
+  right: 1vw;
+  cursor: pointer;
+}
+
+.recipe-create-chat-container {
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.recipe-create-chat-container::-webkit-scrollbar {
+  display: none;
+}
+
+.reply-chat-message,
+.user-chat-message {
+  max-width: 80%;
+  padding: 0.8vw 1vw;
+  border-radius: 1vw 0 1vw 1vw;
+  background-color: var(--user-chat-color);
+  align-self: flex-end;
+  line-height: 1.3;
+  margin-bottom: 1vw;
+}
+
+.reply-chat-message {
+  padding: 0.8vw;
+  border-radius: 0 1vw 1vw 1vw;
+  background-color: var(--reply-chat-color);
+  align-self: flex-start;
+}
+
+.recommend-chat-message {
+  border: 0.03vw solid var(--primary-color);
+  padding: 0.5vw 0.8vw;
+  border-radius: 1vw;
+  background-color: white;
+  margin-bottom: 0.5vw;
+  opacity: 0.8;
+  cursor: pointer;
+}

@@ -1,7 +1,6 @@
 import '../assets/styles/footer.css';
 
 export default function Footer() {
-  // return <img className="footer-image" src="/images/footer.png" alt="footer" />;
   const iconList = [
     '/images/bixby.png',
     '/images/task.png',
@@ -14,7 +13,15 @@ export default function Footer() {
     <div className="footer-container">
       <div className="footer-icon-box">
         {iconList.map((url) => (
-          <img className="footer-icon" src={url} alt={url} key={url} />
+          <img
+            className="footer-icon"
+            src={url}
+            alt={url}
+            key={url}
+            onClick={() => {
+              location.href = '/';
+            }}
+          />
         ))}
       </div>
     </div>

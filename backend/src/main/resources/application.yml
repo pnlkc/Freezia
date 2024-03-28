@@ -12,8 +12,10 @@ REFRESH_TOKEN_EXPIRE_TIME_MILLI_SEC: 86400000 # 1일
 REFRESH_TOKEN_NAME: refreshToken
 
 # AI 서버 설정
-#AI_SERVER_HOST: https://j10s005.p.ssafy.io
-AI_SERVER_HOST: https://3887aec5-3573-4806-8a13-0307b17a0827.mock.pstmn.io
+AI_SERVER_HOST: "j10s005.p.ssafy.io"
+#AI_SERVER_HOST: 3887aec5-3573-4806-8a13-0307b17a0827.mock.pstmn.io
 
 # 스케줄링
-
+scheduler:
+  use: true
+  cron: "0 0 4,10,16 * * *"

@@ -1,32 +1,47 @@
 package com.s005.fif.service;
 
-import com.s005.fif.dto.request.GeneAICategoryListRequestDto;
-import com.s005.fif.dto.request.GeneAIHealthRequestDto;
-import com.s005.fif.dto.request.GeneAIPromptRequestDto;
-import com.s005.fif.common.types.HealthRecipeType;
-import com.s005.fif.dto.response.GeneAIResponseRecipeDto;
-import com.s005.fif.dto.response.RecipeResponseDto;
-
-import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.http.codec.ServerSentEvent;
-import reactor.core.publisher.Flux;
-
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
+import org.springframework.http.codec.ServerSentEvent;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.s005.fif.common.exception.CustomException;
+import com.s005.fif.common.exception.ExceptionType;
+import com.s005.fif.common.types.RecipeRecommendType;
+import com.s005.fif.dto.request.GeneAICategoryListRequestDto;
+import com.s005.fif.dto.request.GeneAIHealthRequestDto;
+import com.s005.fif.dto.request.GeneAIPromptRequestDto;
+import com.s005.fif.dto.request.model.GeneAIBaseRequestDto;
+import com.s005.fif.dto.response.GeneAIResponseRecipeDto;
+import com.s005.fif.dto.response.RecipeResponseDto;
+import com.s005.fif.entity.FridgeIngredient;
+import com.s005.fif.entity.Member;
+import com.s005.fif.repository.FridgeIngredientRepository;
+import com.s005.fif.repository.MemberRepository;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Flux;
+
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class GeneAIService {
 
     @Value("${AI_SERVER_HOST}")
     private String HOST_PATH;
+
+    private final MemberRepository memberRepository;
+    private final FridgeIngredientRepository fridgeIngredientRepository;
 
     private final RestClient restClient = RestClient.create();
 
@@ -125,14 +140,60 @@ public class GeneAIService {
         return eventStream;
     }
 
-    public GeneAIResponseRecipeDto makeHealthRecipes(HealthRecipeType healthRecipeType, GeneAIHealthRequestDto healthRequestDto) {
-        String uri = HOST_PATH + "/api/ai/health/" + healthRecipeType.getPath();
+    /**
+     * 생체 정보 기반 레시피 추천
+     * @param recipeRecommendType 추천 타입
+     * @param healthRequestDto 요청 데이터
+     * @return 생성된 레시피 데이터
+     */
+    public GeneAIResponseRecipeDto makeHealthRecipes(RecipeRecommendType recipeRecommendType, GeneAIHealthRequestDto healthRequestDto) {
+        String path = "/api/ai/health/" + recipeRecommendType.getName();
 
-		return restClient.get()
-			.uri(uri)
-			.accept(MediaType.APPLICATION_JSON)
-			.retrieve()
-			.body(GeneAIResponseRecipeDto.class);
+        return restClient.get()
+            .uri(uriBuilder ->
+                uriBuilder
+                    .scheme("https")
+                    .host(HOST_PATH)
+                    .path(path)
+                    .queryParam("ingredients", healthRequestDto.getIngredients())
+                    .queryParam("diseases", healthRequestDto.getDiseases())
+                    .queryParam("dislikeIngredients", healthRequestDto.getDislikeIngredients())
+                    .build()
+            )
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange((clientRequest, clientResponse) -> {
+                try {
+                    GeneAIResponseRecipeDto geneAIResponseRecipeDto = clientResponse.bodyTo(GeneAIResponseRecipeDto.class);
+					if (geneAIResponseRecipeDto == null || geneAIResponseRecipeDto.getRecipeList() == null)
+                        throw new IOException("레시피 데이터 응답 매핑 실패");
+                    return geneAIResponseRecipeDto;
+                } catch (Exception e) {
+                    log.error("레시피 생성 요청 실패: \n"
+                        + "Response - {}", new String(clientResponse.getBody().readAllBytes(), StandardCharsets.UTF_8));
+                    throw e;
+                }
+            });
+    }
+
+
+    public List<RecipeResponseDto> makeRecommendationRecipes(GeneAICategoryListRequestDto categoryListRequestDto) {
+        String listUri = HOST_PATH + "/api/ai/category/list";
+        String recipeUri = HOST_PATH + "/api/ai/category/recipe";
+
+        List<RecipeResponseDto> recipeResponseDtoList = new ArrayList<>();
+
+        return null;
+    }
+
+    public GeneAIBaseRequestDto getGeneAIBaseRequest(Integer memberId) {
+
+        Member member = memberRepository.findById(memberId)
+            .orElseThrow(() -> new CustomException(ExceptionType.MEMBER_NOT_FOUND));
+
+        List<FridgeIngredient> ingredients = fridgeIngredientRepository.findAllByFridgeFridgeId(
+            member.getFridge().getFridgeId());
+
+        return GeneAIBaseRequestDto.builder().build();
     }
 
 }

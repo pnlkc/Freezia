@@ -1,4 +1,4 @@
-package com.s005.fif.repository;
+package com.s005.fif.dto.response;
 
 import java.time.LocalDate;
 import java.util.List;

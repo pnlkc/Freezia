@@ -10,9 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.s005.fif.common.Constant;
 import com.s005.fif.common.exception.CustomException;
 import com.s005.fif.common.exception.ExceptionType;
+import com.s005.fif.common.types.RecipeRecommendType;
 import com.s005.fif.dto.request.CompleteCookRequestDto;
 import com.s005.fif.dto.request.model.IngredientNameDto;
 import com.s005.fif.dto.response.CompleteCookResponseDto;
+import com.s005.fif.dto.response.GeneAIResponseRecipeDto;
 import com.s005.fif.dto.response.RecipeResponseDto;
 import com.s005.fif.dto.response.RecipeSimpleResponseDto;
 import com.s005.fif.dto.response.RecipeStepResponseDto;
@@ -26,15 +28,17 @@ import com.s005.fif.entity.RecipeStep;
 import com.s005.fif.repository.CompleteCookRepository;
 import com.s005.fif.repository.IngredientRepository;
 import com.s005.fif.repository.MemberRepository;
-import com.s005.fif.repository.RecipeRecommendationResponseDto;
+import com.s005.fif.dto.response.RecipeRecommendationResponseDto;
 import com.s005.fif.repository.RecipeRepository;
 import com.s005.fif.repository.RecipeStepRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class RecipeService {
 
 	private final RecipeRepository recipeRepository;
@@ -448,4 +452,47 @@ public class RecipeService {
 
 		return "요리 기록이 삭제되었습니다.";
 	}
+
+	/**
+	 * 생성된 레시피를 저장한다.
+	 * @param memberId 사용자 아이디
+	 * @param recommendType 추천 유형
+	 * @param geneAIResponseRecipeDto 생성된 레시피 데이터
+	 * @param imgUrl 생성된 이미지 Url
+	 */
+	public void saveGeneratedRecipe(Integer memberId, RecipeRecommendType recommendType,GeneAIResponseRecipeDto geneAIResponseRecipeDto, String imgUrl) {
+
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new CustomException(ExceptionType.MEMBER_NOT_FOUND));
+
+		List<Recipe> recipes = new ArrayList<>();
+		List<RecipeStep> recipeSteps = new ArrayList<>();
+
+		geneAIResponseRecipeDto.getRecipeList().forEach((r) -> {
+			Recipe newRecipe;
+			try {
+				newRecipe = GeneAIResponseRecipeDto.GeneAIRecipeDto.toEntity(r, member, imgUrl, geneAIResponseRecipeDto.getReply(), recommendType.getNumber());
+				recipes.add(newRecipe);
+			} catch (Exception e) {
+				log.error("생성된 레시피 세부 정보 매핑 중 에러 발생 - 생성된 레시피: {}", r, e);
+				return;
+			}
+
+			List<GeneAIResponseRecipeDto.GeneAIRecipeStepDto> geneAIRecipeStepDtoList = r.getRecipeSteps();
+			for (int i = 0; i < geneAIRecipeStepDtoList.size(); i++) {
+				GeneAIResponseRecipeDto.GeneAIRecipeStepDto geneAIRecipeStepDto = geneAIRecipeStepDtoList.get(i);
+				try {
+					RecipeStep newRecipeStep = GeneAIResponseRecipeDto.GeneAIRecipeStepDto.toEntity(geneAIRecipeStepDto, newRecipe, i + 1);
+					recipeSteps.add(newRecipeStep);
+				} catch (Exception e) {
+					log.error("생성된 레시피 단계 정보 매핑 중 에러 발생 - 생성된 레시피: {}", r, e);
+				}
+			}
+		});
+
+		recipeRepository.saveAll(recipes);
+		recipeStepRepository.saveAll(recipeSteps);
+
+	}
+
 }

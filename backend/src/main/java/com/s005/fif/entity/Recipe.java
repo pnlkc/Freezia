@@ -85,7 +85,7 @@ public class Recipe {
 	@Column(nullable = false)
 	private Integer recommendType;
 
-	@Size(max = Constant.COMMON_CONTENT_LENGTH)
+	@Size(max = Constant.COMMON_LARGE_CONTENT_LENGTH)
 	private String recommendDesc;
 
 	@Column(nullable = false)

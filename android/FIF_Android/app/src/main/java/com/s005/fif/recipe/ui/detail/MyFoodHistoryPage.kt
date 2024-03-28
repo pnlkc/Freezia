@@ -98,19 +98,19 @@ fun MyFoodHistoryItem(
 ) {
     Card(
         modifier = modifier
-            .fillMaxWidth()
-            .combinedClickable(
-                onClick = {  },
-                onLongClick = {
-
-                }
-            ),
+            .fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
         shape = RoundedCornerShape(20.dp)
     ) {
         Column(
             modifier = Modifier
+                .combinedClickable(
+                    onClick = {  },
+                    onLongClick = {
+
+                    }
+                )
                 .padding(horizontal = 20.dp)
                 .padding(top = 20.dp, bottom = 30.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
@@ -178,8 +178,7 @@ fun MyFoodHistoryIngredientList(
             Image(
                 modifier = Modifier
                     .size(20.dp)
-                    .clip(CircleShape)
-                    .clickable { },
+                    .clip(CircleShape),
                 painter = img,
                 contentDescription = desc,
                 colorFilter = ColorFilter.tint(colorScheme.primary)

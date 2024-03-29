@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import com.s005.fif.R
 import com.s005.fif.ui.theme.Typography
 import com.s005.fif.user.dto.RecipeHistoryItem
+import com.s005.fif.user.ui.UserViewModel
 import com.s005.fif.user.ui.recipe_history.ui.RecipeHistoryLazyVerticalGridItem
 import com.s005.fif.utils.ScreenSizeUtil
 import com.s005.fif.utils.ScreenSizeUtil.toDpSize
@@ -54,6 +55,7 @@ import com.s005.fif.utils.StringLineChangeUtil.toNonBreakingString
 @Composable
 fun RecipeChatScreen(
     modifier: Modifier = Modifier,
+    userViewModel: UserViewModel,
     navigateUp: () -> Unit,
 ) {
     Column(

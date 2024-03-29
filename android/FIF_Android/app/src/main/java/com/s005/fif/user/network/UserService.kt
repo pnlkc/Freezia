@@ -2,6 +2,7 @@ package com.s005.fif.user.network
 
 import com.s005.fif.common.dto.DefaultResponse
 import com.s005.fif.user.dto.AccessTokenResponse
+import com.s005.fif.user.dto.FridgeIngredientListResponse
 import com.s005.fif.user.dto.MemberInfoResponse
 import com.s005.fif.user.dto.MemberSelectRequest
 import com.s005.fif.user.dto.OnboardingRequest
@@ -43,4 +44,7 @@ interface UserService {
     suspend fun editUserPreference(
         @Body onboardingRequest: OnboardingRequest
     ): Response<DefaultResponse>
+
+    @GET("fridge-ingredients")
+    suspend fun getFridgeIngredient(): Response<FridgeIngredientListResponse>
 }

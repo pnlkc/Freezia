@@ -22,12 +22,14 @@ import com.s005.fif.di.LoginUser
 import com.s005.fif.di.LoginUser.fridgeId
 import com.s005.fif.user.data.UserRepository
 import com.s005.fif.user.dto.AccessTokenResponse
+import com.s005.fif.user.dto.FridgeIngredientItem
 import com.s005.fif.user.dto.Member
 import com.s005.fif.user.dto.MemberInfoResponse
 import com.s005.fif.user.dto.MemberSelectRequest
 import com.s005.fif.user.dto.Onboarding
 import com.s005.fif.user.dto.OnboardingRequest
 import com.s005.fif.user.dto.UserItem
+import com.s005.fif.user.dto.toFridgeIngredientItem
 import com.s005.fif.user.dto.toMember
 import com.s005.fif.user.dto.toOnboardingRequest
 import com.s005.fif.user.dto.toUserItem
@@ -51,6 +53,7 @@ class UserViewModel @Inject constructor(
     var onboardingState by mutableStateOf(Onboarding())
     var dislikeInputText by mutableStateOf("")
     var diseaseInputText by mutableStateOf("")
+    val fridgeIngredientList = mutableStateListOf<FridgeIngredientItem>()
 
     init {
         viewModelScope.launch {
@@ -231,5 +234,21 @@ class UserViewModel @Inject constructor(
 
     suspend fun removeAccessToken() {
         fifPreferenceModule.removeAccessToken()
+    }
+
+    suspend fun getFridgeIngredientList() {
+        val responseResult = userRepository.getFridgeIngredient()
+
+        if (responseResult.isSuccessful) {
+            fridgeIngredientList.clear()
+            fridgeIngredientList.addAll(responseResult.body()!!.fridgeIngredients.map { it.toFridgeIngredientItem() })
+
+            Log.d("로그", "FridgeIngredientViewModel - getFridgeIngredientList() 호출됨 / 응답 성공 : ${fridgeIngredientList}")
+        } else {
+            val body =
+                Json.decodeFromString<ErrorResponse>(responseResult.errorBody()?.string()!!)
+
+            Log.d("로그", "FridgeIngredientViewModel - getFridgeIngredientList() 호출됨 / 응답 실패 : ${body}")
+        }
     }
 }

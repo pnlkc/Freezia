@@ -347,6 +347,7 @@ fun FIFNavHost(
 
             RecipeChatScreen(
                 modifier = modifierSNI,
+                userViewModel = userViewModel,
                 navigateUp = {
                     navController.navigateUp()
                 }

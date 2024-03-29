@@ -44,6 +44,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -72,7 +73,7 @@ fun MainScreen(
     navigateToRecipeChat: () -> Unit,
     navigateToRecipeDetail: (Int) -> Unit,
     navigateToRecipeHistory: () -> Unit,
-    navigateToUserSelect: () -> Unit
+    navigateToUserSelect: () -> Unit,
 ) {
     var backWait = 0L
     val context = LocalContext.current
@@ -110,7 +111,12 @@ fun MainScreen(
 
                 navigateToRecipeList()
             },
-            navigateToRecipeChat = navigateToRecipeChat,
+            navigateToRecipeChat = {
+                coroutineScope.launch {
+                    userViewModel.getFridgeIngredientList()
+                    navigateToRecipeChat()
+                }
+            },
             navigateToRecipeDetail = navigateToRecipeDetail,
             memberInfo = userViewModel.memberInfo,
             recommendRecipeListItem = mainViewModel.recommendRecipeListItem
@@ -369,12 +375,13 @@ fun MainRecipeRecommendCard(
                     text = if (item == null) {
                         AnnotatedStringUtil.makeString(stringResource(id = R.string.text_no_recommend_recipe))
                     } else {
-                        AnnotatedStringUtil.makeMainRecommendRecipeString(item.recommendDesc, item.name)
+                        AnnotatedStringUtil.makeMainRecommendRecipeString(item.recommendType, item.name)
                     },
                     style = Typography.bodyMedium,
-                    maxLines = 4,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
-                    textAlign = if (item == null) TextAlign.Center else TextAlign.Start
+                    textAlign = if (item == null) TextAlign.Center else TextAlign.Start,
+                    lineHeight = 25.sp
                 )
 
                 if (item != null) {

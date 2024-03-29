@@ -2,6 +2,7 @@ package com.s005.fif.user.data
 
 import com.s005.fif.common.dto.DefaultResponse
 import com.s005.fif.user.dto.AccessTokenResponse
+import com.s005.fif.user.dto.FridgeIngredientListResponse
 import com.s005.fif.user.dto.MemberInfoResponse
 import com.s005.fif.user.dto.MemberSelectRequest
 import com.s005.fif.user.dto.OnboardingRequest
@@ -35,6 +36,8 @@ interface UserRepository {
     suspend fun editUserPreference(
         onboardingRequest: OnboardingRequest,
     ): Response<DefaultResponse>
+
+    suspend fun getFridgeIngredient(): Response<FridgeIngredientListResponse>
 }
 
 class DefaultUserRepository @Inject constructor(
@@ -66,5 +69,9 @@ class DefaultUserRepository @Inject constructor(
 
     override suspend fun editUserPreference(onboardingRequest: OnboardingRequest): Response<DefaultResponse> {
         return userService.editUserPreference(onboardingRequest)
+    }
+
+    override suspend fun getFridgeIngredient(): Response<FridgeIngredientListResponse> {
+        return userService.getFridgeIngredient()
     }
 }

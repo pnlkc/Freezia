@@ -374,6 +374,7 @@ fun MainRecipeRecommendCard(
                     style = Typography.bodyMedium,
                     maxLines = 4,
                     overflow = TextOverflow.Ellipsis,
+                    textAlign = if (item == null) TextAlign.Center else TextAlign.Start
                 )
 
                 if (item != null) {

@@ -62,7 +62,7 @@
     <string name="text_remove_ingredient_title">삭제할 재료를 선택해 주세요</string>
     <string name="text_exit_app">뒤로가기 버튼을 한번 더 누르면 종료됩니다</string>
     <string name="text_no_recipe_history">해당 레시피의 요리 기록이 없습니다</string>
-    <string name="text_no_recommend_recipe">추천 레시피가 없습니다</string>
+    <string name="text_no_recommend_recipe">\n추천 레시피가 없습니다\n</string>
 
     <string name="description_btn_go_back">뒤로가기 버튼</string>
     <string name="description_btn_bookmark">북마크 버튼</string>

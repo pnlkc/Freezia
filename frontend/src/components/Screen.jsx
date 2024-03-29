@@ -6,11 +6,11 @@ import {
   useNavigate,
 } from 'react-router-dom';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import { useEffect } from 'react';
 
 import Home from '../page/Home';
 import Cooking from '../page/Cooking';
 import { setNavigate } from '../utils/navigate';
-import { useEffect } from 'react';
 
 function FadedRoutes() {
   const location = useLocation();

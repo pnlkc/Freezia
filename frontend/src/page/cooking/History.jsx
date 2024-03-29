@@ -5,6 +5,7 @@ import Header from '../../components/cooking/Header';
 
 import '../../assets/styles/cooking/history.css';
 import RecipeListBox from '../../components/cooking/RecipeListBox';
+import { getCompleteRecipeList, getSaveRecipeList } from '../../apis/user';
 
 export default function History() {
   const [selected, setSelected] = useState('saved');
@@ -16,8 +17,23 @@ export default function History() {
     }
   }, [location]);
 
-  const saveRecipeList = JSON.parse(sessionStorage.getItem('save'));
-  const completeRecipeList = JSON.parse(sessionStorage.getItem('complete'));
+  const [saveRecipeList, setSaveRecipeList] = useState(
+    JSON.parse(sessionStorage.getItem('save')),
+  );
+
+  const [completeRecipeList, setCompleteRecipeList] = useState(
+    JSON.parse(sessionStorage.getItem('complete')),
+  );
+
+  useEffect(() => {
+    getSaveRecipeList().then((recipeList) => {
+      setSaveRecipeList(recipeList);
+    });
+
+    getCompleteRecipeList().then((recipeList) => {
+      setCompleteRecipeList(recipeList);
+    });
+  });
 
   return (
     <div className="profile-history-container">

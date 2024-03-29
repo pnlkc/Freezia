@@ -20,7 +20,6 @@ function App() {
   useEffect(() => {
     // startRecognition();
     setToken();
-    setWatchToken(import.meta.env.VITE_TMP_WATCH_TOKEN);
     onMessage(messaging, (payload) => {
       const message = JSON.parse(payload.data.json);
       console.log(message);

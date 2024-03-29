@@ -1,4 +1,5 @@
 import '../../assets/styles/cooking/recipehistorylist.css';
+import { ingredientImageErrorHander } from '../../utils/imageErrorHandler';
 
 export default function RecipeHistoryList({ recipeHistory }) {
   return (
@@ -28,7 +29,12 @@ export default function RecipeHistoryList({ recipeHistory }) {
                       className="history-ingredient-add-item"
                       key={ingredientId}
                     >
-                      <img className="add-item-image" src={image} alt={name} />
+                      <img
+                        className="add-item-image"
+                        src={image}
+                        alt={name}
+                        onError={ingredientImageErrorHander}
+                      />
                       <div className="add-item-name">{name}</div>
                       <div className="add-item-amount">
                         <span>{amounts}</span>
@@ -57,6 +63,7 @@ export default function RecipeHistoryList({ recipeHistory }) {
                         className="remove-item-image"
                         src={image}
                         alt={name}
+                        onError={ingredientImageErrorHander}
                       />
                       <div className="remove-item-name">{name}</div>
                       <div className="remove-item-amount">

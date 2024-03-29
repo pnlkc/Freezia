@@ -1,9 +1,6 @@
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import { onMessage } from 'firebase/messaging';
-
+import { useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { connectWatch } from '../../apis/firebase';
-import messaging from '../../utils/firebase';
 
 import '../../assets/styles/cooking/watchconnect.css';
 import '../../assets/styles/cooking/waitingconnect.css';
@@ -32,7 +29,7 @@ export default function WaitingConnect() {
       style={{ backgroundImage: `url('${recipeDetail?.imgUrl}')` }}
     >
       <div
-        className="connect-recipe-back-button"
+        className="connect-recipe-back-button f-5"
         onClick={() => {
           if (timer) {
             clearTimeout(timer);

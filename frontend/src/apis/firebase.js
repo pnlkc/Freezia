@@ -11,11 +11,13 @@ export const connectWatch = async (recipeId) => {
 };
 
 export const disconnectWatch = async (recipeId) => {
-  axios.get(`recipes/${recipeId}/galaxy-watch`);
+  axios.get(`recipes/${recipeId}/galaxy-watch`).then(() => {
+    sessionStorage.setItem('isConnected', 'false');
+  });
 };
 
 export const moveStep = async (step) => {
-  axios.get(`recipes/steps/${step}`);
+  axios.post(`recipes/steps/${step}`, { sender: 0 });
 };
 
 export const setWatchToken = async (token) => {
@@ -23,4 +25,8 @@ export const setWatchToken = async (token) => {
     type: 2,
     token,
   });
+};
+
+export const sendWarning = async () => {
+  axios.get('fridge-ingredients/fcmtest/1');
 };

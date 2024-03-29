@@ -38,7 +38,7 @@ export default function RecipeSave() {
     <div className="recipe-save-container">
       <div className="recipe-save-title f-4 bold">
         <span
-          className="recipe-save-back-button f-4"
+          className="recipe-save-back-button f-5"
           onClick={() => {
             sessionStorage.removeItem('addIngredientList');
             sessionStorage.removeItem('removeIngredientList');

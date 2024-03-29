@@ -88,6 +88,8 @@
 }
 
 .recipe-item-description-name {
+  font-size: 1vw;
+  word-break: keep-all;
   color: white;
   opacity: 0.99;
 }

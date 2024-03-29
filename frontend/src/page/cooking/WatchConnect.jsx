@@ -12,7 +12,7 @@ export default function WatchConnect() {
       style={{ backgroundImage: `url('${recipeDetail?.imgUrl}')` }}
     >
       <div
-        className="connect-recipe-back-button"
+        className="connect-recipe-back-button f-5"
         onClick={() => {
           navigate(`/Cooking/recipe/${recipeDetail?.recipeId}`);
         }}

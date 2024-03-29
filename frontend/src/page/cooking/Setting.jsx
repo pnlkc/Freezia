@@ -1,19 +1,18 @@
 import '../../assets/styles/cooking/setting.css';
 import Header from '../../components/cooking/Header';
+import { diseasesData, ingredientData } from '../../utils/data';
 
 export default function Setting() {
-  const data = {
-    menu: [
-      { id: 1, name: '한식' },
-      { id: 2, name: '일식' },
-      { id: 3, name: '국물요리' },
-    ],
-    dislike: [
-      { id: 1, name: '오이' },
-      { id: 2, name: '고수' },
-    ],
-    disease: [{ id: 1, name: '당뇨' }],
-  };
+  const profile = JSON.parse(sessionStorage.getItem('profile'));
+
+  const dislikeIngredients = profile.dislikeIngredients.map((id) => {
+    const index = ingredientData.findIndex(
+      ({ ingredientId }) => +ingredientId === +id,
+    );
+    return ingredientData[index].name;
+  });
+
+  const diseases = profile.diseases.map((id) => diseasesData[id]);
 
   return (
     <div className="profile-setting-container">
@@ -34,8 +33,8 @@ export default function Setting() {
               />
             </div>
             <div className="preference-settting-tags">
-              {data.menu.map(({ id, name }) => (
-                <div className="preference-setting-tag" key={id}>
+              {profile?.preferMenu.split(',').map((name) => (
+                <div className="preference-setting-tag" key={name}>
                   <span>{name}</span>
                   <img
                     className="preference-setting-tag-icon"
@@ -59,8 +58,8 @@ export default function Setting() {
               />
             </div>
             <div className="preference-settting-tags">
-              {data.dislike.map(({ id, name }) => (
-                <div className="preference-setting-tag" key={id}>
+              {dislikeIngredients.map((name) => (
+                <div className="preference-setting-tag" key={name}>
                   <span>{name}</span>
                   <img
                     className="preference-setting-tag-icon"
@@ -84,8 +83,8 @@ export default function Setting() {
               />
             </div>
             <div className="preference-settting-tags">
-              {data.disease.map(({ id, name }) => (
-                <div className="preference-setting-tag" key={id}>
+              {diseases.map((name) => (
+                <div className="preference-setting-tag" key={name}>
                   <span>{name}</span>
                   <img
                     className="preference-setting-tag-icon"

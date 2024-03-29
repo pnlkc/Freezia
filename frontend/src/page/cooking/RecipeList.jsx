@@ -1,15 +1,37 @@
 import { Link } from 'react-router-dom';
-import '../../assets/styles/cooking/recipelist.css';
+import { useEffect, useState } from 'react';
+
 import FilterList from '../../components/cooking/FilterList';
 import Header from '../../components/cooking/Header';
+import { recipeTypeList } from '../../utils/data';
+
+import '../../assets/styles/cooking/recipelist.css';
 
 export default function RecipeList() {
-  const recipeList = JSON.parse(sessionStorage.recipeList);
+  const [recipeList, setRecipeList] = useState(
+    JSON.parse(sessionStorage.recipeList),
+  );
+  const [selectedList, setSelectedList] = useState([]);
+  const [filteredList, setFilteredList] = useState([]);
+
+  useEffect(() => {
+    const filterSet = new Set(selectedList);
+    setFilteredList(
+      recipeList.filter((recipe) => {
+        const typeSet = new Set(recipe.recipeTypes.split(','));
+        return typeSet.intersection(filterSet) !== 0;
+      }),
+    );
+  }, [selectedList]);
 
   return (
     <div className="cooking-recipe-list-container">
       <Header isHome />
-      <FilterList />
+      <FilterList
+        recipeTypeList={recipeTypeList}
+        selectedList={selectedList}
+        setSelectedList={setSelectedList}
+      />
       <div className="cooking-recipe-list">
         <Link
           to="/Cooking/recipe/create"
@@ -19,7 +41,7 @@ export default function RecipeList() {
             레시피 생성하기
           </div>
         </Link>
-        {recipeList.map(({ name, imgUrl, recipeId, cookTime }) => (
+        {filteredList.map(({ name, imgUrl, recipeId, cookTime }) => (
           <Link
             to={`/Cooking/recipe/${recipeId}`}
             key={recipeId}
@@ -35,7 +57,7 @@ export default function RecipeList() {
                     alt="아이콘"
                     className="recipe-item-description-duration-icon"
                   />
-                  {`${cookTime}min`}
+                  {`${cookTime} min`}
                 </div>
                 <div className="recipe-item-description-name">{name}</div>
               </div>

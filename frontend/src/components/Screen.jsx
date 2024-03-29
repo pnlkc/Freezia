@@ -10,12 +10,15 @@ import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import Home from '../page/Home';
 import Cooking from '../page/Cooking';
 import { setNavigate } from '../utils/navigate';
+import { useEffect } from 'react';
 
 function FadedRoutes() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  setNavigate(navigate);
+  useEffect(() => {
+    setNavigate(navigate);
+  }, []);
 
   return (
     <TransitionGroup>

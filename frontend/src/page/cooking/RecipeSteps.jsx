@@ -23,8 +23,8 @@ export default function RecipeSteps() {
     setWidth(slideRef.current.getBoundingClientRect().width);
     onMessage(messaging, (payload) => {
       const message = JSON.parse(payload.data.json);
-      console.log(message);
-      if (message.step) setStep(message.step - 1);
+      if (message.type !== 4 || message.sender === 0) return;
+      setStep(message.step - 1);
     });
 
     return () => {
@@ -43,7 +43,7 @@ export default function RecipeSteps() {
     <div className="recipe-step-container">
       <Link
         to={`/Cooking/recipe/${recipeDetail.recipeId}`}
-        className="recipe-step-back-button link"
+        className="recipe-step-back-button f-5 link"
       >
         {'<'}
       </Link>

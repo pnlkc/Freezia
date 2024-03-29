@@ -67,6 +67,7 @@
   height: 1.7vw;
   width: 1.7vw;
   border-radius: 50%;
+  object-fit: cover;
 }
 
 .add-item-name,

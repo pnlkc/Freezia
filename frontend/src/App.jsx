@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
+import { onMessage } from 'firebase/messaging';
 // import startRecognition from './utils/voiceRecognization';
 import ScreenFrame from './components/ScreenFrame';
 
 import './assets/styles/main.css';
-import { setToken } from './utils/firebase';
-import { setWatchToken } from './apis/firebase';
+import messaging, { setToken } from './utils/firebase';
+import { sendWarning, setWatchToken } from './apis/firebase';
 import navigateInstance from './utils/navigate';
 
 function App() {
@@ -15,12 +16,21 @@ function App() {
       : false,
   );
   const [onScreen, setOnScreen] = useState(false);
-  const { navigate } = navigateInstance;
 
   useEffect(() => {
     // startRecognition();
     setToken();
     setWatchToken(import.meta.env.VITE_TMP_WATCH_TOKEN);
+    onMessage(messaging, (payload) => {
+      const message = JSON.parse(payload.data.json);
+      console.log(message);
+      if (message.type === 1) {
+        sessionStorage.setItem('warning', JSON.stringify(message));
+        const { navigate } = navigateInstance;
+        navigate('/Cooking/warning');
+        setFocused(true);
+      }
+    });
   }, []);
   useEffect(() => {
     if (focused) {
@@ -58,7 +68,7 @@ function App() {
           }}
         />
       </div>
-      {onScreen && <ScreenFrame />}
+      <ScreenFrame onScreen={onScreen} />
       {/* <div id="container">
         <div id="result" />
       </div> */}
@@ -66,10 +76,11 @@ function App() {
         <div
           className="open-door-button"
           onClick={() => {
-            setFocused(true);
-            navigate('/Cooking/warning');
+            sendWarning();
           }}
-        />
+        >
+          문 열기
+        </div>
       )}
     </div>
   );

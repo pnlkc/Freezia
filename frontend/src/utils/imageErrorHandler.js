@@ -1,5 +1,5 @@
 export const ingredientImageErrorHander = (e) => {
-  e.target.src = '/images/cooking/no-image.svg';
+  e.target.src = '/images/cooking/no-image.jpg';
 };
 
 export const profileImageErrorHaner = (e) => {

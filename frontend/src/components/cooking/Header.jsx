@@ -9,7 +9,7 @@ export default function Header({ isHome }) {
     <div className="cooking-header">
       {!isHome ? (
         <div
-          className="header-back-button f-4 link"
+          className="header-back-button f-5 link"
           onClick={() => {
             navigate(-1);
           }}
@@ -17,8 +17,8 @@ export default function Header({ isHome }) {
           {'<'}
         </div>
       ) : (
-        <Link to="/Cooking/main" className="cooking-header-title sans f-3 link">
-          SmartThings Cooking
+        <Link to="/Cooking/main" className="cooking-header-title bold f-4 link">
+          FREEZIA
         </Link>
       )}
       <div className="cooking-header-icon-box">

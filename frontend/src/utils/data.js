@@ -11,6 +11,19 @@ export const diseasesData = {
   10: '통풍',
 };
 
+export const recipeTypeList = [
+  '한식',
+  '양식',
+  '중식',
+  '일식',
+  '밑반찬',
+  '면요리',
+  '볶음요리',
+  '찜요리',
+  '국물요리',
+  '유통기한 임박',
+];
+
 export const ingredientData = [
   {
     ingredientId: 1,

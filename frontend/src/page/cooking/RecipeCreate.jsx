@@ -148,7 +148,7 @@ export default function RecipeCreate() {
   return (
     <div className="recipe-create-container">
       <div
-        className="reipce-create-back-button f-4"
+        className="reipce-create-back-button f-5"
         onClick={() => {
           navigate(-1);
         }}

@@ -38,9 +38,7 @@ import com.s005.fif.R
 import com.s005.fif.components.BackgroundImage
 import com.s005.fif.fcm.RecipeLiveData
 import com.s005.fif.fridge_ingredient.ui.FridgeIngredientViewModel
-import com.s005.fif.recipe.ui.RecipeViewModel
 import com.s005.fif.shopping_list.ui.ShoppingListViewModel
-import com.s005.fif.timer.ui.TimerBtn
 import com.s005.fif.utils.ScreenSize
 import com.s005.fif.utils.ScreenSize.toDpSize
 import com.s005.fif.utils.ScreenSize.toSpSize

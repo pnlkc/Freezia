@@ -81,7 +81,7 @@ public class DeviceLinkageService {
 		firebaseCloudMessageService.sendMessageTo(fcmSendDto);
 	}
 
-	public void moveToNextStep(Integer memberId, Integer step) {
+	public void moveToNextStep(Integer memberId, Integer step, Integer sender) {
 		// 웹, 워치 토큰 조회
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new CustomException(ExceptionType.MEMBER_NOT_FOUND));
@@ -91,6 +91,7 @@ public class DeviceLinkageService {
 		FcmStepShiftingDto fcmStepShiftingDto = FcmStepShiftingDto.builder()
 			.type(4)
 			.step(step)
+			.sender(sender)
 			.build();
 		FcmSendDto fcmSendDto = FcmSendDto.builder()
 			.title("레시피 단계 이동")

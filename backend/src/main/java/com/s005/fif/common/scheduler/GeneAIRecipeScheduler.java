@@ -41,7 +41,7 @@ public class GeneAIRecipeScheduler {
 	/**
 	 * 스케줄링을 통해 레시피 생성 메서드 자동 호출
 	 */
-	@Scheduled(cron = "${scheduler.cron}")
+	@Scheduled(cron = "${scheduler.cron}", zone = "Asia/Seoul")
 	public void generateRecipeBySchedule() {
 
 		if (!use) {

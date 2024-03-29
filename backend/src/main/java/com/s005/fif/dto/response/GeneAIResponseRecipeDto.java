@@ -26,7 +26,7 @@ public class GeneAIResponseRecipeDto {
 	public static class GeneAIRecipeDto {
 		private String name;
 		private List<GeneAIIngredientDto> ingredientList;
-		private List<GeneAISeasoningDto> seasoningList;
+		private List<GeneAIIngredientDto> seasoningList;
 		private String cookTime;
 		private String calorie;
 		private String servings;
@@ -40,8 +40,8 @@ public class GeneAIResponseRecipeDto {
 			String recommendDesc,
 			Integer recommendType
 		) {
-			List<String> ingredientList = r.getIngredientList().stream().map((ingredient) -> ingredient.getName() + ":" + ingredient.getAmounts() + ":" + ingredient.getUnit()).toList();
-			List<String> seasoningList = r.getSeasoningList().stream().map((seasoning) -> seasoning.getName() + ":" + seasoning.getAmounts() + ":" + seasoning.getUnit()).toList();
+			List<String> ingredientList = r.getIngredientList().stream().map(GeneAIRecipeDto::ingredientInfo).toList();
+			List<String> seasoningList = r.getSeasoningList().stream().map(GeneAIRecipeDto::ingredientInfo).toList();
 			return Recipe.builder()
 				.member(member)
 				.name(r.getName())
@@ -58,22 +58,25 @@ public class GeneAIResponseRecipeDto {
 				.serving(1)
 				.build();
 		}
+
+		public static String ingredientInfo(GeneAIIngredientDto ingredient) {
+			String amounts = ingredient.getAmounts();
+			String unit = ingredient.getUnit();
+
+			// amounts가 "조금", "약간"과 같이 숫자가 아닐 경우 1T로 설정
+			if (!amounts.matches("[0-9]+")) {
+				amounts = "1";
+				unit = "T";
+			}
+
+			return ingredient.getName() + ":" + amounts + unit;
+		}
 	}
 
 	@Getter
 	@NoArgsConstructor
 	@ToString
 	public static class GeneAIIngredientDto {
-		private String name;
-		private String amounts;
-		private String unit;
-
-	}
-
-	@Getter
-	@NoArgsConstructor
-	@ToString
-	public static class GeneAISeasoningDto {
 		private String name;
 		private String amounts;
 		private String unit;

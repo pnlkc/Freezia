@@ -15,11 +15,14 @@ import com.s005.fif.service.DeviceLinkageService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
+@Slf4j
 public class DeviceLinkageController {
 
 	private final DeviceLinkageService deviceLinkageService;
@@ -40,8 +43,8 @@ public class DeviceLinkageController {
 
 	@PostMapping("/recipes/steps/{step}")
 	@Operation(summary = "워치&패널 레시피 단계 이동")
-	public Response moveToNextStep(@Parameter(hidden = true) MemberDto memberDto, @PathVariable Integer step, @RequestBody FCMStepShiftingRequestDto requestDto) {
-		deviceLinkageService.moveToNextStep(memberDto.getMemberId(), step, requestDto.getSender());
+	public Response moveToNextStep(@Parameter(hidden = true) MemberDto memberDto, @PathVariable Integer step, @Valid @RequestBody FCMStepShiftingRequestDto fcmStepShiftingRequestDto) {
+		deviceLinkageService.moveToNextStep(memberDto.getMemberId(), step, fcmStepShiftingRequestDto.getSender());
 		return new Response(Response.MESSAGE,  step +" 단계로 이동합니다.");
 	}
 

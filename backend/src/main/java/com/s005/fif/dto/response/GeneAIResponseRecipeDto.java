@@ -40,8 +40,8 @@ public class GeneAIResponseRecipeDto {
 			String recommendDesc,
 			Integer recommendType
 		) {
-			List<String> ingredientList = r.getIngredientList().stream().map(GeneAIIngredientDto::getName).toList();
-			List<String> seasoningList = r.getSeasoningList().stream().map(GeneAISeasoningDto::getName).toList();
+			List<String> ingredientList = r.getIngredientList().stream().map((ingredient) -> ingredient.getName() + ":" + ingredient.getAmounts() + ":" + ingredient.getUnit()).toList();
+			List<String> seasoningList = r.getSeasoningList().stream().map((seasoning) -> seasoning.getName() + ":" + seasoning.getAmounts() + ":" + seasoning.getUnit()).toList();
 			return Recipe.builder()
 				.member(member)
 				.name(r.getName())

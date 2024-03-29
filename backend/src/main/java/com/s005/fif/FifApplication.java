@@ -20,6 +20,6 @@ public class FifApplication {
 
 	@PostConstruct
 	public void setTimeZone() {
-		TimeZone.setDefault(TimeZone.getTimeZone("KST"));
+		TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
 	}
 }

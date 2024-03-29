@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,18 +38,22 @@ import com.s005.fif.R
 import com.s005.fif.components.BackgroundImage
 import com.s005.fif.fcm.RecipeLiveData
 import com.s005.fif.recipe.ui.RecipeViewModel
+import com.s005.fif.shopping_list.ui.ShoppingListViewModel
 import com.s005.fif.utils.ScreenSize
 import com.s005.fif.utils.ScreenSize.toDpSize
 import com.s005.fif.utils.ScreenSize.toSpSize
+import kotlinx.coroutines.launch
 
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
     mainViewModel: MainViewModel,
+    shoppingListViewModel: ShoppingListViewModel,
     navigateToShoppingList: () -> Unit,
     navigateToRecipeDetail: () -> Unit,
     navigateToTimerList: () -> Unit,
 ) {
+    val coroutineScope = rememberCoroutineScope()
     val btnSize = ScreenSize.screenHeightDp.toDpSize(22)
     val btnBottomPadding = ScreenSize.screenHeightDp.toDpSize(10)
     val btnSpaceBy = ScreenSize.screenWidthDp.toDpSize(2)
@@ -85,7 +90,12 @@ fun MainScreen(
             btnBottomPadding = btnBottomPadding,
             btnSpaceBy = btnSpaceBy,
             isRecipeSelected = isRecipeSelected,
-            navigateToShoppingList = navigateToShoppingList,
+            navigateToShoppingList = {
+                coroutineScope.launch {
+                    shoppingListViewModel.getShoppingList()
+                    navigateToShoppingList()
+                }
+            },
             navigateToRecipe = navigateToRecipeDetail,
             navigateToTimerList = navigateToTimerList,
             mainUiState = { mainViewModel.mainUiState }

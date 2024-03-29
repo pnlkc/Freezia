@@ -44,6 +44,7 @@ fun FIFWatchNavHost(
         composable(route = Main.route) {
             MainScreen(
                 mainViewModel = mainViewModel,
+                shoppingListViewModel = shoppingListViewModel,
                 navigateToShoppingList = {
                     navController.navigate(ShoppingList.route) {
                         launchSingleTop = true

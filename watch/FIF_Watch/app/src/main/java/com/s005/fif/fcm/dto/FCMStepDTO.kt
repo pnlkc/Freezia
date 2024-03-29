@@ -5,5 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class FCMStepDTO(
     val type: Int,
-    val step: Int
+    val step: Int,
+    val sender: Int
 )

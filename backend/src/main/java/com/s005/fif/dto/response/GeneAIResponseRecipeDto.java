@@ -63,10 +63,10 @@ public class GeneAIResponseRecipeDto {
 			String amounts = ingredient.getAmounts();
 			String unit = ingredient.getUnit();
 
-			// amounts가 "조금", "약간"과 같이 숫자가 아닐 경우 1T로 설정
+			// amounts가 "조금", "약간"과 같이 숫자가 아닐 경우 1t로 설정
 			if (!amounts.matches("[0-9]+")) {
 				amounts = "1";
-				unit = "T";
+				unit = "t";
 			}
 
 			return ingredient.getName() + ":" + amounts + unit;

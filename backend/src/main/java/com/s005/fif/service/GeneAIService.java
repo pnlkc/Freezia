@@ -1,7 +1,6 @@
 package com.s005.fif.service;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +13,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.s005.fif.common.auth.MemberDto;
 import com.s005.fif.common.exception.CustomException;
 import com.s005.fif.common.exception.ExceptionType;
@@ -25,7 +23,6 @@ import com.s005.fif.dto.request.GeneAIPromptRequestDto;
 import com.s005.fif.dto.request.model.GeneAIBaseRequestDto;
 import com.s005.fif.dto.response.GeneAICategoryListResponseDto;
 import com.s005.fif.dto.response.GeneAIResponseRecipeDto;
-import com.s005.fif.dto.response.RecipeResponseDto;
 import com.s005.fif.dto.response.ThreadIdResponseDto;
 import com.s005.fif.entity.FridgeIngredient;
 import com.s005.fif.entity.Member;
@@ -44,6 +41,8 @@ public class GeneAIService {
 
     @Value("${ai-server-base-url}")
     private String sendUrl;
+	@Value("${scheduler.category-recipe.max-creation-limit}")
+	private int categoryRecipeMaxLimit;
 
     private final MemberRepository memberRepository;
 
@@ -175,7 +174,7 @@ public class GeneAIService {
 		List<String> recipeList = listResponseDto.getRecipeList();
 
 		// for (int i = 0; i < recipeList.size(); i++) {
-		for (int i = 0; i < Math.min(5, recipeList.size()); i++) { // FIXME: 테스트를 위해 최대 5개만 생성
+		for (int i = 0; i < Math.min(categoryRecipeMaxLimit, recipeList.size()); i++) { // FIXME: 테스트를 위해 최대 1개만 생성
 			String recipeName = recipeList.get(i);
 			restClient.get()
 				.uri(uriBuilder ->

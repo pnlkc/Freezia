@@ -46,7 +46,7 @@ public class GeneAIResponseRecipeDto {
 				.member(member)
 				.name(r.getName())
 				.cookTime(Util.extractDigit(r.getCookTime()))
-				.calorie(Util.extractDigit(r.getCalorie()))
+				.calorie(setDefaultCalorie(Util.extractDigit(r.getCalorie())))
 				.ingredientList(String.join(",", ingredientList))
 				.seasoningList(String.join(",", seasoningList))
 				.imgUrl(imgUrl)
@@ -57,6 +57,10 @@ public class GeneAIResponseRecipeDto {
 				.recipeTypes(r.recipeType)
 				.serving(1)
 				.build();
+		}
+
+		private static int setDefaultCalorie(int calorie) {
+			return calorie == 0 ? 250 : calorie;
 		}
 
 		public static String ingredientInfo(GeneAIIngredientDto ingredient) {

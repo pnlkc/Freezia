@@ -57,6 +57,14 @@ public class GeneAIRecipeScheduler {
 	 */
 	public void generateRecipe() {
 
+		log.info("이전 레시피 삭제");
+		try {
+			int cnt = recipeService.deleteOldRecipes();
+			log.info("삭제된 레시피 개수: {}", cnt);
+		} catch (Exception e) {
+			log.info("이전 레시피 삭제 실패", e);
+		}
+
 		LocalDateTime startTime = LocalDateTime.now();
 		log.info("레시피 생성 시작: " + startTime);
 
@@ -155,13 +163,7 @@ public class GeneAIRecipeScheduler {
 			}
 		}
 
-		log.info("이전 레시피 삭제");
-		try {
-			int cnt = recipeService.deleteOldRecipes();
-			log.info("삭제된 레시피 개수: {}", cnt);
-		} catch (Exception e) {
-			log.info("이전 레시피 삭제 실패", e);
-		}
+
 
 		LocalDateTime endTime = LocalDateTime.now();
 		log.info("레시피 생성 종료: {}", endTime);

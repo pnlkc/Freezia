@@ -57,7 +57,7 @@ fun MainScreen(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val btnSize = ScreenSize.screenHeightDp.toDpSize(22)
-    val btnBottomPadding = ScreenSize.screenHeightDp.toDpSize(15)
+    val btnBottomPadding = ScreenSize.screenHeightDp.toDpSize(17)
     val btnSpaceBy = ScreenSize.screenWidthDp.toDpSize(2)
 
     val isRecipeSelected = RecipeLiveData.recipeData != null
@@ -133,7 +133,7 @@ fun MainBody(
             modifier = Modifier
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(ScreenSize.screenHeightDp.toDpSize(7))
+            verticalArrangement = Arrangement.spacedBy(ScreenSize.screenHeightDp.toDpSize(if (isRecipeSelected) 7 else 15))
         ) {
             ProfileColumn(
                 modifier = Modifier,
@@ -159,7 +159,7 @@ fun MainBody(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(horizontal = ScreenSize.screenWidthDp.toDpSize(5))
-                .padding(bottom = ScreenSize.screenWidthDp.toDpSize(5)),
+                .padding(bottom = ScreenSize.screenWidthDp.toDpSize(3)),
             btnSpaceBy = btnSpaceBy,
             btnBottomPadding = btnBottomPadding,
             btnSize = btnSize,
@@ -245,28 +245,29 @@ fun MainBtnRow(
         modifier = modifier
             .fillMaxWidth(),
     ) {
-        Button(
-            modifier = Modifier
-                .padding(bottom = btnBottomPadding)
-                .size(btnSize)
-                .align(Alignment.TopStart),
-            onClick = { navigateToRecipe() },
-            enabled = isRecipeSelected
-        ) {
-            Icon(
+        if (isRecipeSelected) {
+            Button(
                 modifier = Modifier
-                    .background(if (isRecipeSelected) Color.White else MaterialTheme.colors.onSecondary)
-                    .padding(ScreenSize.screenHeightDp.toDpSize(6)),
-                painter = painterResource(id = R.drawable.food),
-                contentDescription = stringResource(id = R.string.btn_recipe_desc),
-                tint = if (isRecipeSelected) MaterialTheme.colors.primary else MaterialTheme.colors.secondary
-            )
+                    .padding(bottom = btnBottomPadding)
+                    .size(btnSize)
+                    .align(Alignment.TopStart),
+                onClick = { navigateToRecipe() },
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .background(Color.White)
+                        .padding(ScreenSize.screenHeightDp.toDpSize(6)),
+                    painter = painterResource(id = R.drawable.food),
+                    contentDescription = stringResource(id = R.string.btn_recipe_desc),
+                    tint = MaterialTheme.colors.primary
+                )
+            }
         }
 
         Row(
             modifier = Modifier
                 .align(Alignment.BottomCenter),
-            horizontalArrangement = Arrangement.spacedBy(ScreenSize.screenHeightDp.toDpSize(1.5f))
+            horizontalArrangement = Arrangement.spacedBy(ScreenSize.screenHeightDp.toDpSize(2f))
         ) {
             Button(
                 modifier = Modifier
@@ -301,22 +302,23 @@ fun MainBtnRow(
             }
         }
 
-        Button(
-            modifier = Modifier
-                .padding(bottom = btnBottomPadding)
-                .size(btnSize)
-                .align(Alignment.TopEnd),
-            onClick = { navigateToTimerList() },
-            enabled = isRecipeSelected
-        ) {
-            Icon(
+        if (isRecipeSelected) {
+            Button(
                 modifier = Modifier
-                    .background(if (isRecipeSelected) Color.White else MaterialTheme.colors.onSecondary)
-                    .padding(ScreenSize.screenHeightDp.toDpSize(6)),
-                painter = painterResource(id = R.drawable.timer),
-                contentDescription = stringResource(id = R.string.btn_timer_desc),
-                tint = if (isRecipeSelected) MaterialTheme.colors.primary else MaterialTheme.colors.secondary
-            )
+                    .padding(bottom = btnBottomPadding)
+                    .size(btnSize)
+                    .align(Alignment.TopEnd),
+                onClick = { navigateToTimerList() },
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .background(Color.White)
+                        .padding(ScreenSize.screenHeightDp.toDpSize(6)),
+                    painter = painterResource(id = R.drawable.timer),
+                    contentDescription = stringResource(id = R.string.btn_timer_desc),
+                    tint = MaterialTheme.colors.primary
+                )
+            }
         }
     }
 }

@@ -87,8 +87,6 @@ class MainActivity : ComponentActivity() {
 
         getScreenSize(resources.displayMetrics)
 
-        getFCMToken()
-
         getRecipe()
 
         setContent {
@@ -165,20 +163,6 @@ class MainActivity : ComponentActivity() {
     private fun getScreenSize(displayMetrics: DisplayMetrics) {
         screenHeightDp = displayMetrics.heightPixels / displayMetrics.density
         screenWidthDp = displayMetrics.widthPixels / displayMetrics.density
-    }
-
-
-    private fun getFCMToken() {
-        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                Log.d("로그", "MainActivity - getFCMToken() 호출됨 / 토큰 가져오기 실패")
-                return@OnCompleteListener
-            }
-
-            val token = task.result
-
-            Log.d("로그", "MainActivity - getFCMToken() 호출됨 / 토큰 가져오기 성공 ${token}")
-        })
     }
 
     private fun getRecipe() {

@@ -5,11 +5,13 @@
     values-round/strings.xml for round devices.
     -->
     <string name="profile_img_desc">프로필 이미지</string>
+    <string name="ingredient_img_desc">식재료 이미지</string>
     <string name="not_select_recipe">진행 중인 요리가 없습니다</string>
     <string name="btn_recipe_desc">레시피 버튼</string>
     <string name="btn_shopping_list_desc">쇼핑 리스트 버튼</string>
     <string name="btn_timer_desc">타이머 버튼</string>
     <string name="shopping_list">쇼핑 리스트</string>
+    <string name="fridge_ingredient_list">냉장고 재고</string>
     <string name="cook_time_text">요리 시간 %1$d분</string>
     <string name="use_timer">타이머 사용하기</string>
     <string name="btn_recipe_step_back">레시피 뒤로 가기 버튼</string>
@@ -26,6 +28,7 @@
     <string name="btn_timer_reset">타이머 초기화 버튼</string>
     <string name="btn_timer_list">타이머 리스트 버튼</string>
     <string name="btn_timer_to_recipe">타이머에서 레시피 단계로 이동 버튼</string>
+    <string name="btn_fridge_ingredient">냉장고 재고 이동 버튼</string>
     <string name="btn_timer_play">타이머 시작 버튼</string>
     <string name="background_image">배경 이미지</string>
     <string name="timer_done_icon">타이머 완료 아이콘</string>

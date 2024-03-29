@@ -12,4 +12,6 @@ sealed class NavigationDestination(val route: String) {
     data object TimerDetail : NavigationDestination("timer_detail") {
         const val TIMER_IDX = "timer_idx"
     }
+
+    data object FridgeIngredient : NavigationDestination("fridge_ingredient")
 }

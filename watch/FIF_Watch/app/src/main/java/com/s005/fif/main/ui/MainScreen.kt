@@ -37,8 +37,10 @@ import com.bumptech.glide.integration.compose.placeholder
 import com.s005.fif.R
 import com.s005.fif.components.BackgroundImage
 import com.s005.fif.fcm.RecipeLiveData
+import com.s005.fif.fridge_ingredient.ui.FridgeIngredientViewModel
 import com.s005.fif.recipe.ui.RecipeViewModel
 import com.s005.fif.shopping_list.ui.ShoppingListViewModel
+import com.s005.fif.timer.ui.TimerBtn
 import com.s005.fif.utils.ScreenSize
 import com.s005.fif.utils.ScreenSize.toDpSize
 import com.s005.fif.utils.ScreenSize.toSpSize
@@ -49,13 +51,15 @@ fun MainScreen(
     modifier: Modifier = Modifier,
     mainViewModel: MainViewModel,
     shoppingListViewModel: ShoppingListViewModel,
+    fridgeIngredientViewModel: FridgeIngredientViewModel,
     navigateToShoppingList: () -> Unit,
     navigateToRecipeDetail: () -> Unit,
     navigateToTimerList: () -> Unit,
+    navigateToFridgeIngredient: () -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
     val btnSize = ScreenSize.screenHeightDp.toDpSize(22)
-    val btnBottomPadding = ScreenSize.screenHeightDp.toDpSize(10)
+    val btnBottomPadding = ScreenSize.screenHeightDp.toDpSize(15)
     val btnSpaceBy = ScreenSize.screenWidthDp.toDpSize(2)
 
     val isRecipeSelected = RecipeLiveData.recipeData != null
@@ -98,6 +102,12 @@ fun MainScreen(
             },
             navigateToRecipe = navigateToRecipeDetail,
             navigateToTimerList = navigateToTimerList,
+            navigateToFridgeIngredient = {
+                coroutineScope.launch {
+                    fridgeIngredientViewModel.getFridgeIngredientList()
+                    navigateToFridgeIngredient()
+                }
+            },
             mainUiState = { mainViewModel.mainUiState }
         )
     }
@@ -113,6 +123,7 @@ fun MainBody(
     navigateToShoppingList: () -> Unit,
     navigateToRecipe: () -> Unit,
     navigateToTimerList: () -> Unit,
+    navigateToFridgeIngredient: () -> Unit,
     mainUiState: () -> MainUiState,
 ) {
     Box(
@@ -124,7 +135,7 @@ fun MainBody(
             modifier = Modifier
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(ScreenSize.screenHeightDp.toDpSize(11))
+            verticalArrangement = Arrangement.spacedBy(ScreenSize.screenHeightDp.toDpSize(7))
         ) {
             ProfileColumn(
                 modifier = Modifier,
@@ -148,14 +159,17 @@ fun MainBody(
 
         MainBtnRow(
             modifier = Modifier
-                .align(Alignment.BottomCenter),
+                .align(Alignment.BottomCenter)
+                .padding(horizontal = ScreenSize.screenWidthDp.toDpSize(5))
+                .padding(bottom = ScreenSize.screenWidthDp.toDpSize(5)),
             btnSpaceBy = btnSpaceBy,
             btnBottomPadding = btnBottomPadding,
             btnSize = btnSize,
             isRecipeSelected = isRecipeSelected,
             navigateToShoppingList = navigateToShoppingList,
             navigateToRecipe = navigateToRecipe,
-            navigateToTimerList = navigateToTimerList
+            navigateToTimerList = navigateToTimerList,
+            navigateToFridgeIngredient = navigateToFridgeIngredient
         )
     }
 }
@@ -227,18 +241,17 @@ fun MainBtnRow(
     navigateToShoppingList: () -> Unit,
     navigateToRecipe: () -> Unit,
     navigateToTimerList: () -> Unit,
+    navigateToFridgeIngredient: () -> Unit
 ) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement
-            .spacedBy(btnSpaceBy),
-        verticalAlignment = Alignment.Bottom
+    Box(
+        modifier = modifier
+            .fillMaxWidth(),
     ) {
-
         Button(
             modifier = Modifier
                 .padding(bottom = btnBottomPadding)
-                .size(btnSize),
+                .size(btnSize)
+                .align(Alignment.TopStart),
             onClick = { navigateToRecipe() },
             enabled = isRecipeSelected
         ) {
@@ -252,33 +265,56 @@ fun MainBtnRow(
             )
         }
 
-
-        Button(
+        Row(
             modifier = Modifier
-                .size(btnSize),
-            onClick = { navigateToShoppingList() }
+                .align(Alignment.BottomCenter),
+            horizontalArrangement = Arrangement.spacedBy(ScreenSize.screenHeightDp.toDpSize(1.5f))
         ) {
-            Icon(
+            Button(
                 modifier = Modifier
-                    .background(MaterialTheme.colors.primary)
-                    .padding(ScreenSize.screenHeightDp.toDpSize(6)),
-                painter = painterResource(id = R.drawable.shopping_cart),
-                contentDescription = stringResource(id = R.string.btn_shopping_list_desc),
-                tint = Color.White
-            )
+                    .size(btnSize),
+                onClick = { navigateToShoppingList() }
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .background(MaterialTheme.colors.primary)
+                        .padding(ScreenSize.screenHeightDp.toDpSize(6)),
+                    painter = painterResource(id = R.drawable.shopping_cart),
+                    contentDescription = stringResource(id = R.string.btn_shopping_list_desc),
+                    tint = Color.White
+                )
+            }
+
+            Button(
+                modifier = Modifier
+                    .size(btnSize),
+                onClick = {
+                    navigateToFridgeIngredient()
+                }
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .background(MaterialTheme.colors.primary)
+                        .padding(ScreenSize.screenHeightDp.toDpSize(6)),
+                    painter = painterResource(id = R.drawable.fridge),
+                    contentDescription = stringResource(id = R.string.btn_timer_to_recipe),
+                    tint = Color.White
+                )
+            }
         }
 
         Button(
             modifier = Modifier
                 .padding(bottom = btnBottomPadding)
-                .size(btnSize),
+                .size(btnSize)
+                .align(Alignment.TopEnd),
             onClick = { navigateToTimerList() },
             enabled = isRecipeSelected
         ) {
             Icon(
                 modifier = Modifier
                     .background(if (isRecipeSelected) Color.White else MaterialTheme.colors.onSecondary)
-                    .padding(ScreenSize.screenHeightDp.toDpSize(4)),
+                    .padding(ScreenSize.screenHeightDp.toDpSize(6)),
                 painter = painterResource(id = R.drawable.timer),
                 contentDescription = stringResource(id = R.string.btn_timer_desc),
                 tint = if (isRecipeSelected) MaterialTheme.colors.primary else MaterialTheme.colors.secondary

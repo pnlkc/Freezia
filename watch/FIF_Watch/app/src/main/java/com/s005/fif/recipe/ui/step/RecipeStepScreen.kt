@@ -230,7 +230,7 @@ fun RecipeStepBody(
             ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (currentStep.timer != null) {
+            if (currentStep.timer != null && currentStep.timer != 0) {
                 Chip(
                     modifier = Modifier
                         .height(ScreenSize.screenHeightDp.toDpSize(18)),

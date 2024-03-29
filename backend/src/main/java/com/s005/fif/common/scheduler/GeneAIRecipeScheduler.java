@@ -4,10 +4,13 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.s005.fif.common.Constant;
 import com.s005.fif.common.types.RecipeRecommendType;
@@ -26,7 +29,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Component
+@Service
 @RequiredArgsConstructor
 public class GeneAIRecipeScheduler {
 
@@ -55,7 +58,16 @@ public class GeneAIRecipeScheduler {
 	/**
 	 * 레시피 생성 메서드
 	 */
+	@Async
 	public void generateRecipe() {
+
+		log.info("이전 레시피 삭제");
+		try {
+			int cnt = recipeService.deleteOldRecipes();
+			log.info("삭제된 레시피 개수: {}", cnt);
+		} catch (Exception e) {
+			log.info("이전 레시피 삭제 실패", e);
+		}
 
 		LocalDateTime startTime = LocalDateTime.now();
 		log.info("레시피 생성 시작: " + startTime);
@@ -155,13 +167,7 @@ public class GeneAIRecipeScheduler {
 			}
 		}
 
-		log.info("이전 레시피 삭제");
-		try {
-			int cnt = recipeService.deleteOldRecipes();
-			log.info("삭제된 레시피 개수: {}", cnt);
-		} catch (Exception e) {
-			log.info("이전 레시피 삭제 실패", e);
-		}
+
 
 		LocalDateTime endTime = LocalDateTime.now();
 		log.info("레시피 생성 종료: {}", endTime);

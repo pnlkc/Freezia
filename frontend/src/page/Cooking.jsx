@@ -14,9 +14,10 @@ import Setting from './cooking/Setting';
 import Profile from './cooking/Profile';
 import History from './cooking/History';
 import Shopping from './cooking/Shopping';
+import Warning from './cooking/Warning';
+import WaitingConnect from './cooking/WaitingConnect';
 
 import '../assets/styles/cooking.css';
-import WaitingConnect from './cooking/WaitingConnect';
 
 export default function Cooking() {
   return (
@@ -24,6 +25,7 @@ export default function Cooking() {
       <Routes>
         <Route path="/" element={<UserSelect />} />
         <Route path="/main" element={<Main />} />
+        <Route path="/warning" element={<Warning />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/profile/setting" element={<Setting />} />
         <Route path="/profile/history" element={<History />} />

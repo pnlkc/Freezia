@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 
 import '../../assets/styles/cooking/recipefinishcard.css';
+import { disconnectWatch } from '../../apis/firebase';
 
 export default function RecipeFinsishCard() {
   const recipeDetail = JSON.parse(sessionStorage.getItem('recipeInfo'));
@@ -43,6 +44,9 @@ export default function RecipeFinsishCard() {
           <Link
             to="/Cooking/recipe/list"
             className="finish-card-button-exit box-shadow link"
+            onClick={() => {
+              disconnectWatch(recipeDetail.recipeId);
+            }}
           >
             레시피 목록으로 이동
           </Link>

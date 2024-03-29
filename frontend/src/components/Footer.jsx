@@ -1,4 +1,5 @@
 import '../assets/styles/footer.css';
+import navigateInstance from '../utils/navigate';
 
 export default function Footer() {
   const iconList = [
@@ -8,6 +9,8 @@ export default function Footer() {
     '/images/back.png',
     '/images/alarm.png',
   ];
+
+  const { navigate } = navigateInstance;
 
   return (
     <div className="footer-container">
@@ -19,7 +22,7 @@ export default function Footer() {
             alt={url}
             key={url}
             onClick={() => {
-              location.href = '/';
+              navigate('/');
             }}
           />
         ))}

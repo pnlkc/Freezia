@@ -4,22 +4,31 @@ import ScreenFrame from './components/ScreenFrame';
 
 import './assets/styles/main.css';
 import { setToken } from './utils/firebase';
+import { setWatchToken } from './apis/firebase';
+import navigateInstance from './utils/navigate';
 
 function App() {
   const [focused, setFocused] = useState(
-    sessionStorage.getItem('focused')
+    sessionStorage.getItem('focused') &&
+      sessionStorage.getItem('focused') !== 'undefined'
       ? JSON.parse(sessionStorage.getItem('focused'))
       : false,
   );
   const [onScreen, setOnScreen] = useState(false);
+  const { navigate } = navigateInstance;
 
   useEffect(() => {
     // startRecognition();
     setToken();
+    setWatchToken(import.meta.env.VITE_TMP_WATCH_TOKEN);
   }, []);
   useEffect(() => {
     if (focused) {
-      if (JSON.parse(sessionStorage.getItem('focused')) === focused) {
+      if (
+        sessionStorage.getItem('focused') &&
+        sessionStorage.getItem('focused') !== 'undefined' &&
+        JSON.parse(sessionStorage.getItem('focused')) === focused
+      ) {
         setOnScreen(true);
       } else {
         setTimeout(() => {
@@ -35,7 +44,13 @@ function App() {
     <div>
       <div className="background-crop">
         <img
-          className={`${JSON.parse(sessionStorage.getItem('focused')) ? 'background-in' : 'background-out'} ${focused ? 'focus-in' : 'focus-out'}`}
+          className={`${
+            sessionStorage.getItem('focused') &&
+            sessionStorage.getItem('focused') !== 'undefined' &&
+            JSON.parse(sessionStorage.getItem('focused'))
+              ? 'background-in'
+              : 'background-out'
+          } ${focused ? 'focus-in' : 'focus-out'}`}
           src="/images/background.png"
           alt="background"
           onClick={() => {
@@ -47,6 +62,15 @@ function App() {
       {/* <div id="container">
         <div id="result" />
       </div> */}
+      {!focused && (
+        <div
+          className="open-door-button"
+          onClick={() => {
+            setFocused(true);
+            navigate('/Cooking/warning');
+          }}
+        />
+      )}
     </div>
   );
 }

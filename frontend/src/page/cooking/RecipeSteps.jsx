@@ -1,11 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { onMessage } from 'firebase/messaging';
 
 import '../../assets/styles/cooking/recipesteps.css';
 import ContentCard from '../../components/cooking/ContentCard';
 import registDragEvent, { inrange } from '../../utils/registDragEvent';
 import RecipeFinsishCard from '../../components/cooking/RecipeFinishCard';
-import { moveStep } from '../../apis/firebase';
+import { disconnectWatch, moveStep } from '../../apis/firebase';
+import messaging from '../../utils/firebase';
 
 export default function RecipeSteps() {
   const isConnected = sessionStorage.getItem('isConnected') === 'true';
@@ -19,10 +21,19 @@ export default function RecipeSteps() {
 
   useEffect(() => {
     setWidth(slideRef.current.getBoundingClientRect().width);
+    onMessage(messaging, (payload) => {
+      const message = JSON.parse(payload.data.json);
+      console.log(message);
+      if (message.step) setStep(message.step - 1);
+    });
+
+    return () => {
+      disconnectWatch(recipeDetail.recipeId);
+    };
   }, []);
 
   useEffect(() => {
-    if (isConnected) moveStep(step);
+    if (isConnected) moveStep(step + 1);
   }, [step]);
 
   const recipeSteps = JSON.parse(sessionStorage.getItem('recipeSteps'));

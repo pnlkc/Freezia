@@ -17,9 +17,7 @@ export default function WaitingConnect() {
   useEffect(() => {
     connectWatch(recipeId).then(() => {
       sessionStorage.setItem('isConnected', 'true');
-      onMessage(messaging, (payload) => {
-        console.log('Message received. ', payload);
-      });
+
       setTimer(
         setTimeout(() => {
           navigate(`/Cooking/recipe/${recipeId}/steps/0`);

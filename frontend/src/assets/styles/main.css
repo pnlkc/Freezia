@@ -88,6 +88,15 @@ button {
   animation: none;
 }
 
+.open-door-button {
+  position: absolute;
+  width: 12.8%;
+  height: 46.4%;
+  top: 12.1%;
+  left: 34.2%;
+  cursor: pointer;
+}
+
 @keyframes slide-in {
   from {
     left: 0;

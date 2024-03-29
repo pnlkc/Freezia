@@ -3,6 +3,7 @@ import '../../assets/styles/cooking/recipesave.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { ingredientImageErrorHander } from '../../utils/imageErrorHandler';
 import { saveCompleteRecipe } from '../../apis/history';
+import { disconnectWatch } from '../../apis/firebase';
 
 export default function RecipeSave() {
   const recipeDetail = JSON.parse(sessionStorage.getItem('recipeInfo'));
@@ -141,13 +142,15 @@ export default function RecipeSave() {
             }),
             memo: '',
           });
+
+          disconnectWatch(recipeDetail.recipeId);
+
           sessionStorage.removeItem('addIngredientList');
           sessionStorage.removeItem('removeIngredientList');
         }}
       >
         저장
       </Link>
-      {/* </div> */}
       <style>{'.footer-container { display : none } '}</style>
     </div>
   );

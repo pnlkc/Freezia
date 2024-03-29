@@ -17,3 +17,10 @@ export const disconnectWatch = async (recipeId) => {
 export const moveStep = async (step) => {
   axios.get(`recipes/steps/${step}`);
 };
+
+export const setWatchToken = async (token) => {
+  axios.post('fcm/token', {
+    type: 2,
+    token,
+  });
+};

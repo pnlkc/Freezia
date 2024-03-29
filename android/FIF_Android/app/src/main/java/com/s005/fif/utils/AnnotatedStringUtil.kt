@@ -12,7 +12,7 @@ import com.s005.fif.ui.theme.Typography
 
 object AnnotatedStringUtil {
     @Composable
-    fun makeString(full: String, spot: String) : AnnotatedString {
+    fun makeUserProfileString(full: String, spot: String) : AnnotatedString {
         return buildAnnotatedString {
             withStyle(
                 style = SpanStyle(
@@ -32,6 +32,39 @@ object AnnotatedStringUtil {
             ) {
                 append(" ")
                 append(full.removePrefix(spot))
+            }
+        }
+    }
+
+    @Composable
+    fun makeMainRecommendRecipeString(full: String, spot: String) : AnnotatedString {
+        return buildAnnotatedString {
+            withStyle(
+                style = SpanStyle(
+                    color = Color.Black,
+                    fontSize = Typography.bodyMedium.fontSize
+                )
+            ) {
+                append(full.split(spot)[0])
+            }
+
+            withStyle(
+                style = SpanStyle(
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = Typography.bodyLarge.fontSize,
+                    fontWeight = FontWeight.Bold
+                )
+            ) {
+                append(spot)
+            }
+
+            withStyle(
+                style = SpanStyle(
+                    color = Color.Black,
+                    fontSize = Typography.bodyMedium.fontSize
+                )
+            ) {
+                append(full.split(spot)[1])
             }
         }
     }

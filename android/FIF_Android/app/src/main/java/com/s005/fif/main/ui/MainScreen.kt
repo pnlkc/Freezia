@@ -57,6 +57,7 @@ import com.s005.fif.user.dto.Member
 import com.s005.fif.user.ui.UserViewModel
 import com.s005.fif.user.ui.profile.HealthCard
 import com.s005.fif.user.ui.profile.UserProfileColumnText
+import com.s005.fif.utils.AnnotatedStringUtil
 import com.s005.fif.utils.StringLineChangeUtil.toNonBreakingString
 import kotlinx.coroutines.launch
 
@@ -366,11 +367,14 @@ fun MainRecipeRecommendCard(
                 Text(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    text = item?.recommendDesc ?: stringResource(id = R.string.text_no_recommend_recipe),
+                    text = if (item == null) {
+                        AnnotatedStringUtil.makeMainRecommendRecipeString(stringResource(id = R.string.text_no_recommend_recipe), "")
+                    } else {
+                        AnnotatedStringUtil.makeMainRecommendRecipeString(item.recommendDesc, item.name)
+                    },
                     style = Typography.bodyMedium,
                     maxLines = 4,
                     overflow = TextOverflow.Ellipsis,
-                    textAlign = TextAlign.Center
                 )
 
                 if (item != null) {

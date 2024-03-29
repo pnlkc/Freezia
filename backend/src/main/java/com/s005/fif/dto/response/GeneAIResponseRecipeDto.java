@@ -69,7 +69,7 @@ public class GeneAIResponseRecipeDto {
 				unit = "t";
 			}
 
-			return ingredient.getName() + ":" + amounts + unit;
+			return ingredient.getName() + ":" + amounts + ":" + unit;
 		}
 	}
 

@@ -1,6 +1,5 @@
 package com.s005.fif.timer.ui
 
-import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -22,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -38,7 +36,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.CircularProgressIndicator
 import androidx.wear.compose.material.Icon
@@ -50,7 +47,6 @@ import com.s005.fif.timer.entity.TimerInfo
 import com.s005.fif.utils.ScreenSize
 import com.s005.fif.utils.ScreenSize.toDpSize
 import com.s005.fif.utils.ScreenSize.toSpSize
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)

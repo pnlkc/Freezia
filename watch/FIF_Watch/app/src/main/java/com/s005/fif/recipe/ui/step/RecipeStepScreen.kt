@@ -49,6 +49,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.s005.fif.R
 import com.s005.fif.components.BackgroundImage
 import com.s005.fif.fcm.RecipeLiveData
+import com.s005.fif.recipe.dto.RecipeStepItemResponse
 import com.s005.fif.recipe.ui.RecipeViewModel
 import com.s005.fif.timer.ui.TimerViewModel
 import com.s005.fif.utils.DummyImageUtil
@@ -108,7 +109,7 @@ fun RecipeStepScreen(
 
             if (RecipeLiveData.isFcmNotification) {
                 RecipeLiveData.isFcmNotification = false
-            } else if (page <= maxPages) {
+            } else if (page <= maxPages - 1) {
                 recipeViewModel.moveRecipeStep(page + 1)
             }
         }
@@ -119,12 +120,15 @@ fun RecipeStepScreen(
             .fillMaxSize(),
         state = pagerState
     ) { page ->
+        val currentStep = RecipeLiveData.recipeData!!.recipeSteps[minOf(page, pagerState.pageCount - 2)]
+
         Box(
             modifier = modifier
                 .fillMaxSize()
         ) {
             BackgroundImage(
-                imgUrl = DummyImageUtil.list[minOf(4, page)]
+                imgUrl = null,
+                type = currentStep.type
             )
 
             if (page != maxPages) {
@@ -149,7 +153,8 @@ fun RecipeStepScreen(
                     },
                     onTimerClicked = { time, name ->
                         navigateToTimerDetail(timerViewModel.addTimer(time, name, page) - 1)
-                    }
+                    },
+                    currentStep = currentStep
                 )
             } else {
                 RecipeDoneBody(
@@ -181,9 +186,8 @@ fun RecipeStepBody(
     goStepBack: () -> Unit,
     goStepForward: () -> Unit,
     onTimerClicked: (Int, String) -> Unit,
+    currentStep: RecipeStepItemResponse
 ) {
-    val currentStep = RecipeLiveData.recipeData!!.recipeSteps[page]
-
     Column(
         modifier = modifier
             .fillMaxSize()

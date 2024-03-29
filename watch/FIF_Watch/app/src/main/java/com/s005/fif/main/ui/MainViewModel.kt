@@ -6,6 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import com.s005.fif.common.dto.ErrorResponse
 import com.s005.fif.di.LoginUser
 import com.s005.fif.di.FIFPreferenceModule
@@ -13,6 +15,7 @@ import com.s005.fif.main.data.MainRepository
 import com.s005.fif.main.dto.AccessTokenResponse
 import com.s005.fif.main.dto.MemberInfoResponse
 import com.s005.fif.main.dto.MemberSelectRequest
+import com.s005.fif.main.dto.SendFCMTokenRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -36,7 +39,11 @@ class MainViewModel @Inject constructor(
 
             if (accessToken == null) {
                 getAccessToken()
+            } else {
+                Log.d("로그", "MainViewModel - init() 호출됨 / accessToken : ${accessToken}")
             }
+
+            sendFCMToken()
 
             getMemberInfo()
         }
@@ -75,5 +82,34 @@ class MainViewModel @Inject constructor(
 
             Log.d("로그", "MainViewModel - getMemberInfo() 호출됨 / 응답 실패 : ${body}")
         }
+    }
+
+   fun sendFCMToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.d("로그", "MainViewModel - sendFCMToken() 호출됨 / 토큰 가져오기 실패")
+                return@OnCompleteListener
+            }
+
+            val token = task.result
+
+            Log.d("로그", "MainViewModel - sendFCMToken() 호출됨 / 토큰 가져오기 성공 ${token}")
+
+            viewModelScope.launch {
+                val responseResult = mainRepository.sendFCMToken(
+                    SendFCMTokenRequest(2, token)
+                )
+
+                if (responseResult.isSuccessful) {
+                    Log.d("로그", "MainViewModel - sendFCMToken() 호출됨 / 응답 성공 : ${responseResult.body()!!}")
+                } else {
+                    val body = Json.decodeFromString<ErrorResponse>(
+                        responseResult.errorBody()?.string()!!
+                    )
+
+                    Log.d("로그", "MainViewModel - sendFCMToken() 호출됨 / 응답 실패 : ${body}")
+                }
+            }
+        })
     }
 }

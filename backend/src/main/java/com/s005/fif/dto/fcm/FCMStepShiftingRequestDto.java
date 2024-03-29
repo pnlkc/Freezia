@@ -2,14 +2,10 @@ package com.s005.fif.dto.fcm;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@Builder
-public class FcmStepShiftingDto {
-
-	private Integer type;
-
-	private Integer step;
-
+@NoArgsConstructor
+public class FCMStepShiftingRequestDto {
 	private Integer sender;
 }

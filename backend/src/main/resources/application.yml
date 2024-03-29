@@ -48,3 +48,5 @@ logging:
 scheduler:
   use: true
   cron: "0 0 4,10,16 * * *"
+  category-recipe:
+    max-creation-limit: 1

@@ -3,6 +3,9 @@ package com.s005.fif.di
 import android.content.Context
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.s005.fif.di.LoginUser.memberId
+import com.s005.fif.fridge_ingredient.data.DefaultFridgeIngredientRepository
+import com.s005.fif.fridge_ingredient.data.FridgeIngredientRepository
+import com.s005.fif.fridge_ingredient.network.FridgeIngredientService
 import com.s005.fif.main.data.DefaultMainRepository
 import com.s005.fif.main.data.MainRepository
 import com.s005.fif.main.dto.MemberSelectRequest
@@ -167,6 +170,18 @@ object AppModule {
     @Provides
     fun provideShoppingListRepository(shoppingListService: ShoppingListService): ShoppingListRepository {
         return DefaultShoppingListRepository(shoppingListService)
+    }
+
+    @Singleton
+    @Provides
+    fun provideFridgeIngredientService(retrofit: Retrofit): FridgeIngredientService {
+        return retrofit.create(FridgeIngredientService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideFridgeIngredientRepository(fridgeIngredientService: FridgeIngredientService): FridgeIngredientRepository {
+        return DefaultFridgeIngredientRepository(fridgeIngredientService)
     }
 
     @Singleton

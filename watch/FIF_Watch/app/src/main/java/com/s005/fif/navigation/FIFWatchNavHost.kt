@@ -8,6 +8,8 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
+import com.s005.fif.fridge_ingredient.ui.FridgeIngredientScreen
+import com.s005.fif.fridge_ingredient.ui.FridgeIngredientViewModel
 import com.s005.fif.main.ui.MainScreen
 import com.s005.fif.main.ui.MainViewModel
 import com.s005.fif.navigation.NavigationDestination.Main
@@ -17,6 +19,7 @@ import com.s005.fif.navigation.NavigationDestination.ShoppingList
 import com.s005.fif.navigation.NavigationDestination.TimerDetail
 import com.s005.fif.navigation.NavigationDestination.TimerList
 import com.s005.fif.navigation.NavigationDestination.Warning
+import com.s005.fif.navigation.NavigationDestination.FridgeIngredient
 import com.s005.fif.recipe.ui.RecipeViewModel
 import com.s005.fif.recipe.ui.step.RecipeStepScreen
 import com.s005.fif.recipe.ui.detail.RecipeDetailScreen
@@ -36,6 +39,7 @@ fun FIFWatchNavHost(
     val mainViewModel: MainViewModel = hiltViewModel()
     val recipeViewModel: RecipeViewModel = hiltViewModel()
     val shoppingListViewModel: ShoppingListViewModel = hiltViewModel()
+    val fridgeIngredientViewModel: FridgeIngredientViewModel = hiltViewModel()
 
     SwipeDismissableNavHost(
         navController = navController,
@@ -45,6 +49,7 @@ fun FIFWatchNavHost(
             MainScreen(
                 mainViewModel = mainViewModel,
                 shoppingListViewModel = shoppingListViewModel,
+                fridgeIngredientViewModel = fridgeIngredientViewModel,
                 navigateToShoppingList = {
                     navController.navigate(ShoppingList.route) {
                         launchSingleTop = true
@@ -57,6 +62,11 @@ fun FIFWatchNavHost(
                 },
                 navigateToTimerList = {
                     navController.navigate(TimerList.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToFridgeIngredient = {
+                    navController.navigate(FridgeIngredient.route) {
                         launchSingleTop = true
                     }
                 }
@@ -97,7 +107,7 @@ fun FIFWatchNavHost(
                 },
                 navigateToTimerDetail = { idx ->
                     navController.navigate("${TimerDetail.route}/${idx}") {
-                        launchSingleTop = false
+                        launchSingleTop = true
                         restoreState = true
                     }
                 },
@@ -144,6 +154,12 @@ fun FIFWatchNavHost(
                     }
                 },
                 idx = idx
+            )
+        }
+
+        composable(route = FridgeIngredient.route) {
+            FridgeIngredientScreen(
+                fridgeIngredientViewModel = fridgeIngredientViewModel
             )
         }
     }

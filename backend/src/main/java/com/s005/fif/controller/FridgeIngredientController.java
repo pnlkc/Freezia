@@ -8,12 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.s005.fif.common.auth.MemberDto;
 import com.s005.fif.common.response.Response;
@@ -54,6 +49,13 @@ public class FridgeIngredientController {
 	@Operation(summary = "식재료 출고")
 	public Response removeIngredients(@Parameter(hidden = true) MemberDto memberDto, @RequestBody FridgeIngredientOutputRequestDto dto) {
 		fridgeIngredientService.removeIngredients(memberDto.getMemberId(), dto.getFridgeIngredientId());
+		return new Response(Response.MESSAGE, "출고되었습니다.");
+	}
+
+	@GetMapping("/fcmtest/{fridgeIngredientId}")
+	@Operation(summary = "식재료 출고 FCM 테스트")
+	public Response sendFCMIngredientForTest(@Parameter(hidden = true) MemberDto memberDto, @PathVariable Integer fridgeIngredientId) {
+		fridgeIngredientService.sendFCMIngredientForTest(memberDto.getMemberId(), fridgeIngredientId);
 		return new Response(Response.MESSAGE, "출고되었습니다.");
 	}
 }

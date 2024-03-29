@@ -354,7 +354,6 @@ fun MainRecipeRecommendCard(
                 contentDescription = stringResource(id = R.string.description_recipe_img),
                 contentScale = ContentScale.Crop,
                 colorFilter = ColorFilter.tint(Color.Black.copy(alpha = 0.2f), BlendMode.Overlay),
-                loading = placeholder(R.drawable.close),
                 failure = placeholder(R.drawable.close)
             )
 
@@ -368,7 +367,7 @@ fun MainRecipeRecommendCard(
                     modifier = Modifier
                         .fillMaxWidth(),
                     text = if (item == null) {
-                        AnnotatedStringUtil.makeMainRecommendRecipeString(stringResource(id = R.string.text_no_recommend_recipe), "")
+                        AnnotatedStringUtil.makeString(stringResource(id = R.string.text_no_recommend_recipe))
                     } else {
                         AnnotatedStringUtil.makeMainRecommendRecipeString(item.recommendDesc, item.name)
                     },

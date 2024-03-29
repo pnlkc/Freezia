@@ -142,6 +142,7 @@ fun FIFNavHost(
             UserSelectScreen(
                 modifier = modifierSN,
                 userViewModel = userViewModel,
+                mainViewModel = mainViewModel,
                 navigateToUserOnboarding = {
                     navController.navigate("${NavigationDestination.UserOnboarding.route}/0") {
                         launchSingleTop = true

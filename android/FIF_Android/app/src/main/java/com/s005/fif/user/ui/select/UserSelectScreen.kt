@@ -36,6 +36,8 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.s005.fif.R
+import com.s005.fif.main.ui.MainViewModel
+import com.s005.fif.recipe.ui.RecipeViewModel
 import com.s005.fif.ui.theme.Typography
 import com.s005.fif.user.dto.UserItem
 import com.s005.fif.user.ui.UserViewModel
@@ -47,6 +49,7 @@ import kotlinx.coroutines.launch
 fun UserSelectScreen(
     modifier: Modifier = Modifier,
     userViewModel: UserViewModel,
+    mainViewModel: MainViewModel,
     navigateToUserOnboarding: () -> Unit,
     navigateToMain: () -> Unit
 ) {
@@ -61,6 +64,7 @@ fun UserSelectScreen(
                 userViewModel.getMemberInfo()
 
                 if (userViewModel.memberInfo!!.onboardYn) {
+                    mainViewModel.getRecommendRecipeList()
                     navigateToMain()
                 } else {
                     userViewModel.clearOnboarding()

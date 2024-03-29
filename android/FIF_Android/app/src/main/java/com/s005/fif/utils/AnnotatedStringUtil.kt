@@ -68,4 +68,18 @@ object AnnotatedStringUtil {
             }
         }
     }
+
+    @Composable
+    fun makeString(text: String) : AnnotatedString {
+        return buildAnnotatedString {
+            withStyle(
+                style = SpanStyle(
+                    color = Color.Black,
+                    fontSize = Typography.bodyMedium.fontSize
+                )
+            ) {
+                append(text)
+            }
+        }
+    }
 }

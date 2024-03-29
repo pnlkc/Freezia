@@ -28,7 +28,7 @@ class ShoppingListViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getShoppingList() {
+    suspend fun getShoppingList() {
         val responseResult = shoppingListRepository.getShoppingList()
 
         if (responseResult.isSuccessful) {

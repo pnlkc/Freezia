@@ -6,6 +6,7 @@ import com.s005.fif.common.dto.DefaultResponse
 import com.s005.fif.common.dto.ErrorResponse
 import com.s005.fif.fcm.RecipeLiveData
 import com.s005.fif.recipe.data.RecipeRepository
+import com.s005.fif.recipe.dto.MoveRecipeStepRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.serialization.json.Json
 import retrofit2.Response
@@ -19,7 +20,7 @@ class RecipeViewModel @Inject constructor(
     suspend fun moveRecipeStep(step: Int) {
         RecipeLiveData.recipeStep.postValue(step - 1)
 
-        val responseResult = recipeRepository.moveRecipeStep(step)
+        val responseResult = recipeRepository.moveRecipeStep(step, MoveRecipeStepRequest())
 
         if (responseResult.isSuccessful) {
             Log.d("로그", "RecipeViewModel - moveRecipeStep() 호출됨 / 응답 성공 : ${responseResult.body()!!}")

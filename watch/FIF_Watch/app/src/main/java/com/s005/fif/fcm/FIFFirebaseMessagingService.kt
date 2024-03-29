@@ -67,8 +67,11 @@ class FIFFirebaseMessagingService : FirebaseMessagingService() {
                 val step = Json.decodeFromString<FCMStepDTO>(message.data["json"]!!)
 
                 Log.d("로그", "FIFFirebaseMessagingService - onMessageReceived() 호출됨 / 레시피 단계 이동 알림 : ${step.step}")
-                RecipeLiveData.isFcmNotification = true
-                RecipeLiveData.recipeStep.postValue(step.step - 1)
+
+                if (step.sender != 2) {
+                    RecipeLiveData.isFcmNotification = true
+                    RecipeLiveData.recipeStep.postValue(step.step - 1)
+                }
             }
         }
     }

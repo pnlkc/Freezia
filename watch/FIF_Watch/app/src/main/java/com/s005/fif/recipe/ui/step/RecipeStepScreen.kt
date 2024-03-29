@@ -109,7 +109,7 @@ fun RecipeStepScreen(
 
             if (RecipeLiveData.isFcmNotification) {
                 RecipeLiveData.isFcmNotification = false
-            } else if (page <= maxPages - 1) {
+            } else if (page <= maxPages + 1) {
                 recipeViewModel.moveRecipeStep(page + 1)
             }
         }
@@ -120,15 +120,19 @@ fun RecipeStepScreen(
             .fillMaxSize(),
         state = pagerState
     ) { page ->
-        val currentStep = RecipeLiveData.recipeData!!.recipeSteps[minOf(page, pagerState.pageCount - 2)]
+        val currentStep = if (page != maxPages) {
+            RecipeLiveData.recipeData!!.recipeSteps[page]
+        } else {
+            null
+        }
 
         Box(
             modifier = modifier
                 .fillMaxSize()
         ) {
             BackgroundImage(
-                imgUrl = null,
-                type = currentStep.type
+                imgUrl = if (currentStep == null) RecipeLiveData.recipeData!!.recipeInfo.imgUrl else null,
+                type = currentStep?.type
             )
 
             if (page != maxPages) {
@@ -154,7 +158,7 @@ fun RecipeStepScreen(
                     onTimerClicked = { time, name ->
                         navigateToTimerDetail(timerViewModel.addTimer(time, name, page) - 1)
                     },
-                    currentStep = currentStep
+                    currentStep = currentStep!!
                 )
             } else {
                 RecipeDoneBody(

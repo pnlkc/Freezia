@@ -1,6 +1,7 @@
 package com.s005.fif.recipe.network
 
 import com.s005.fif.common.dto.DefaultResponse
+import com.s005.fif.recipe.dto.MoveRecipeStepRequest
 import com.s005.fif.recipe.dto.RecipeCompleteRequest
 import com.s005.fif.recipe.dto.RecipeDetailResponse
 import com.s005.fif.recipe.dto.RecipeStepListResponse
@@ -27,9 +28,10 @@ interface RecipeService {
         @Body recipeCompleteRequest: RecipeCompleteRequest
     ): Response<DefaultResponse>
 
-    @GET("recipes/steps/{step}")
+    @POST("recipes/steps/{step}")
     suspend fun moveRecipeStep(
-        @Path("step") step: Int
+        @Path("step") step: Int,
+        @Body moveRecipeStepRequest: MoveRecipeStepRequest
     ) : Response<DefaultResponse>
 
     @GET("recipes/{recipeId}/galaxy-watch")

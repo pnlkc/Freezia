@@ -1,6 +1,7 @@
 package com.s005.fif.recipe.data
 
 import com.s005.fif.common.dto.DefaultResponse
+import com.s005.fif.recipe.dto.MoveRecipeStepRequest
 import com.s005.fif.recipe.dto.RecipeCompleteRequest
 import com.s005.fif.recipe.dto.RecipeDetailResponse
 import com.s005.fif.recipe.dto.RecipeStepListResponse
@@ -26,7 +27,8 @@ interface RecipeRepository {
     ): Response<DefaultResponse>
 
     suspend fun moveRecipeStep(
-        step: Int
+        step: Int,
+        moveRecipeStepRequest: MoveRecipeStepRequest
     ) : Response<DefaultResponse>
 
     suspend fun disconnectRecipe(
@@ -52,8 +54,8 @@ class DefaultRecipeRepository @Inject constructor(
         return recipeService.addRecipeComplete(recipeId, recipeCompleteRequest)
     }
 
-    override suspend fun moveRecipeStep(step: Int): Response<DefaultResponse> {
-        return recipeService.moveRecipeStep(step)
+    override suspend fun moveRecipeStep(step: Int, moveRecipeStepRequest: MoveRecipeStepRequest): Response<DefaultResponse> {
+        return recipeService.moveRecipeStep(step, moveRecipeStepRequest)
     }
 
     override suspend fun disconnectRecipe(recipeId: Int): Response<DefaultResponse> {

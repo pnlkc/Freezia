@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import registDragEvent, { inrange } from '../../utils/registDragEvent';
+import { getRecipeDetail } from '../../apis/recipe';
 
 export default function RecommendRecipeCarousel() {
   const [selected, setSelected] = useState(0);
@@ -7,39 +9,28 @@ export default function RecommendRecipeCarousel() {
   const [animate, setAnimate] = useState(false);
   const [width, setWidth] = useState(200);
   const slideRef = useRef();
+  const navigate = useNavigate();
 
-  const recipeList = [
-    {
-      url: '/images/cooking/recipe/1.jpg',
-      name: '애호박 두부면 볶음',
-      description: '',
-      id: 1,
+  const recipeList = JSON.parse(sessionStorage.getItem('recommendation'));
+
+  const typeMap = {
+    1: {
+      keyword: '스트레스',
+      description: '가 높으신날',
     },
-    {
-      url: '/images/cooking/recipe/2.jpg',
-      name: '버섯강된장',
-      description: '',
-      id: 2,
+    2: {
+      keyword: '수면시간',
+      description: '이 부족한날',
     },
-    {
-      url: '/images/cooking/recipe/3.jpg',
-      name: '건새우 마늘쫑 조림',
-      description: '',
-      id: 3,
+    3: {
+      keyword: '혈중산소',
+      description: ' 관리에 좋은',
     },
-    {
-      url: '/images/cooking/recipe/4.jpg',
-      name: '고단백 샐러드 국수',
-      description: '',
-      id: 4,
+    4: {
+      keyword: '유통기한',
+      description: '이 임박한 재료로 만든',
     },
-    {
-      url: '/images/cooking/recipe/5.jpg',
-      name: '콜리플라워 리조또',
-      description: '',
-      id: 5,
-    },
-  ];
+  };
 
   useEffect(() => {
     setWidth(slideRef.current.getBoundingClientRect().width);
@@ -60,6 +51,11 @@ export default function RecommendRecipeCarousel() {
           },
           onDragEnd: (deltaX) => {
             const maxIndex = recipeList.length - 1;
+            if (-10 < deltaX && deltaX < 10) {
+              getRecipeDetail(recipeList[selected].recipeId).then(() => {
+                navigate(`/Cooking/recipe/${recipeList[selected].recipeId}`);
+              });
+            }
 
             if (deltaX < -100) setSelected(inrange(selected + 1, 0, maxIndex));
             if (deltaX > 100) setSelected(inrange(selected - 1, 0, maxIndex));
@@ -67,22 +63,23 @@ export default function RecommendRecipeCarousel() {
             setAnimate(true);
             setTransX(0);
           },
+          stopPropagation: true,
         })}
         onTransitionEnd={() => {
           setAnimate(false);
         }}
       >
-        {recipeList.map(({ url, name, id }) => (
-          <div className="recommend-recipe-carousel-item" key={id}>
+        {recipeList.map(({ imgUrl, name, recipeId, recommendType }) => (
+          <div className="recommend-recipe-carousel-item" key={recipeId}>
             <img
               className="carousel-item-image"
-              src={url}
+              src={imgUrl}
               alt={name}
               draggable={false}
             />
             <div className="carousel-item-description f-2">
-              <span className="bold">스트레스</span>
-              <span>가 높으신날</span>
+              <span className="bold">{typeMap[recommendType].keyword}</span>
+              <span>{typeMap[recommendType].description}</span>
               <div className="mt-0">
                 <span className="bold c-p">{name}</span>
                 <span> 어떠세요?</span>

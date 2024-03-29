@@ -42,7 +42,9 @@ export default function Recipe() {
     <div className="cooking-recipe-container">
       <div
         className="cooking-recipe-header"
-        style={{ backgroundImage: `url('${recipeDetail?.imgUrl}')` }}
+        style={{
+          backgroundImage: `url('${recipeDetail ? recipeDetail.imgUrl : ''}')`,
+        }}
       >
         <div className="cooking-recipe-background-filter" />
         <div className="cooking-recipe-header-icon-box">
@@ -61,7 +63,9 @@ export default function Recipe() {
           />
         </div>
         <div className="recipe-header-description-box">
-          <div className="recipe-header-name f-3">{recipeDetail?.name}</div>
+          <div className="recipe-header-name f-3">
+            {recipeDetail ? recipeDetail.name : ''}
+          </div>
           <div className="recipe-header-tags">
             {recipeDetail?.recipeTypes.split(',').map((name) => (
               <div className="recipe-header-tag" key={name}>{`#${name}`}</div>
@@ -93,12 +97,12 @@ export default function Recipe() {
           <div className="recipe-info-box">
             <div className="recipe-info-wrapper">
               <div className="recipe-info-type">요리 시간</div>
-              <div className="recipe-info-value">{`${recipeDetail?.cookTime} m`}</div>
+              <div className="recipe-info-value">{`${recipeDetail ? recipeDetail.cookTime : 0} m`}</div>
             </div>
             <div className="recipe-info-divider" />
             <div className="recipe-info-wrapper">
               <div className="recipe-info-type">칼로리</div>
-              <div className="recipe-info-value">{`${recipeDetail?.calorie}kcal`}</div>
+              <div className="recipe-info-value">{`${recipeDetail ? recipeDetail.calorie : 0}kcal`}</div>
             </div>
           </div>
           <Link to="connect" className="recipe-connect-link link f-0">

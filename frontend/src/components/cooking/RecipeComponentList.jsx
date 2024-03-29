@@ -48,7 +48,7 @@ export default function RecipeComponentList({
             className="serving-select-button"
             onClick={decreaseServing}
           />
-          <div className="f-2 serving-value">{`${serving} 인분`}</div>
+          <div className="f-2 serving-value">{`${serving ? serving : 0} 인분`}</div>
           <img
             src="/images/cooking/plus_orange.svg"
             alt="제공량 추가"

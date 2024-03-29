@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.s005.fif.R
+import com.s005.fif.recipe.ui.RecipeViewModel
 import com.s005.fif.ui.theme.Typography
 import com.s005.fif.user.ui.UserViewModel
 
@@ -30,6 +31,7 @@ import com.s005.fif.user.ui.UserViewModel
 fun SplashScreen(
     modifier: Modifier = Modifier,
     userViewModel: UserViewModel,
+    mainViewModel: MainViewModel,
     navigateToMain: () -> Unit,
     navigateToUserSelect: () -> Unit
 ) {
@@ -38,6 +40,7 @@ fun SplashScreen(
             userViewModel.getMemberInfo()
 
             if (userViewModel.memberInfo!!.onboardYn) {
+                mainViewModel.getRecommendRecipeList()
                 navigateToMain()
             } else {
                 navigateToUserSelect()

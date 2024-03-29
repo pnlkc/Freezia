@@ -57,10 +57,10 @@ import com.s005.fif.user.ui.onboarding.UserOnboardingBtn
 fun RecipePreferenceSettingScreen(
     modifier: Modifier = Modifier,
     userViewModel: UserViewModel,
-    navigateToUserProfile: () -> Unit,
     navigateUp: () -> Unit,
     navigateToUserOnboarding: () -> Unit,
-    navigateToRecipeHistory: () -> Unit
+    navigateToRecipeHistory: () -> Unit,
+    navigateToUserSelect: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -71,7 +71,8 @@ fun RecipePreferenceSettingScreen(
         UserProfileTopBar(
             navigateUp = navigateUp,
             memberInfo = userViewModel.memberInfo,
-            navigateToRecipeHistory = navigateToRecipeHistory
+            navigateToRecipeHistory = navigateToRecipeHistory,
+            navigateToUserSelect = navigateToUserSelect
         )
 
         RecipePreferenceSettingBody(

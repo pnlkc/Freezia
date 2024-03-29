@@ -10,6 +10,8 @@ import com.s005.fif.common.dto.ErrorResponse
 import com.s005.fif.main.data.MainRepository
 import com.s005.fif.main.dto.RecommendRecipeListItem
 import com.s005.fif.main.dto.toRecommendRecipeListItem
+import com.s005.fif.recipe.dto.RecipeListItem
+import com.s005.fif.recipe.dto.toRecipeListItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
@@ -19,7 +21,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val mainRepository: MainRepository
 ) : ViewModel() {
-    var recommendRecipeListItem by mutableStateOf(listOf<RecommendRecipeListItem>())
+    var recommendRecipeListItem by mutableStateOf(listOf<RecipeListItem>())
 
     init {
         viewModelScope.launch {
@@ -27,11 +29,11 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getRecommendRecipeList() {
+    suspend fun getRecommendRecipeList() {
         val responseResult = mainRepository.getRecommendRecipeList()
 
         if (responseResult.isSuccessful) {
-            recommendRecipeListItem = responseResult.body()!!.recipes.map { it.toRecommendRecipeListItem() }
+            recommendRecipeListItem = responseResult.body()!!.recipes.map { it.toRecipeListItem() }
         } else {
             val body = Json.decodeFromString<ErrorResponse>(
                 responseResult.errorBody()?.string()!!

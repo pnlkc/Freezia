@@ -63,6 +63,7 @@ fun ShoppingListScreen(
     navigateUp: () -> Unit,
     navigateToRecipeHistory: () -> Unit,
     navigateToShoppingListAdd: () -> Unit,
+    navigateToUserSelect: () -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
 
@@ -76,7 +77,8 @@ fun ShoppingListScreen(
         UserProfileTopBar(
             navigateUp = navigateUp,
             memberInfo = userViewModel.memberInfo,
-            navigateToRecipeHistory = navigateToRecipeHistory
+            navigateToRecipeHistory = navigateToRecipeHistory,
+            navigateToUserSelect = navigateToUserSelect
         )
 
         ShoppingListBody(

@@ -70,7 +70,8 @@ fun RecipeHistoryScreen(
     recipeHistoryViewModel: RecipeHistoryViewModel,
     mode: RecipeHistoryType,
     navigateUp: () -> Unit,
-    navigateToRecipeDetail: (Int) -> Unit
+    navigateToRecipeDetail: (Int) -> Unit,
+    navigateToUserSelect: () -> Unit,
 ) {
     LaunchedEffect(key1 = true) {
         recipeHistoryViewModel.getSavedRecipeList()
@@ -86,7 +87,10 @@ fun RecipeHistoryScreen(
         UserProfileTopBar(
             navigateUp = navigateUp,
             memberInfo = userViewModel.memberInfo,
-            navigateToRecipeHistory = {  }
+            navigateToRecipeHistory = {
+                // 이미 같은 화면이므로 아무 작업 안해도 됨
+            },
+            navigateToUserSelect = navigateToUserSelect
         )
 
         SavedRecipeBody(
@@ -105,7 +109,7 @@ fun SavedRecipeBody(
     mode: RecipeHistoryType,
     savedRecipeList: List<RecipeHistoryItem>,
     completedRecipeList: List<RecipeHistoryItem>,
-    navigateToRecipeDetail: (Int) -> Unit
+    navigateToRecipeDetail: (Int) -> Unit,
 ) {
     var selected by remember { mutableStateOf(mode) }
     val pagerState = rememberPagerState(
@@ -125,7 +129,7 @@ fun SavedRecipeBody(
         modifier = modifier
             .padding(horizontal = 10.dp),
 
-    ) {
+        ) {
         SavedRecipeTitleRow(
             selected = selected,
             savedRecipeClicked = {
@@ -161,6 +165,7 @@ fun SavedRecipeBody(
                         onItemClicked = navigateToRecipeDetail
                     )
                 }
+
                 1 -> {
                     // TODO. 실제 리스트로 변경 필요
                     RecipeHistoryPagerItem(
@@ -202,7 +207,7 @@ fun SavedRecipeTitleRow(
             modifier = Modifier
                 .weight(1f),
             icon = painterResource(id = R.drawable.complete),
-            text = stringResource(id = R.string.text_completed_food)+ " (${completedRecipeListSize})",
+            text = stringResource(id = R.string.text_completed_food) + " (${completedRecipeListSize})",
             iconColor = if (selected == SavedRecipe) colorScheme.primary else Color.White,
             textColor = if (selected == SavedRecipe) Color.Black else Color.White,
             backgroundColor = if (selected == SavedRecipe) Color.White else colorScheme.primary,
@@ -219,7 +224,7 @@ fun SavedRecipeTitleItem(
     iconColor: Color,
     textColor: Color,
     backgroundColor: Color,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Row(
         modifier = modifier
@@ -254,7 +259,7 @@ fun SavedRecipeTitleItem(
 fun RecipeHistoryPagerItem(
     modifier: Modifier = Modifier,
     list: List<RecipeHistoryItem>,
-    onItemClicked: (Int) -> Unit
+    onItemClicked: (Int) -> Unit,
 ) {
     LazyVerticalGrid(
         modifier = modifier
@@ -282,7 +287,7 @@ fun RecipeHistoryPagerItem(
 fun RecipeHistoryLazyVerticalGridItem(
     modifier: Modifier = Modifier,
     item: RecipeHistoryItem,
-    onItemClicked: (Int) -> Unit
+    onItemClicked: (Int) -> Unit,
 ) {
     RecipeHistoryLazyVerticalGridItemBox(
         modifier = modifier,
@@ -298,11 +303,11 @@ fun RecipeHistoryLazyVerticalGridItem(
 fun RecipeHistoryLazyVerticalGridItem(
     modifier: Modifier = Modifier,
     item: RecipeListItem,
-    onItemClicked: (Int) -> Unit
+    onItemClicked: (Int) -> Unit,
 ) {
     RecipeHistoryLazyVerticalGridItemBox(
         modifier = modifier,
-        recipeId =item.recipeId,
+        recipeId = item.recipeId,
         imgUrl = item.imgUrl,
         name = item.name,
         cookTime = item.cookTime,
@@ -318,7 +323,7 @@ fun RecipeHistoryLazyVerticalGridItemBox(
     imgUrl: String,
     name: String,
     cookTime: Int,
-    onItemClicked: (Int) -> Unit
+    onItemClicked: (Int) -> Unit,
 ) {
     Box(
         modifier = modifier

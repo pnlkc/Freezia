@@ -51,10 +51,11 @@ class RecipeViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getRecipeList() {
+    suspend fun getRecipeList() {
         val responseResult = recipeRepository.getRecipeList()
 
         if (responseResult.isSuccessful) {
+            recipeList.clear()
             recipeList.addAll(responseResult.body()!!.recipes.map { it.toRecipeListItem() })
 
             Log.d("로그", "RecipeViewModel - getRecipeList() 호출됨 / 응답 성공 : ${recipeList.toList()}")

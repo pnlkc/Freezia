@@ -15,6 +15,8 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +24,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -29,7 +32,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
@@ -92,9 +94,10 @@ fun UserSelectBody(
 
         LazyVerticalGrid(
             modifier = Modifier
-                .padding(horizontal = 10.dp),
-            columns = GridCells.Adaptive(minSize = ScreenSizeUtil.widthDp.toDpSize(30)),
-            verticalArrangement = Arrangement.spacedBy(30.dp)
+                .padding(horizontal = 20.dp),
+            columns = GridCells.Adaptive(minSize = ScreenSizeUtil.widthDp.toDpSize(25)),
+            verticalArrangement = Arrangement.spacedBy(5.dp),
+            horizontalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             item {
                 UserAddItem(
@@ -122,32 +125,34 @@ fun UserSelectBody(
 fun UserAddItem(
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+    Card(
+        modifier = modifier
+            .padding(5.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+        shape = RoundedCornerShape(20.dp)
     ) {
-        Box(
-            modifier = modifier
-                .clip(CircleShape)
-                .size((ScreenSizeUtil.widthDp / 3 - 40).dp)
-                .border(5.dp, colorScheme.primary, CircleShape)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Image(
                 modifier = modifier
-                    .size((ScreenSizeUtil.widthDp / 3 - 60).dp)
-                    .align(Alignment.Center),
-                painter = painterResource(id = R.drawable.add),
+                    .size((ScreenSizeUtil.widthDp / 3 - 40).dp),
+                painter = painterResource(id = R.drawable.add_circle),
                 contentDescription = stringResource(id = R.string.description_btn_profile_add),
                 colorFilter = ColorFilter.tint(colorScheme.primary),
                 contentScale = ContentScale.Fit
             )
-        }
 
-        Text(
-            text = stringResource(id = R.string.text_add_user),
-            style = Typography.bodyMedium
-        )
+            Text(
+                text = stringResource(id = R.string.text_add_user),
+                style = Typography.bodyMedium
+            )
+        }
     }
 }
 
@@ -158,27 +163,37 @@ fun UserSelectItem(
     item: UserItem,
     userClicked: (Int) -> Unit
 ) {
-    Column(
+    Card(
         modifier = modifier
-            .clip(RoundedCornerShape(20.dp))
-            .clickable { userClicked(item.memberId) },
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+            .padding(5.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+        shape = RoundedCornerShape(20.dp)
     ) {
-        GlideImage(
-            modifier = modifier
-                .clip(CircleShape)
-                .size((ScreenSizeUtil.widthDp / 3 - 40).dp),
-            model = item.imgUrl,
-            contentDescription = stringResource(id = R.string.description_img_profile),
-            contentScale = ContentScale.Crop,
-            loading = placeholder(R.drawable.account),
-            failure = placeholder(R.drawable.account)
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(RoundedCornerShape(20.dp))
+                .clickable { userClicked(item.memberId) }
+                .padding(10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            GlideImage(
+                modifier = modifier
+                    .clip(CircleShape)
+                    .size((ScreenSizeUtil.widthDp / 3 - 40).dp),
+                model = item.imgUrl,
+                contentDescription = stringResource(id = R.string.description_img_profile),
+                contentScale = ContentScale.Crop,
+                loading = placeholder(R.drawable.account),
+                failure = placeholder(R.drawable.account)
+            )
 
-        Text(
-            text = item.name,
-            style = Typography.bodyMedium
-        )
+            Text(
+                text = item.name,
+                style = Typography.bodyMedium
+            )
+        }
     }
 }

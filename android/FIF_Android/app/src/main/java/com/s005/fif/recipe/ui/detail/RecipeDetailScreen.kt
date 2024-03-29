@@ -178,7 +178,7 @@ fun RecipeDetailTopBar(
                 .clickable { onRecipeSaveBtnClicked() },
             painter = if (recipe!!.saveYn) painterResource(id = R.drawable.bookmark_fill) else painterResource(id = R.drawable.bookmark),
             contentDescription = stringResource(id = R.string.description_btn_bookmark),
-            tint = if (recipe!!.saveYn) colorScheme.primary else Color.White
+            tint = if (recipe.saveYn) colorScheme.primary else Color.White
         )
     }
 }

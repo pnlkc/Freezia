@@ -33,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,21 +53,27 @@ import com.s005.fif.R
 import com.s005.fif.common.data.DiseaseListData
 import com.s005.fif.common.data.IngredientListData
 import com.s005.fif.recipe.ui.detail.IngredientListItem
+import com.s005.fif.shopping_list.ui.ShoppingListViewModel
 import com.s005.fif.ui.theme.Typography
 import com.s005.fif.user.dto.Member
 import com.s005.fif.user.ui.UserViewModel
 import com.s005.fif.utils.AnnotatedStringUtil
+import kotlinx.coroutines.launch
 
 @Composable
 fun UserProfileScreen(
     modifier: Modifier = Modifier,
     userViewModel: UserViewModel,
+    shoppingListViewModel: ShoppingListViewModel,
     navigateToRecipePreferenceSetting: () -> Unit,
     navigateUp: () -> Unit,
     navigateToSavedRecipe: () -> Unit,
     navigationToShoppingList: () -> Unit,
-    navigateToRecipeHistory: () -> Unit
+    navigateToRecipeHistory: () -> Unit,
+    navigateToUserSelect: () -> Unit
 ) {
+    val coroutineScope = rememberCoroutineScope()
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -76,13 +83,21 @@ fun UserProfileScreen(
         UserProfileTopBar(
             navigateUp = navigateUp,
             memberInfo = userViewModel.memberInfo,
-            navigateToRecipeHistory = navigateToRecipeHistory
+            navigateToRecipeHistory = navigateToRecipeHistory,
+            navigateToUserSelect = navigateToUserSelect
         )
 
         UserProfileBody(
             navigateToRecipePreferenceSetting = navigateToRecipePreferenceSetting,
             navigateToSavedRecipe = navigateToSavedRecipe,
-            navigationToShoppingList = navigationToShoppingList,
+            navigationToShoppingList = {
+                coroutineScope.launch {
+                    shoppingListViewModel.getShoppingList()
+
+                }
+
+                navigationToShoppingList()
+            },
             memberInfo = userViewModel.memberInfo
         )
     }
@@ -94,7 +109,8 @@ fun UserProfileTopBar(
     modifier: Modifier = Modifier,
     navigateUp: () -> Unit,
     memberInfo: Member?,
-    navigateToRecipeHistory: () -> Unit
+    navigateToRecipeHistory: () -> Unit,
+    navigateToUserSelect: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -139,7 +155,7 @@ fun UserProfileTopBar(
                 modifier = modifier
                     .clip(CircleShape)
                     .size(25.dp)
-                    .clickable { },
+                    .clickable { navigateToUserSelect() },
                 model = memberInfo?.imgUrl ?: "",
                 contentDescription = stringResource(id = R.string.description_img_profile),
                 contentScale = ContentScale.Crop,

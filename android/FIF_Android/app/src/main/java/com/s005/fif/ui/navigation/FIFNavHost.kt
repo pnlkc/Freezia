@@ -1,11 +1,11 @@
 package com.s005.fif.ui.navigation
 
 import android.app.Activity
-import android.util.Log
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
@@ -38,6 +38,7 @@ import com.s005.fif.user.ui.recipe_history.ui.RecipeHistoryScreen
 import com.s005.fif.user.ui.recipe_history.ui.RecipeHistoryType
 import com.s005.fif.user.ui.recipe_history.ui.RecipeHistoryViewModel
 import com.s005.fif.user.ui.select.UserSelectScreen
+import kotlinx.coroutines.launch
 
 @Composable
 fun FIFNavHost(
@@ -62,6 +63,17 @@ fun FIFNavHost(
     val recipeHistoryViewModel: RecipeHistoryViewModel = hiltViewModel()
     val shoppingListViewModel: ShoppingListViewModel = hiltViewModel()
 
+    val coroutineScope = rememberCoroutineScope()
+    val navigateToUserSelect = {
+        coroutineScope.launch {
+            userViewModel.removeAccessToken()
+        }
+
+        navController.navigate(NavigationDestination.UserSelect.route) {
+            launchSingleTop = true
+        }
+    }
+
     NavHost(
         navController = navController,
         startDestination = NavigationDestination.Splash.route,
@@ -73,6 +85,7 @@ fun FIFNavHost(
             SplashScreen(
                 modifier = modifierSN,
                 userViewModel = userViewModel,
+                mainViewModel = mainViewModel,
                 navigateToMain = {
                     navController.navigate(NavigationDestination.Main.route) {
                         launchSingleTop = true
@@ -93,6 +106,7 @@ fun FIFNavHost(
                 modifier = modifierSN,
                 userViewModel = userViewModel,
                 mainViewModel = mainViewModel,
+                recipeViewModel = recipeViewModel,
                 navigateToUserProfile = {
                     navController.navigate(NavigationDestination.UserProfile.route) {
                         launchSingleTop = true
@@ -117,7 +131,8 @@ fun FIFNavHost(
                     navController.navigate("${NavigationDestination.RecipeHistory.route}/0") {
                         launchSingleTop = true
                     }
-                }
+                },
+                navigateToUserSelect = navigateToUserSelect
             )
         }
 
@@ -175,6 +190,7 @@ fun FIFNavHost(
             UserProfileScreen(
                 modifier = modifierSN,
                 userViewModel = userViewModel,
+                shoppingListViewModel = shoppingListViewModel,
                 navigateToRecipePreferenceSetting = {
                     navController.navigate(NavigationDestination.RecipePreferenceSetting.route) {
                         launchSingleTop = true
@@ -197,7 +213,8 @@ fun FIFNavHost(
                     navController.navigate("${NavigationDestination.RecipeHistory.route}/0") {
                         launchSingleTop = true
                     }
-                }
+                },
+                navigateToUserSelect = navigateToUserSelect
             )
         }
 
@@ -207,11 +224,6 @@ fun FIFNavHost(
             RecipePreferenceSettingScreen(
                 modifier = modifierSNI,
                 userViewModel = userViewModel,
-                navigateToUserProfile = {
-                    navController.navigate(NavigationDestination.UserProfile.route) {
-                        launchSingleTop = true
-                    }
-                },
                 navigateUp = {
                     navController.navigateUp()
                 },
@@ -224,7 +236,8 @@ fun FIFNavHost(
                     navController.navigate("${NavigationDestination.RecipeHistory.route}/0") {
                         launchSingleTop = true
                     }
-                }
+                },
+                navigateToUserSelect = navigateToUserSelect
             )
         }
 
@@ -251,7 +264,8 @@ fun FIFNavHost(
                     navController.navigate("${NavigationDestination.RecipeDetail.route}/${id}") {
                         launchSingleTop = true
                     }
-                }
+                },
+                navigateToUserSelect = navigateToUserSelect
             )
         }
 
@@ -274,7 +288,8 @@ fun FIFNavHost(
                     navController.navigate("${NavigationDestination.ShoppingListAdd.route}") {
                         launchSingleTop = true
                     }
-                }
+                },
+                navigateToUserSelect = navigateToUserSelect
             )
         }
 
@@ -292,7 +307,8 @@ fun FIFNavHost(
                     navController.navigate("${NavigationDestination.RecipeHistory.route}/0") {
                         launchSingleTop = true
                     }
-                }
+                },
+                navigateToUserSelect = navigateToUserSelect
             )
         }
 
@@ -320,7 +336,8 @@ fun FIFNavHost(
                     navController.navigate("${NavigationDestination.RecipeHistory.route}/0") {
                         launchSingleTop = true
                     }
-                }
+                },
+                navigateToUserSelect = navigateToUserSelect
             )
         }
 

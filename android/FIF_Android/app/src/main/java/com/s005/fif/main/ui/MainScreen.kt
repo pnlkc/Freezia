@@ -28,6 +28,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,6 +41,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -47,25 +50,32 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.s005.fif.R
 import com.s005.fif.main.dto.RecommendRecipeListItem
+import com.s005.fif.recipe.dto.RecipeListItem
+import com.s005.fif.recipe.ui.RecipeViewModel
 import com.s005.fif.ui.theme.Typography
 import com.s005.fif.user.dto.Member
 import com.s005.fif.user.ui.UserViewModel
 import com.s005.fif.user.ui.profile.HealthCard
 import com.s005.fif.user.ui.profile.UserProfileColumnText
+import com.s005.fif.utils.StringLineChangeUtil.toNonBreakingString
+import kotlinx.coroutines.launch
 
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
     userViewModel: UserViewModel,
     mainViewModel: MainViewModel,
+    recipeViewModel: RecipeViewModel,
     navigateToUserProfile: () -> Unit,
     navigateToRecipeList: () -> Unit,
     navigateToRecipeChat: () -> Unit,
     navigateToRecipeDetail: (Int) -> Unit,
     navigateToRecipeHistory: () -> Unit,
+    navigateToUserSelect: () -> Unit
 ) {
     var backWait = 0L
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
     // 뒤로가기시 종료 안내 Toast 메세지
     BackHandler {
@@ -86,12 +96,19 @@ fun MainScreen(
     ) {
         MainTopBar(
             memberInfo = userViewModel.memberInfo,
-            navigateToRecipeHistory = navigateToRecipeHistory
+            navigateToRecipeHistory = navigateToRecipeHistory,
+            navigateToUserSelect = navigateToUserSelect
         )
 
         MainBody(
             navigateToUserProfile = navigateToUserProfile,
-            navigateToRecipeList = navigateToRecipeList,
+            navigateToRecipeList = {
+                coroutineScope.launch {
+                    recipeViewModel.getRecipeList()
+                }
+
+                navigateToRecipeList()
+            },
             navigateToRecipeChat = navigateToRecipeChat,
             navigateToRecipeDetail = navigateToRecipeDetail,
             memberInfo = userViewModel.memberInfo,
@@ -105,7 +122,8 @@ fun MainScreen(
 fun MainTopBar(
     modifier: Modifier = Modifier,
     memberInfo: Member?,
-    navigateToRecipeHistory: () -> Unit
+    navigateToRecipeHistory: () -> Unit,
+    navigateToUserSelect: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -150,7 +168,7 @@ fun MainTopBar(
                 modifier = modifier
                     .clip(CircleShape)
                     .size(25.dp)
-                    .clickable { },
+                    .clickable { navigateToUserSelect() },
                 model = memberInfo?.imgUrl ?: "",
                 contentDescription = stringResource(id = R.string.description_img_profile),
                 contentScale = ContentScale.Crop,
@@ -169,7 +187,7 @@ fun MainBody(
     navigateToRecipeChat: () -> Unit,
     navigateToRecipeDetail: (Int) -> Unit,
     memberInfo: Member?,
-    recommendRecipeListItem: List<RecommendRecipeListItem>
+    recommendRecipeListItem: List<RecipeListItem>
 ) {
     Column(
         modifier = modifier
@@ -233,7 +251,7 @@ fun MainHealthColumn(
 fun MainRecipeRecommendColumn(
     modifier: Modifier = Modifier,
     navigateToRecipeDetail: (Int) -> Unit,
-    recommendRecipeListItem: List<RecommendRecipeListItem>
+    recommendRecipeListItem: List<RecipeListItem>
 ) {
     Column(
         modifier = modifier,
@@ -257,7 +275,7 @@ fun MainRecipeRecommendColumn(
 fun MainRecipeRecommendPager(
     modifier: Modifier = Modifier,
     navigateToRecipeDetail: (Int) -> Unit,
-    recommendRecipeListItem: List<RecommendRecipeListItem>
+    recommendRecipeListItem: List<RecipeListItem>
 ) {
     val pagerState = rememberPagerState(pageCount = { maxOf(1, recommendRecipeListItem.size) })
 
@@ -311,7 +329,7 @@ fun MainRecipeRecommendPager(
 @Composable
 fun MainRecipeRecommendCard(
     modifier: Modifier = Modifier,
-    item: RecommendRecipeListItem?,
+    item: RecipeListItem?,
     navigateToRecipeDetail: () -> Unit,
 ) {
     Card(
@@ -329,7 +347,7 @@ fun MainRecipeRecommendCard(
             GlideImage(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(0.5f)
+                    .fillMaxHeight(0.4f)
                     .clip(RoundedCornerShape(10.dp)),
                 model = item?.imgUrl ?: "",
                 contentDescription = stringResource(id = R.string.description_recipe_img),
@@ -339,27 +357,34 @@ fun MainRecipeRecommendCard(
                 failure = placeholder(R.drawable.close)
             )
 
-            Row(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth(),
-                verticalAlignment = Alignment.Bottom,
-                horizontalArrangement = Arrangement.SpaceBetween
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                horizontalAlignment = Alignment.End
             ) {
                 Text(
-                    text = item?.recommendDesc ?: "추천 레시피가 없습니다",
-                    style = Typography.bodyMedium
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    text = item?.recommendDesc ?: stringResource(id = R.string.text_no_recommend_recipe),
+                    style = Typography.bodyMedium,
+                    maxLines = 4,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Center
                 )
 
-                Text(
-                    modifier = modifier
-                        .clip(RoundedCornerShape(50.dp))
-                        .clickable { navigateToRecipeDetail() }
-                        .background(colorScheme.primary)
-                        .padding(vertical = 5.dp, horizontal = 10.dp),
-                    text = stringResource(id = R.string.text_go_to_recipe_list),
-                    style = Typography.bodyMedium,
-                    color = colorScheme.onPrimary,
-                )
+                if (item != null) {
+                    Text(
+                        modifier = modifier
+                            .clip(RoundedCornerShape(50.dp))
+                            .clickable { navigateToRecipeDetail() }
+                            .background(colorScheme.primary)
+                            .padding(vertical = 5.dp, horizontal = 10.dp),
+                        text = stringResource(id = R.string.text_go_to_recipe_list),
+                        style = Typography.bodyMedium,
+                        color = colorScheme.onPrimary,
+                    )
+                }
             }
         }
     }

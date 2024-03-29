@@ -63,7 +63,8 @@ fun RecipeListScreen(
     navigateUp: () -> Unit,
     navigateToRecipeChat: () -> Unit,
     navigateToRecipeDetail: (Int) -> Unit,
-    navigateToRecipeHistory: () -> Unit
+    navigateToRecipeHistory: () -> Unit,
+    navigateToUserSelect: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -75,7 +76,8 @@ fun RecipeListScreen(
         UserProfileTopBar(
             navigateUp = { navigateUp() },
             memberInfo = userViewModel.memberInfo,
-            navigateToRecipeHistory = navigateToRecipeHistory
+            navigateToRecipeHistory = navigateToRecipeHistory,
+            navigateToUserSelect = navigateToUserSelect
         )
 
         RecipeListBody(

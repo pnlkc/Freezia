@@ -98,7 +98,7 @@ fun RecipeStepScreen(
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = step) {
-        if (pagerState.currentPage != step) {
+        if (pagerState.currentPage != step && RecipeLiveData.isFcmNotification) {
             pagerState.scrollToPage(step)
         }
     }

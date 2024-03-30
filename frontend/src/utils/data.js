@@ -11,6 +11,82 @@ export const diseasesData = {
   10: '통풍',
 };
 
+export const chatExample = {
+  reply: '냉장고에 있는 스팸, 마요네즈, 김치를 사용해 레시피를 생성했습니다.',
+  recommendList: [
+    '가장 최근에 만든 요리와 비슷한 재료를 사용하는 레시피를 알려줘',
+    '간식으로 먹고 싶은데 칼로리를 절반으로 줄인 레시피를 알려줘',
+    '덮밥말고 볶음밥 레시피로 알려줘',
+  ],
+  recipeList: [
+    {
+      name: '스팸마요김치덮밥',
+      ingredientList: [
+        {
+          name: '스팸',
+          amounts: '1',
+          unit: '캔',
+        },
+        {
+          name: '마요네즈',
+          amounts: '2',
+          unit: '큰술',
+        },
+        {
+          name: '김치',
+          amounts: '1',
+          unit: '컵',
+        },
+        {
+          name: '밥',
+          amounts: '2',
+          unit: '공기',
+        },
+      ],
+      seasoningList: [
+        {
+          name: '간장',
+          amounts: '1',
+          unit: '큰술',
+        },
+        {
+          name: '참기름',
+          amounts: '1',
+          unit: '작은술',
+        },
+      ],
+      cookTime: '20분',
+      calorie: '550kcal',
+      servings: '2인분',
+      recipeType: '한식, 덮밥, 간편식',
+      recipeSteps: [
+        {
+          type: '준비',
+          description: '스팸을 깍둑썰기 하고, 김치는 잘게 썰어주세요.',
+          name: '재료 준비',
+          duration: 300,
+          tip: '스팸은 너무 얇게 썰지 않도록 주의하세요.',
+        },
+        {
+          type: '조리',
+          description: '팬에 스팸을 볶다가 김치를 추가하고 볶아주세요.',
+          name: '스팸 김치 볶음',
+          duration: 600,
+          tip: '스팸이 충분히 볶아져야 풍미가 좋아집니다.',
+        },
+        {
+          type: '완성',
+          description:
+            '밥 위에 스팸 김치 볶음을 올리고 마요네즈와 간장, 참기름을 뿌려 마무리합니다.',
+          name: '덮밥 완성',
+          duration: 300,
+          tip: '마요네즈는 취향에 따라 조절하세요.',
+        },
+      ],
+    },
+  ],
+};
+
 export const recipeTypeList = [
   '한식',
   '양식',

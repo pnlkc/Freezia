@@ -2,10 +2,8 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { EventSourcePolyfill, NativeEventSource } from 'event-source-polyfill';
 
-import ReplyMessage from '../../components/cooking/chat/ReplyMessage';
 import UserMessage from '../../components/cooking/chat/UserMessage';
-import { diseasesData, ingredientData } from '../../utils/data';
-import sendMessage from '../../apis/chat';
+import { chatExample, diseasesData, ingredientData } from '../../utils/data';
 import parser from '../../utils/replyParser';
 
 import '../../assets/styles/cooking/recipecreate.css';
@@ -13,16 +11,7 @@ import RealTimeMessage from '../../components/cooking/chat/RealTimeMessage';
 
 export default function RecipeCreate() {
   const [text, setText] = useState('');
-  const [chatLog, setChatLog] = useState([
-    {
-      chat: '냉장고에 있는 재료로 만들 수 있는 덮밥 레시피 알려줘',
-      isReply: false,
-    },
-    {
-      chat: '냉장고에 있는 스팸, 마요네즈, 김치를 사용해 레시피를 생성했습니다.',
-      isReply: true,
-    },
-  ]);
+  const [chatLog, setChatLog] = useState([]);
   const [newMessage, setNewMessage] = useState({ message: '' });
   const [isProgress, setIsProgress] = useState(false);
   const textareaRef = useRef(null);
@@ -34,18 +23,19 @@ export default function RecipeCreate() {
     recommendList: [],
     recipeList: [],
   });
+  const [recommendList, setRecommendList] = useState([]);
 
   useEffect(() => {
     const { message } = newMessage;
     if (message.trim() === '') return;
     setReply(reply + message);
-    parser.parse({ chunk: message, recipe, setRecipe });
+    parser.parse({ chunk: message, recipe, setRecipe, setIsProgress });
   }, [newMessage]);
 
   const handleChange = (event) => {
     if (event.key === 'Enter' && !event.shiftKey) {
       textareaRef.current.value = '';
-      setText(event.target.value);
+      setText('');
       return;
     }
     setText(event.target.value);
@@ -54,7 +44,6 @@ export default function RecipeCreate() {
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = '2.6vw'; // 높이를 초기화
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // 스크롤 높이만큼 높이 설정
     }
   }, [text]); // text 상태가 변경될 때마다 높이 조정
 
@@ -63,56 +52,105 @@ export default function RecipeCreate() {
   }, [chatLog]);
 
   useEffect(() => {
-    if (!isProgress) return;
-    const userInfo = JSON.parse(sessionStorage.getItem('profile'));
-    const diseases = userInfo.diseases.map((id) => diseasesData[id]).join(', ');
-
-    const dislikeIngredients = userInfo.dislikeIngredients
-      .map((id) => {
-        const index = ingredientData.findIndex(
-          ({ ingredientId }) => +ingredientId === +id,
-        );
-        return ingredientData[index].name;
-      })
-      .join(', ');
-
-    const ingredientList = JSON.parse(sessionStorage.getItem('ingredients'));
-    const ingredients = ingredientList.map(({ name }) => name).join(', ');
-
-    const url = `generate-AI?ingredients=${ingredients}&diseases=${diseases}&dislikeIngredients=${dislikeIngredients}&prompt=${textareaRef.current.value}`;
-
-    textareaRef.current.value = '';
-    textareaRef.current.style.height = '2.6vw';
-
-    const EventSource = EventSourcePolyfill || NativeEventSource;
-
-    const eventSource = new EventSource(
-      `${import.meta.env.VITE_BASE_URL}/${url}`,
-      {
-        headers: {
-          Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
-        },
-      },
-    );
-
-    // const eventSource = new EventSource(
-    //   `${import.meta.env.VITE_BASE_URL}/${url}`,
-    //   ['', { withCredentials: true }],
-    // );
-
-    eventSource.onmessage = (event) => {
-      setNewMessage({ message: event.data });
-    };
-
-    eventSource.onerror = (event) => {
-      eventSource.close();
-      setIsProgress(false);
-    };
+    const event = window.addEventListener('resize', () => {
+      if (textareaRef.current) {
+        textareaRef.current.style.height = '2.6vw'; // 높이를 초기화
+        textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+      }
+    });
 
     return () => {
-      eventSource.close();
+      window.removeEventListener('resize', event);
     };
+  }, []);
+
+  useEffect(() => {
+    if (!isProgress) {
+      if (chatLog.length === 0) return;
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+
+      setChatLog([
+        ...chatLog,
+        {
+          recipeInfo: JSON.parse(JSON.stringify(recipe)),
+          isReply: true,
+          id: chatLog.length + 1,
+        },
+      ]);
+
+      setRecommendList([...recipe.recommendList]);
+
+      setRecipe({
+        reply: '',
+        recommendList: [],
+        recipeList: [],
+      });
+    } else {
+      const userInfo = JSON.parse(sessionStorage.getItem('profile'));
+      const diseases = userInfo.diseases
+        .map((id) => diseasesData[id])
+        .join(', ');
+
+      const dislikeIngredients = userInfo.dislikeIngredients
+        .map((id) => {
+          const index = ingredientData.findIndex(
+            ({ ingredientId }) => +ingredientId === +id,
+          );
+          return ingredientData[index].name;
+        })
+        .join(', ');
+
+      const ingredientList = JSON.parse(sessionStorage.getItem('ingredients'));
+      const ingredients = ingredientList.map(({ name }) => name).join(', ');
+
+      const url = `generate-AI?ingredients=${ingredients}&diseases=${diseases}&dislikeIngredients=${dislikeIngredients}&prompt=${textareaRef.current.value}`;
+
+      textareaRef.current.value = '';
+      textareaRef.current.style.height = '2.6vw';
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+
+      ('```json' + JSON.stringify(chatExample) + '```')
+        .split('')
+        .map((chunk, idx) => {
+          setTimeout(
+            () => {
+              setNewMessage({ message: chunk });
+            },
+            idx * 30 + 1000,
+          );
+        });
+
+      return;
+
+      const EventSource = EventSourcePolyfill || NativeEventSource;
+
+      const eventSource = new EventSource(
+        `${import.meta.env.VITE_BASE_URL}/${url}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+          },
+        },
+      );
+
+      eventSource.onmessage = (event) => {
+        setNewMessage({ message: event.data });
+      };
+
+      eventSource.onerror = (event) => {
+        eventSource.close();
+        setIsProgress(false);
+      };
+
+      return () => {
+        eventSource.close();
+      };
+    }
   }, [isProgress]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [recipe]);
 
   const enterMessage = () => {
     if (textareaRef.current.value.trim() === '') return;
@@ -124,8 +162,13 @@ export default function RecipeCreate() {
       {
         chat: textareaRef.current.value,
         isReply: false,
+        id: chatLog.length + 1,
       },
     ]);
+
+    textareaRef.current.value = '';
+    textareaRef.current.style.height = '2.6vw';
+    textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
   };
 
   const preventEnter = (event) => {
@@ -143,6 +186,7 @@ export default function RecipeCreate() {
   const selectRecommend = (chat) => {
     textareaRef.current.value = chat;
     setText(chat);
+    enterMessage();
   };
 
   return (
@@ -156,18 +200,18 @@ export default function RecipeCreate() {
         {'<'}
       </div>
       <div className="recipe-create-chat-container">
-        {chatLog.map(({ chat, isReply }) => {
+        {chatLog.map(({ chat, isReply, recipeInfo, id }) => {
           return isReply ? (
-            <ReplyMessage chat={chat} key={chat} />
+            <RealTimeMessage recipe={recipeInfo} key={id} />
           ) : (
-            <UserMessage chat={chat} key={chat} />
+            <UserMessage chat={chat} key={id} />
           );
         })}
-        {isProgress && <RealTimeMessage reply={reply} />}
+        {isProgress && <RealTimeMessage recipe={recipe} />}
         {chatLog.length > 0 &&
           chatLog[chatLog.length - 1].isReply &&
-          recommendChat &&
-          recommendChat.map((chat) => (
+          !isProgress &&
+          recommendList.map((chat) => (
             <div
               className="recommend-chat-message f-0"
               key={chat}
@@ -186,9 +230,10 @@ export default function RecipeCreate() {
           onChange={handleChange}
           className="recipe-create-input f-1"
           placeholder="채팅 내용을 입력하세요"
-          onKeyUp={(e) => {
-            if (e.code !== 'Enter') return;
-            enterMessage();
+          onKeyUp={(event) => {
+            if (event.key === 'Enter' && !event.shiftKey) {
+              enterMessage();
+            }
           }}
           onKeyDown={preventEnter}
         />

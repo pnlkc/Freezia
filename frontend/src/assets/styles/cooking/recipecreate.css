@@ -16,16 +16,17 @@
   width: 85%;
   position: relative;
   display: flex;
-  height: 2.2vw;
   margin-top: auto;
 }
 
 .recipe-create-chat-container {
   width: 100%;
-  height: calc(100% - 2.2vw);
+  height: calc(100% - 7vw);
   display: flex;
   flex-direction: column;
   overflow-y: scroll;
+  padding-top: 1vw;
+  padding-bottom: 3vw;
 }
 
 .recipe-create-input {
@@ -63,13 +64,14 @@
 
 .reply-chat-message,
 .user-chat-message {
-  max-width: 80%;
+  max-width: 90%;
   padding: 0.8vw 1vw;
   border-radius: 1vw 0 1vw 1vw;
   background-color: var(--user-chat-color);
   align-self: flex-end;
   line-height: 1.3;
   margin-bottom: 1vw;
+  flex-shrink: 0;
 }
 
 .reply-chat-message {
@@ -87,4 +89,5 @@
   margin-bottom: 0.5vw;
   opacity: 0.8;
   cursor: pointer;
+  flex-shrink: 0;
 }

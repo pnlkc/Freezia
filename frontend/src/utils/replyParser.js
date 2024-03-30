@@ -15,7 +15,7 @@ class ReplyParser {
     this.total = '';
   }
 
-  processCharacter(char, recipe, setRecipe) {
+  processCharacter(char, recipe, setRecipe, setIsProgress) {
     if (char !== '{' && this.stack.length === 0) return;
     this.total += char;
 
@@ -38,21 +38,26 @@ class ReplyParser {
     } else if (!this.inString && (char === '{' || char === '[')) {
       this.pushCurrentContext(char, recipe, setRecipe);
     } else if (!this.inString && (char === '}' || char === ']')) {
-      this.popContext(recipe, setRecipe);
+      this.popContext(setIsProgress);
     } else if (!this.inString && char === ':') {
       this.isValue = true;
     } else if (!this.inString && char === ',') {
+      const context = this.stack[this.stack.length - 1];
+      if (context.type === 'array') this.extendArray(recipe, setRecipe);
+      if (this.buffer.trim() === '') return;
+
       if (this.isValue) {
         if (this.currentKey === '') {
           this.currentKey = this.buffer;
           this.currentKey = this.currentKey.trim();
           this.isValue = false;
         } else {
-          this.assignValue(this.buffer);
+          this.assignValue(this.buffer, recipe, setRecipe);
         }
         this.buffer = '';
       } else {
-        this.isValue = true;
+        const context = this.stack[this.stack.length - 1];
+        if (context.type === 'array') this.isValue = true;
       }
     } else {
       this.buffer += char;
@@ -70,12 +75,11 @@ class ReplyParser {
     }
   }
 
-  assignValue(value, recipe, setRecipe) {
+  assignValue(value) {
     if (this.stack.length > 0) {
       const context = this.stack[this.stack.length - 1];
       if (context.type === 'array') {
         context.object.push(('' + value).trim());
-        this.extendArray(recipe, setRecipe);
       } else {
         // 'object'
         context.object[this.currentKey] = ('' + value).trim();
@@ -93,6 +97,7 @@ class ReplyParser {
     if (newContext.type === 'array') {
       this.keyStack.push(this.currentKey);
       this.extendArray(recipe, setRecipe);
+      this.isValue = true;
     } else this.isValue = false;
 
     if (this.stack.length > 0) {
@@ -109,16 +114,13 @@ class ReplyParser {
     this.currentObject = newContext.object;
   }
 
-  popContext(recipe, setRecipe) {
+  popContext(setIsProgress) {
     const finishedContext = this.stack.pop();
     if (finishedContext.type === 'array') {
       this.keyStack.pop();
       this.isValue = false;
       this.currentKey = '';
     }
-
-    if (this.keyStack.length > 0) this.extendArray(recipe, setRecipe);
-
     this.currentObject =
       this.stack.length > 0 ? this.stack[this.stack.length - 1].object : {};
 
@@ -126,6 +128,7 @@ class ReplyParser {
       // At this point, finishedContext.object contains the fully parsed object or array
       console.log('Finished parsing:', finishedContext.object);
       console.log(this.total);
+      setIsProgress(false);
       try {
         console.log(JSON.parse(this.total));
       } catch (e) {
@@ -149,9 +152,9 @@ class ReplyParser {
         } else context[context.length - 1] += result.value;
       }
     } finally {
-      console.log(result);
-      console.log(recipe);
-      setRecipe(recipe);
+      // console.log(result);
+      // console.log(recipe);
+      setRecipe({ ...recipe });
     }
   }
 
@@ -176,7 +179,7 @@ class ReplyParser {
       });
     } else if (lastKey === 'recipeList') {
       recipeContext.push({
-        carlorie: '',
+        calorie: '',
         cookTime: '',
         ingredientList: [],
         name: '',
@@ -192,9 +195,9 @@ class ReplyParser {
     setRecipe(recipe);
   }
 
-  parse({ chunk, recipe, setRecipe }) {
+  parse({ chunk, recipe, setRecipe, setIsProgress }) {
     for (const char of chunk) {
-      this.processCharacter(char, recipe, setRecipe);
+      this.processCharacter(char, recipe, setRecipe, setIsProgress);
     }
   }
 }

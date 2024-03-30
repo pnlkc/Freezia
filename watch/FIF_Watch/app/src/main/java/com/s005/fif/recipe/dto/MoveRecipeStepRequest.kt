@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class MoveRecipeStepRequest(
-    val sender: Int = 2
+    val sender: Int
 )

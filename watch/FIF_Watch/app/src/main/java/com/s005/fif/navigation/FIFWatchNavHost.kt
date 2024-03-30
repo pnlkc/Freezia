@@ -108,7 +108,6 @@ fun FIFWatchNavHost(
                 navigateToTimerDetail = { idx ->
                     navController.navigate("${TimerDetail.route}/${idx}") {
                         launchSingleTop = true
-                        restoreState = true
                     }
                 },
                 step = step

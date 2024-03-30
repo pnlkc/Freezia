@@ -79,8 +79,12 @@ async def get_recipe_stream(ingredients, diseases, dislikeIngredients, prompt, t
         )
 
     # Thread 생성
-    thread = client.beta.threads.retrieve(thread_id=threadId)
-    # thread = client.beta.threads.create()
+    try:
+        thread = client.beta.threads.retrieve(thread_id=threadId)
+    except Exception as e:
+        print(e)
+        thread = client.beta.threads.create()
+    # 
 
     try:
         message = client.beta.threads.messages.create(

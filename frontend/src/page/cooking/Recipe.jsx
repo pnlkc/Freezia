@@ -69,7 +69,7 @@ export default function Recipe() {
           <div
             className="f-5 recipe-header-icon"
             onClick={() => {
-              navigate(-1);
+              navigate('/Cooking/recipe/list');
             }}
           >
             {'<'}

@@ -19,11 +19,20 @@
   margin: 1vw 0;
 }
 
+.history-complete-memo-box {
+  margin-top: 0.5vw;
+}
+
+.history-complete-memo-title {
+  margin: 0.2vw 0;
+  margin-right: 0.3vw;
+}
+
 .history-ingredient-list {
   width: 100%;
   display: flex;
   flex-direction: row;
-  margin-top: 2vw;
+  margin-top: 1vw;
 }
 
 .history-ingredient-add-list,

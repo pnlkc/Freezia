@@ -10,9 +10,14 @@ export default function RecipeHistoryList({ recipeHistory }) {
           addIngredients,
           removeIngredients,
           completeCookId,
+          memo,
         }) => (
           <div className="history-list-box box-shadow" key={completeCookId}>
             <div className="histroy-complete-date">{completeDate}</div>
+            <div className="history-complete-memo-box f-0">
+              <span className="history-complete-memo-title bold">메모:</span>
+              <span className="history-complete-memo">{memo}</span>
+            </div>
             <div className="history-ingredient-list">
               <div className="history-ingredient-add-list">
                 <div className="histroy-ingredient-list-type">

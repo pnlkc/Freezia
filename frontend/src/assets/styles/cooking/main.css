@@ -1,19 +1,19 @@
 .cooking-main-container {
   padding: 0 !important;
   display: flex;
-  height: calc(100% - 2.8vw);
   flex-direction: column;
-  overflow-y: scroll;
-}
-
-.cooking-main-container::-webkit-scrollbar {
-  display: none;
+  height: calc(100% - 2.8vw);
 }
 
 .cooking-main-content-box {
   width: 100%;
+  /* height: calc(100% - 7.5vw); */
   flex-grow: 1;
   padding: 0 1.5vw;
+  overflow-y: scroll;
+}
+.cooking-main-content-box::-webkit-scrollbar {
+  display: none;
 }
 
 .cooking-main-button-box {

@@ -1,5 +1,6 @@
 package com.s005.fif.user.ui.onboarding
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,8 +19,6 @@ import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,23 +26,34 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.s005.fif.R
+import com.s005.fif.common.data.LikeFoodItemData
+import com.s005.fif.common.data.LikeFoodListData
 import com.s005.fif.ui.theme.Typography
+import com.s005.fif.user.ui.UserViewModel
 
 @Composable
 fun LikeFoodPage(
     modifier: Modifier = Modifier,
+    userViewModel: UserViewModel,
     goPrevPage: () -> Unit,
-    goNextPage: () -> Unit
+    goNextPage: () -> Unit,
 ) {
     BackHandler {
         goPrevPage()
     }
 
+    Log.d("로그", " - LikeFoodBody() 호출됨 / ${userViewModel.onboardingState}")
+
     LikeFoodBody(
         modifier = modifier
             .fillMaxSize(),
         goPrevPage = goPrevPage,
-        goNextPage = goNextPage
+        goNextPage = goNextPage,
+        likeFoodList = LikeFoodListData.list,
+        onItemClicked = { isChecked, item ->
+            userViewModel.checkLikeFood(isChecked, item)
+        },
+        checkedItemList = userViewModel.onboardingState.preferMenu
     )
 }
 
@@ -51,7 +61,10 @@ fun LikeFoodPage(
 fun LikeFoodBody(
     modifier: Modifier = Modifier,
     goPrevPage: () -> Unit,
-    goNextPage: () -> Unit
+    goNextPage: () -> Unit,
+    likeFoodList: List<LikeFoodItemData>,
+    onItemClicked: (Boolean, LikeFoodItemData) -> Unit,
+    checkedItemList: List<LikeFoodItemData>
 ) {
     Column(
         modifier = modifier
@@ -74,23 +87,15 @@ fun LikeFoodBody(
             columns = GridCells.Fixed(2)
         ) {
             itemsIndexed(
-                items = listOf<String>(
-                    "한식",
-                    "중식",
-                    "양식",
-                    "일식",
-                    "면 요리",
-                    "국물 요리",
-                    "볶음 요리",
-                    "찜 요리",
-                    "튀김 요리"
-                ),
+                items = likeFoodList,
                 key = { _, item ->
-                    item
+                    item.foodId
                 }
             ) { _, item ->
                 LikeFoodCheckBox(
-                    item = item
+                    item = item,
+                    onItemClicked = onItemClicked,
+                    isChecked = checkedItemList.contains(item)
                 )
             }
         }
@@ -110,24 +115,26 @@ fun LikeFoodBody(
 @Composable
 fun LikeFoodCheckBox(
     modifier: Modifier = Modifier,
-    item: String,
+    item: LikeFoodItemData,
+    onItemClicked: (Boolean, LikeFoodItemData) -> Unit,
+    isChecked: Boolean
 ) {
-    val (checkedState, onStateChange) = remember { mutableStateOf(false) }
-
     Row(
-        Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(56.dp)
             .clip(RoundedCornerShape(10.dp))
             .toggleable(
-                value = checkedState,
-                onValueChange = { onStateChange(!checkedState) },
+                value = isChecked,
+                onValueChange = {
+                    onItemClicked(it, item)
+                },
                 role = Role.Checkbox
             ),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Checkbox(
-            checked = checkedState,
+            checked = isChecked,
             onCheckedChange = null, // null recommended for accessibility with screenreaders
             colors = CheckboxDefaults.colors(
                 uncheckedColor = colorScheme.primary
@@ -135,7 +142,7 @@ fun LikeFoodCheckBox(
         )
 
         Text(
-            text = item,
+            text = item.name,
             style = Typography.bodyMedium,
             modifier = Modifier.padding(start = 16.dp)
         )

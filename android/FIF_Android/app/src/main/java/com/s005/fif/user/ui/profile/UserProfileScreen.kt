@@ -1,5 +1,8 @@
 package com.s005.fif.user.ui.profile
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -7,7 +10,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,31 +30,53 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.integration.compose.placeholder
 import com.s005.fif.R
+import com.s005.fif.common.data.DiseaseListData
+import com.s005.fif.common.data.IngredientListData
+import com.s005.fif.shopping_list.ui.ShoppingListViewModel
 import com.s005.fif.ui.theme.Typography
+import com.s005.fif.user.dto.Member
+import com.s005.fif.user.ui.UserViewModel
 import com.s005.fif.utils.AnnotatedStringUtil
+import kotlinx.coroutines.launch
 
 @Composable
 fun UserProfileScreen(
     modifier: Modifier = Modifier,
+    userViewModel: UserViewModel,
+    shoppingListViewModel: ShoppingListViewModel,
     navigateToRecipePreferenceSetting: () -> Unit,
     navigateUp: () -> Unit,
     navigateToSavedRecipe: () -> Unit,
-    navigationToShoppingList: () -> Unit
+    navigationToShoppingList: () -> Unit,
+    navigateToRecipeHistory: () -> Unit,
+    navigateToUserSelect: () -> Unit
 ) {
+    val coroutineScope = rememberCoroutineScope()
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -57,13 +84,24 @@ fun UserProfileScreen(
             .background(colorScheme.background)
     ) {
         UserProfileTopBar(
-            navigateUp = navigateUp
+            navigateUp = navigateUp,
+            memberInfo = userViewModel.memberInfo,
+            navigateToRecipeHistory = navigateToRecipeHistory,
+            navigateToUserSelect = navigateToUserSelect
         )
 
         UserProfileBody(
             navigateToRecipePreferenceSetting = navigateToRecipePreferenceSetting,
             navigateToSavedRecipe = navigateToSavedRecipe,
-            navigationToShoppingList = navigationToShoppingList
+            navigationToShoppingList = {
+                coroutineScope.launch {
+                    shoppingListViewModel.getShoppingList()
+
+                }
+
+                navigationToShoppingList()
+            },
+            memberInfo = userViewModel.memberInfo
         )
     }
 }
@@ -72,7 +110,10 @@ fun UserProfileScreen(
 @Composable
 fun UserProfileTopBar(
     modifier: Modifier = Modifier,
-    navigateUp: () -> Unit
+    navigateUp: () -> Unit,
+    memberInfo: Member?,
+    navigateToRecipeHistory: () -> Unit,
+    navigateToUserSelect: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -99,7 +140,7 @@ fun UserProfileTopBar(
                 modifier = Modifier
                     .clip(CircleShape)
                     .size(25.dp)
-                    .clickable { },
+                    .clickable { navigateToRecipeHistory() },
                 painter = painterResource(id = R.drawable.bookmark),
                 contentDescription = stringResource(id = R.string.description_btn_bookmark)
             )
@@ -117,10 +158,12 @@ fun UserProfileTopBar(
                 modifier = modifier
                     .clip(CircleShape)
                     .size(25.dp)
-                    .clickable { },
-                model = "https://img.danawa.com/prod_img/500000/207/533/img/18533207_1.jpg?_v=20221226163359",
+                    .clickable { navigateToUserSelect() },
+                model = memberInfo?.imgUrl ?: "",
                 contentDescription = stringResource(id = R.string.description_img_profile),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
+                loading = placeholder(R.drawable.account),
+                failure = placeholder(R.drawable.account)
             )
         }
     }
@@ -131,7 +174,8 @@ fun UserProfileBody(
     modifier: Modifier = Modifier,
     navigateToRecipePreferenceSetting: () -> Unit,
     navigateToSavedRecipe: () -> Unit,
-    navigationToShoppingList: () -> Unit
+    navigationToShoppingList: () -> Unit,
+    memberInfo: Member?
 ) {
     Column(
         modifier = modifier
@@ -140,12 +184,14 @@ fun UserProfileBody(
         verticalArrangement = Arrangement.spacedBy(30.dp)
     ) {
         UserProfileHealthColumn(
-            modifier = Modifier
+            modifier = Modifier,
+            memberInfo = memberInfo
         )
 
         UserProfileRecipePreferenceColumn(
             modifier = Modifier,
-            navigateToRecipePreferenceSetting = navigateToRecipePreferenceSetting
+            navigateToRecipePreferenceSetting = navigateToRecipePreferenceSetting,
+            memberInfo = memberInfo
         )
 
         UserProfileListColumn(
@@ -159,16 +205,19 @@ fun UserProfileBody(
 @Composable
 fun UserProfileHealthColumn(
     modifier: Modifier = Modifier,
+    memberInfo: Member?
 ) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         UserProfileColumnText(
-            text = stringResource(id = R.string.text_health_title, "김싸피")
+            text = stringResource(id = R.string.text_health_title, memberInfo?.name ?: "닉네임")
         )
 
-        HealthCard()
+        HealthCard(
+            memberInfo = memberInfo
+        )
     }
 }
 
@@ -176,6 +225,7 @@ fun UserProfileHealthColumn(
 @Composable
 fun HealthCard(
     modifier: Modifier = Modifier,
+    memberInfo: Member?
 ) {
     Card(
         modifier = Modifier
@@ -214,16 +264,19 @@ fun HealthCard(
                             .clip(CircleShape)
                             .size(80.dp)
                             .align(Alignment.BottomCenter),
-                        model = "https://thumbnews.nateimg.co.kr/view610///news.nateimg.co.kr/orgImg/ts/2019/03/08/598316_280802_2053.jpg",
+                        model = memberInfo?.imgUrl ?: "",
                         contentDescription = stringResource(id = R.string.description_img_profile),
-                        contentScale = ContentScale.Crop
+                        contentScale = ContentScale.Crop,
+                        loading = placeholder(R.drawable.account),
+                        failure = placeholder(R.drawable.account)
                     )
                 }
             }
 
             HealthGraphColumn(
                 modifier = modifier
-                    .weight(1f)
+                    .weight(1f),
+                memberInfo = memberInfo
             )
         }
     }
@@ -232,24 +285,42 @@ fun HealthCard(
 @Composable
 fun HealthGraphColumn(
     modifier: Modifier = Modifier,
+    memberInfo: Member?
 ) {
+    val progressAnimDuration = 1000
+
+    val stressProgressAnimation by animateFloatAsState(
+        targetValue = if (memberInfo == null) 0f else (memberInfo.stress.toFloat() / 10),
+        animationSpec = tween(durationMillis = progressAnimDuration, easing = FastOutSlowInEasing),
+    )
+
+    val sleepProgressAnimation by animateFloatAsState(
+        targetValue = if (memberInfo == null) 0f else (memberInfo.sleep.toFloat() / 10),
+        animationSpec = tween(durationMillis = progressAnimDuration, easing = FastOutSlowInEasing),
+    )
+
+    val bloodOxygenProgressAnimation by animateFloatAsState(
+        targetValue = if (memberInfo == null) 0f else (memberInfo.bloodOxygen.toFloat() / 100),
+        animationSpec = tween(durationMillis = progressAnimDuration, easing = FastOutSlowInEasing),
+    )
+
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         HealthGraphProgressIndicator(
             text = stringResource(id = R.string.text_stress),
-            progress = 0.5f
+            progress = stressProgressAnimation
         )
 
         HealthGraphProgressIndicator(
             text = stringResource(id = R.string.text_sleep),
-            progress = 0.3f
+            progress = sleepProgressAnimation
         )
 
         HealthGraphProgressIndicator(
             text = stringResource(id = R.string.text_blood_oxygen),
-            progress = 0.7f
+            progress = bloodOxygenProgressAnimation
         )
     }
 }
@@ -294,7 +365,8 @@ fun HealthGraphProgressIndicator(
 @Composable
 fun UserProfileRecipePreferenceColumn(
     modifier: Modifier = Modifier,
-    navigateToRecipePreferenceSetting: () -> Unit
+    navigateToRecipePreferenceSetting: () -> Unit,
+    memberInfo: Member?
 ) {
     Column(
         modifier = modifier,
@@ -333,7 +405,7 @@ fun UserProfileRecipePreferenceColumn(
             ) {
                 UserProfileRecipePreferenceRow(
                     text = stringResource(id = R.string.text_like_food),
-                    list = listOf("한식", "일식", "국물 요리")
+                    list = memberInfo?.preferMenu?.split(", ") ?: listOf()
                 )
 
                 HorizontalDivider(
@@ -344,7 +416,7 @@ fun UserProfileRecipePreferenceColumn(
 
                 UserProfileRecipePreferenceRow(
                     text = stringResource(id = R.string.text_dislike_ingredient),
-                    list = listOf("오이", "고수")
+                    list = memberInfo?.dislikeIngredients?.map { IngredientListData.map[it]!! } ?: listOf()
                 )
 
                 HorizontalDivider(
@@ -355,7 +427,7 @@ fun UserProfileRecipePreferenceColumn(
 
                 UserProfileRecipePreferenceRow(
                     text = stringResource(id = R.string.text_illness),
-                    list = listOf("당뇨")
+                    list = memberInfo?.diseases?.map { DiseaseListData.map[it]!! } ?: listOf()
                 )
             }
         }
@@ -369,18 +441,38 @@ fun UserProfileRecipePreferenceRow(
     list: List<String>,
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = text,
-            style = Typography.bodySmall
-        )
+        Row(
+            modifier = Modifier
+                .weight(0.3f)
+                .height(IntrinsicSize.Min),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                modifier = Modifier
+                    .weight(1f),
+                text = text,
+                style = Typography.bodySmall,
+                textAlign = TextAlign.Start,
+                maxLines = 1
+            )
+
+            VerticalDivider(
+                modifier = Modifier
+                    .fillMaxHeight(),
+                thickness = 1.dp,
+                color = colorScheme.onSecondary.copy(alpha = 0.5f)
+            )
+        }
 
         LazyRow(
-            modifier = Modifier,
+            modifier = Modifier
+                .weight(1f),
             horizontalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             itemsIndexed(
@@ -449,19 +541,20 @@ fun UserProfileListColumnCard(
     onClicked: () -> Unit
 ) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClicked() },
+        modifier = modifier
+            .fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
     ) {
         Row(
             modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onClicked() }
                 .padding(15.dp),
             verticalAlignment = Alignment.Bottom
         ) {
             Text(
-                text = AnnotatedStringUtil.makeString(
+                text = AnnotatedStringUtil.makeUserProfileString(
                     full = full,
                     spot = spot
                 )

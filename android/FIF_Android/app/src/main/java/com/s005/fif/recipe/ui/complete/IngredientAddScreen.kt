@@ -18,6 +18,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.s005.fif.R
+import com.s005.fif.common.data.IngredientItemData
+import com.s005.fif.common.data.IngredientListData
+import com.s005.fif.recipe.ui.RecipeViewModel
 import com.s005.fif.recipe.ui.step.RecipeStepTopBar
 import com.s005.fif.user.ui.onboarding.DislikeIngredientSearchResultItem
 import com.s005.fif.user.ui.onboarding.DislikeIngredientSelectLazyRow
@@ -28,6 +31,7 @@ import com.s005.fif.user.ui.onboarding.UserProfileTextField
 @Composable
 fun IngredientAddScreen(
     modifier: Modifier = Modifier,
+    recipeViewModel: RecipeViewModel,
     navigateUp: () -> Unit
 ) {
     Column(
@@ -45,15 +49,34 @@ fun IngredientAddScreen(
         IngredientAddBody(
             modifier = modifier
                 .fillMaxSize(),
+            inputText = recipeViewModel.inputText,
+            inputTextChange = {
+                recipeViewModel.inputText = it
+            },
+            addItem = { item ->
+                recipeViewModel.addTempAddIngredient(item)
+            },
+            removeItem = { item ->
+                recipeViewModel.removeTempAddIngredient(item)
+            },
+            list = recipeViewModel.addTempIngredientList,
+            completeBtnClicked = {
+                recipeViewModel.addAddIngredient()
+                navigateUp()
+            }
         )
     }
-
-
 }
 
 @Composable
 fun IngredientAddBody(
     modifier: Modifier = Modifier,
+    inputText: String,
+    inputTextChange: (String) -> Unit,
+    addItem: (IngredientItemData) -> Unit,
+    removeItem: (IngredientItemData) -> Unit,
+    list: List<IngredientItemData>,
+    completeBtnClicked: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -73,24 +96,27 @@ fun IngredientAddBody(
 
             item {
                 UserProfileTextField(
-                    content = "",
-                    setContent = { },
+                    content = inputText,
+                    setContent = inputTextChange,
                     hintText = stringResource(id = R.string.text_field_hint_dislike_ingredient)
                 )
             }
 
             itemsIndexed(
-                items = listOf<String>(
-                    "파",
-                    "양파",
-                    "쪽파"
-                ),
+                items = if (inputText.isBlank()) {
+                    IngredientListData.list
+                } else {
+                    IngredientListData.list.filter { it.name.contains(inputText) }
+                },
                 key = { _, item ->
-                    item
+                    item.ingredientId
                 }
             ) { _, item ->
                 DislikeIngredientSearchResultItem(
-                    item = item
+                    item = item,
+                    onItemClicked = { _, item ->
+                        addItem(item)
+                    }
                 )
             }
 
@@ -105,11 +131,16 @@ fun IngredientAddBody(
             color = Color.Black.copy(0.1f),
         )
 
-        DislikeIngredientSelectLazyRow()
+        DislikeIngredientSelectLazyRow(
+            dislikeIngredientList = list,
+            onItemClicked = { _, item ->
+                removeItem(item)
+            }
+        )
 
         UserOnboardingBtn(
             modifier = Modifier,
-            onClick = {  },
+            onClick = { completeBtnClicked() },
             text = stringResource(id = R.string.text_btn_complete)
         )
     }

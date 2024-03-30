@@ -3,6 +3,7 @@ package com.s005.fif.recipe.ui.list
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -44,9 +45,12 @@ import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.s005.fif.R
+import com.s005.fif.common.data.LikeFoodCheckableItem
+import com.s005.fif.recipe.dto.RecipeListItem
+import com.s005.fif.recipe.ui.RecipeViewModel
 import com.s005.fif.ui.theme.Typography
+import com.s005.fif.user.ui.UserViewModel
 import com.s005.fif.user.ui.profile.UserProfileTopBar
-import com.s005.fif.user.ui.recipe_history.ui.RecipeHistoryData
 import com.s005.fif.user.ui.recipe_history.ui.RecipeHistoryLazyVerticalGridItem
 import com.s005.fif.utils.ScreenSizeUtil
 import kotlinx.coroutines.delay
@@ -54,9 +58,13 @@ import kotlinx.coroutines.delay
 @Composable
 fun RecipeListScreen(
     modifier: Modifier = Modifier,
+    userViewModel: UserViewModel,
+    recipeViewModel: RecipeViewModel,
     navigateUp: () -> Unit,
     navigateToRecipeChat: () -> Unit,
-    navigateToRecipeDetail: () -> Unit
+    navigateToRecipeDetail: (Int) -> Unit,
+    navigateToRecipeHistory: () -> Unit,
+    navigateToUserSelect: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -66,12 +74,23 @@ fun RecipeListScreen(
             .background(MaterialTheme.colorScheme.background)
     ) {
         UserProfileTopBar(
-            navigateUp = { navigateUp() }
+            navigateUp = { navigateUp() },
+            memberInfo = userViewModel.memberInfo,
+            navigateToRecipeHistory = navigateToRecipeHistory,
+            navigateToUserSelect = navigateToUserSelect
         )
 
         RecipeListBody(
             navigateToRecipeChat = navigateToRecipeChat,
-            navigateToRecipeDetail = navigateToRecipeDetail
+            navigateToRecipeDetail = {
+                recipeViewModel.clearIngredientList()
+                navigateToRecipeDetail(it)
+            },
+            recipeListItem = recipeViewModel.recipeList.toList(),
+            recipeTypeList = recipeViewModel.recipeTypeList,
+            onItemClicked = { name, isChecked ->
+                recipeViewModel.checkRecipeType(name, isChecked)
+            }
         )
     }
 }
@@ -80,7 +99,10 @@ fun RecipeListScreen(
 fun RecipeListBody(
     modifier: Modifier = Modifier,
     navigateToRecipeChat: () -> Unit,
-    navigateToRecipeDetail: () -> Unit
+    navigateToRecipeDetail: (Int) -> Unit,
+    recipeListItem: List<RecipeListItem>,
+    recipeTypeList: List<LikeFoodCheckableItem>,
+    onItemClicked: (String, Boolean) -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -88,11 +110,16 @@ fun RecipeListBody(
             .padding(horizontal = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        RecipeListTagList()
+        RecipeListTagList(
+            recipeTypeList = recipeTypeList,
+            onItemClicked = onItemClicked
+        )
 
         RecipeListLazyGrid(
             navigateToRecipeChat = navigateToRecipeChat,
-            navigateToRecipeDetail = navigateToRecipeDetail
+            navigateToRecipeDetail = navigateToRecipeDetail,
+            list = recipeListItem,
+            recipeTypeList = recipeTypeList,
         )
     }
 }
@@ -101,20 +128,9 @@ fun RecipeListBody(
 @Composable
 fun RecipeListTagList(
     modifier: Modifier = Modifier,
+    recipeTypeList: List<LikeFoodCheckableItem>,
+    onItemClicked: (String, Boolean) -> Unit,
 ) {
-    val list = listOf(
-        "한식",
-        "중식",
-        "양식",
-        "일식",
-        "밑반찬",
-        "면 요리",
-        "국물 요리",
-        "볶음 요리",
-        "찜 요리",
-        "유통기한 임박"
-    )
-
     FlowRow(
         modifier = modifier
             .fillMaxWidth()
@@ -122,9 +138,10 @@ fun RecipeListTagList(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        list.forEach { item ->
+        recipeTypeList.forEach { item ->
             RecipeListTagItem(
-                item = item
+                item = item,
+                onItemClicked = onItemClicked
             )
         }
     }
@@ -133,42 +150,30 @@ fun RecipeListTagList(
 @Composable
 fun RecipeListTagItem(
     modifier: Modifier = Modifier,
-    item: String,
+    item: LikeFoodCheckableItem,
+    onItemClicked: (String, Boolean) -> Unit,
 ) {
-    var isSelected by remember {
-        mutableStateOf(false)
-    }
-
     Text(
         modifier = modifier
             .clip(RoundedCornerShape(50.dp))
-            .clickable { isSelected = !isSelected }
-            .background(if (isSelected) MaterialTheme.colorScheme.primary else Color.White)
+            .clickable { onItemClicked(item.name, !item.isChecked) }
+            .background(if (item.isChecked) MaterialTheme.colorScheme.primary else Color.White)
             .padding(vertical = 5.dp, horizontal = 10.dp),
-        text = item,
+        text = item.name,
         style = Typography.bodyMedium,
-        color = if (isSelected) MaterialTheme.colorScheme.onPrimary else Color.Black,
+        color = if (item.isChecked) MaterialTheme.colorScheme.onPrimary else Color.Black,
         maxLines = 1
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun RecipeListLazyGrid(
     modifier: Modifier = Modifier,
-    list: List<RecipeHistoryData> = listOf(
-        RecipeHistoryData(30, "자장면", "https://flexible.img.hani.co.kr/flexible/normal/640/427/imgdb/original/2023/0306/20230306502777.jpg"),
-        RecipeHistoryData(35, "짬뽕", "https://i.namu.wiki/i/upNZ7cYsFsAfU0KcguO6OHMK68xC-Bj8EXxdCti61Jhjx10UCBgdK5bZCEx41-aAWcjWZ5JMKFUSaUGLC1tqWg.webp"),
-        RecipeHistoryData(40, "탕수육", "https://i.namu.wiki/i/NSZu9w4DRwEPOCgPSzvs4sAZlxfMBoxZLCZQgM_O4wRH8jN0guRfBiLURu-Tno5p-Q2aw5e5gy9gLJsnYKlq8Q.webp"),
-        RecipeHistoryData(25, "볶음밥", "https://i.namu.wiki/i/LSHO99AHJpGzryDcM1npuUFNwzSUFYxUmXmqnmVZHOuc5iqCkNYRjRli9aX50BZ3cHz4gtPTqxldJee82Zj0Mg.webp"),
-        RecipeHistoryData(50, "라면", "https://img1.daumcdn.net/thumb/R658x0.q70/?fname=https://t1.daumcdn.net/news/202310/20/dailylife/20231020130002135gmiu.jpg"),
-        RecipeHistoryData(50, "족발", "https://i.namu.wiki/i/I63sEiy-8vUXVhV-I0IZiS9ntT0INuKXgBYAE3QqUvOlToSoEqSgpvEbUmxsFTXtoBRN4WJolyAFEAlDdeZFhQ.webp"),
-        RecipeHistoryData(50, "마라탕", "https://i.namu.wiki/i/qFWfOHBd0mx7NmNquwtaSbUjnPumXpk5oi1jxNKpWUsv_eGJe44xm9AePkbhQ6hIxTjMtroFaOFPbhBy0MSbNQ.webp"),
-        RecipeHistoryData(50, "순대볶음", "https://cdn.mkhealth.co.kr/news/photo/202008/img_MKH200814003_0.jpg"),
-        RecipeHistoryData(50, "떡볶이", "https://i.namu.wiki/i/A5AIHovo1xwuEjs7V8-aKpZCSWY2gN3mZEPR9fymaez_J7ufmI9B7YyDBu6kZy9TC9VWJatXVJZbDjcYLO2S8Q.webp"),
-        RecipeHistoryData(50, "해물찜", "https://recipe1.ezmember.co.kr/cache/recipe/2016/12/16/99d6cb0cb6c434b562217f407623c8491.jpg"),
-    ),
+    list: List<RecipeListItem>,
     navigateToRecipeChat: () -> Unit,
-    navigateToRecipeDetail: () -> Unit
+    navigateToRecipeDetail: (Int) -> Unit,
+    recipeTypeList: List<LikeFoodCheckableItem>,
 ) {
     var isShow by remember {
         mutableStateOf(false)
@@ -196,14 +201,29 @@ fun RecipeListLazyGrid(
         }
 
         itemsIndexed(
-            items = list,
+            items = if (recipeTypeList.count { it.isChecked } == 0) {
+                list
+            } else {
+                val filterList = recipeTypeList.filter { it.isChecked }
+                list.filter { recipeListItem ->
+                    var isContain = false
+
+                    recipeListItem.recipeTypes.split(",").forEach { type ->
+                        if (filterList.count { it.name ==  type} > 0) isContain = true
+                    }
+
+                    isContain
+                }
+            },
             key = { _, item ->
                 item.imgUrl
             }
         ) { _, item ->
             RecipeHistoryLazyVerticalGridItem(
+                modifier = Modifier
+                    .animateItemPlacement(),
                 item = item,
-                onClick = { navigateToRecipeDetail() }
+                onItemClicked = { navigateToRecipeDetail(item.recipeId) }
             )
         }
     }
@@ -214,7 +234,7 @@ fun RecipeListLazyGrid(
 fun RecipeListRecipeGPTBtn(
     modifier: Modifier = Modifier,
     isShow: Boolean,
-    navigateToRecipeChat: () -> Unit
+    navigateToRecipeChat: () -> Unit,
 ) {
     Box(
         modifier = modifier

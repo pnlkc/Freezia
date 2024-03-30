@@ -6,6 +6,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowColumn
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -25,6 +28,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,22 +42,31 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.integration.compose.placeholder
 import com.s005.fif.R
+import com.s005.fif.recipe.dto.IngredientItem
+import com.s005.fif.recipe.dto.RecipeListItem
+import com.s005.fif.recipe.ui.RecipeViewModel
 import com.s005.fif.recipe.ui.step.RecipeStepTopBar
 import com.s005.fif.ui.theme.Typography
 import com.s005.fif.user.ui.onboarding.UserOnboardingBtn
 import com.s005.fif.utils.ScreenSizeUtil
 import com.s005.fif.utils.ScreenSizeUtil.toDpSize
 import com.s005.fif.utils.ScreenSizeUtil.widthDp
+import kotlinx.coroutines.launch
 
 @Composable
 fun RecipeCompleteScreen(
     modifier: Modifier = Modifier,
+    recipeViewModel: RecipeViewModel,
+    recipeId: Int,
     navigateUp: () -> Unit,
     navigateToRecipeHistory: () -> Unit,
     navigateToIngredientAdd: () -> Unit,
-    navigateToIngredientRemove: () -> Unit
+    navigateToIngredientRemove: (Int) -> Unit
 ) {
+    val coroutineScope = rememberCoroutineScope()
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -69,9 +82,29 @@ fun RecipeCompleteScreen(
         RecipeCompleteBody(
             modifier = Modifier
                 .padding(horizontal = 20.dp),
-            navigateToRecipeHistory = navigateToRecipeHistory,
-            navigateToIngredientAdd = navigateToIngredientAdd,
-            navigateToIngredientRemove = navigateToIngredientRemove
+            navigateToRecipeHistory = {
+                coroutineScope.launch {
+                    recipeViewModel.addRecipeHistory(recipeId)
+                }
+
+                navigateToRecipeHistory()
+            },
+            navigateToIngredientAdd = {
+                recipeViewModel.inputText
+                navigateToIngredientAdd()
+            },
+            navigateToIngredientRemove = {
+                navigateToIngredientRemove(recipeId)
+            },
+            recipe = recipeViewModel.getRecipe(recipeId)!!,
+            addIngredientList = recipeViewModel.addIngredientList,
+            removeIngredientList = recipeViewModel.removeIngredientList.filter { it.isChecked },
+            onAddIngredientItemClicked = { id ->
+                recipeViewModel.removeAddIngredient(id)
+            },
+            onRemoveIngredientItemClicked = { id ->
+                recipeViewModel.checkRemoveIngredient(id, false)
+            }
         )
     }
 }
@@ -82,7 +115,12 @@ fun RecipeCompleteBody(
     modifier: Modifier = Modifier,
     navigateToRecipeHistory: () -> Unit,
     navigateToIngredientAdd: () -> Unit,
-    navigateToIngredientRemove: () -> Unit
+    navigateToIngredientRemove: () -> Unit,
+    recipe: RecipeListItem,
+    addIngredientList: List<IngredientItem>,
+    removeIngredientList: List<IngredientItem>,
+    onAddIngredientItemClicked: (Int) -> Unit,
+    onRemoveIngredientItemClicked: (Int) -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -99,7 +137,7 @@ fun RecipeCompleteBody(
             GlideImage(
                 modifier = Modifier
                     .fillMaxSize(),
-                model = "https://static.wtable.co.kr/image/production/service/recipe/1967/bfbec835-45b4-4e15-a658-ec4f1947ba2e.jpg?size=800x800",
+                model = recipe.imgUrl,
                 contentDescription = stringResource(id = R.string.description_recipe_img),
                 contentScale = ContentScale.Crop,
                 colorFilter = ColorFilter.tint(Color.Black.copy(alpha = 0.2f), BlendMode.ColorBurn)
@@ -108,7 +146,7 @@ fun RecipeCompleteBody(
             Text(
                 modifier = Modifier
                     .align(Alignment.Center),
-                text = "스팸 마요 김치 덮밥",
+                text = recipe.name,
                 style = Typography.bodyLarge,
                 color = Color.White,
             )
@@ -117,21 +155,25 @@ fun RecipeCompleteBody(
         RecipeCompleteIngredientList(
             modifier = Modifier
                 .weight(1f),
-            title = stringResource(id = R.string.text_add_ingredient) + " (10)",
-            onClick = { navigateToIngredientAdd() }
+            title = stringResource(id = R.string.text_add_ingredient) + " (${addIngredientList.size})",
+            onAddBtnClicked = { navigateToIngredientAdd() },
+            ingredientList = addIngredientList,
+            onIngredientItemClicked = onAddIngredientItemClicked
         )
 
         RecipeCompleteIngredientList(
             modifier = Modifier
                 .weight(1f),
-            title = stringResource(id = R.string.text_remove_ingredient) + " (10)",
-            onClick = { navigateToIngredientRemove() }
+            title = stringResource(id = R.string.text_remove_ingredient) + " (${removeIngredientList.size})",
+            onAddBtnClicked = { navigateToIngredientRemove() },
+            ingredientList = removeIngredientList,
+            onIngredientItemClicked = onRemoveIngredientItemClicked
         )
 
         UserOnboardingBtn(
             modifier = Modifier,
             text = stringResource(id = R.string.text_btn_save),
-            onClick = { navigateToRecipeHistory() }
+            onClick = navigateToRecipeHistory
         )
     }
 }
@@ -140,7 +182,9 @@ fun RecipeCompleteBody(
 fun RecipeCompleteIngredientList(
     modifier: Modifier = Modifier,
     title: String,
-    onClick: () -> Unit
+    onAddBtnClicked: () -> Unit,
+    onIngredientItemClicked: (Int) -> Unit,
+    ingredientList: List<IngredientItem>
 ) {
     Card(
         modifier = modifier
@@ -173,7 +217,7 @@ fun RecipeCompleteIngredientList(
                     modifier = Modifier
                         .clip(RoundedCornerShape(20.dp))
                         .background(colorScheme.primary)
-                        .clickable { onClick() }
+                        .clickable { onAddBtnClicked() }
                         .padding(vertical = 5.dp)
                         .padding(start = 5.dp, end = 10.dp),
                     verticalAlignment = Alignment.CenterVertically,
@@ -197,7 +241,9 @@ fun RecipeCompleteIngredientList(
 
             RecipeCompleteIngredientGrid(
                 modifier = Modifier
-                    .weight(1f)
+                    .weight(1f),
+                ingredientList = ingredientList,
+                onClick = onIngredientItemClicked
             )
         }
     }
@@ -206,7 +252,10 @@ fun RecipeCompleteIngredientList(
 @Composable
 fun RecipeCompleteIngredientGrid(
     modifier: Modifier = Modifier,
+    ingredientList: List<IngredientItem>,
+    onClick: (Int) -> Unit
 ) {
+    // 한 화면에 몇개의 아이템 배치할지 정하는 변수
     val horizontalCnt = 3
 
     LazyHorizontalGrid(
@@ -217,16 +266,18 @@ fun RecipeCompleteIngredientGrid(
         contentPadding = PaddingValues(horizontal = 10.dp)
     ) {
         itemsIndexed(
-            items = listOf<String>("아스파라거스", "사과2", "사과3", "사과4", "사과5", "사과6", "사과7", "사과8", "사과9", "사과10"),
+            items = ingredientList,
             key = { _, item ->
-                item
+                item.ingredientId
             }
         ) { _, item ->
             RecipeCompleteIngredientItem(
                 modifier = Modifier
                     .width((widthDp.dp - 80.dp - 10.dp * (horizontalCnt - 1)) / horizontalCnt),
                 item = item,
-                onClick = {  }
+                onClick = {
+                    onClick(item.ingredientId)
+                }
             )
         }
     }
@@ -236,8 +287,8 @@ fun RecipeCompleteIngredientGrid(
 @Composable
 fun RecipeCompleteIngredientItem(
     modifier: Modifier = Modifier,
-    item: String,
-    onClick: () -> Unit
+    item: IngredientItem,
+    onClick: (Int) -> Unit
 ) {
     Card(
         modifier = modifier
@@ -249,7 +300,7 @@ fun RecipeCompleteIngredientItem(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .clickable { onClick() }
+                .clickable { onClick(item.ingredientId) }
         ) {
             Column(
                 modifier = Modifier
@@ -264,14 +315,15 @@ fun RecipeCompleteIngredientItem(
                         .weight(1f)
                         .aspectRatio(1f)
                         .clip(CircleShape),
-                    model = "https://d2phebdq64jyfk.cloudfront.net/media/image/article/thumbnail/%E1%84%83%E1%85%A1%E1%86%AB%E1%84%89%E1%85%B5%E1%86%AB_1-30.jpg",
+                    model = item.image,
                     contentDescription = stringResource(id = R.string.description_ingredient_img),
                     contentScale = ContentScale.Crop,
-                    colorFilter = ColorFilter.tint(Color.Black.copy(alpha = 0.2f), BlendMode.ColorBurn)
+                    loading = placeholder(R.drawable.basic_ingredient),
+                    failure = placeholder(R.drawable.basic_ingredient)
                 )
 
                 Text(
-                    text = item,
+                    text = item.name,
                     style = Typography.bodySmall,
                     textAlign = TextAlign.Center
                 )

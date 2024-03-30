@@ -7,7 +7,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -19,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -30,8 +30,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,14 +43,20 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.s005.fif.R
+import com.s005.fif.common.data.DiseaseItemData
+import com.s005.fif.common.data.DiseaseListData
 import com.s005.fif.ui.theme.Typography
+import com.s005.fif.user.ui.UserViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun IllnessPage(
     modifier: Modifier = Modifier,
+    userViewModel: UserViewModel,
     goPrevPage: () -> Unit,
-    goNextPage: () -> Unit
+    goNextPage: () -> Unit,
 ) {
     BackHandler {
         goPrevPage()
@@ -60,7 +66,15 @@ fun IllnessPage(
         modifier = modifier
             .fillMaxSize(),
         goPrevPage = goPrevPage,
-        goNextPage = goNextPage
+        goNextPage = goNextPage,
+        inputText = userViewModel.diseaseInputText,
+        inputTextChange = {
+            userViewModel.diseaseInputText = it
+        },
+        onItemClicked = { isAdd, item ->
+            userViewModel.clickDiseaseItem(isAdd, item)
+        },
+        checkedDiseaseList = userViewModel.onboardingState.diseases
     )
 }
 
@@ -68,7 +82,11 @@ fun IllnessPage(
 fun IllnessBody(
     modifier: Modifier = Modifier,
     goPrevPage: () -> Unit,
-    goNextPage: () -> Unit
+    goNextPage: () -> Unit,
+    inputText: String,
+    inputTextChange: (String) -> Unit,
+    onItemClicked: (Boolean, DiseaseItemData) -> Unit,
+    checkedDiseaseList: List<DiseaseItemData>
 ) {
     Column(
         modifier = modifier
@@ -96,23 +114,25 @@ fun IllnessBody(
 
             item {
                 UserProfileTextField(
-                    content = "",
-                    setContent = { },
+                    content = inputText,
+                    setContent = { inputTextChange(it) },
                     hintText = stringResource(id = R.string.text_field_hint_illness)
                 )
             }
 
             itemsIndexed(
-                items = listOf<String>(
-                    "고혈압",
-                    "저혈압",
-                ),
+                items = if (inputText.isBlank()) {
+                    DiseaseListData.list
+                } else {
+                    DiseaseListData.list.filter { it.name.contains(inputText) }
+                },
                 key = { _, item ->
-                    item
+                    item.diseaseId
                 }
             ) { _, item ->
                 IllnessSearchResultItem(
-                    item = item
+                    item = item,
+                    onItemClicked = onItemClicked
                 )
             }
 
@@ -127,7 +147,10 @@ fun IllnessBody(
             color = Color.Black.copy(0.1f),
         )
 
-        IllnessSelectLazyRow()
+        IllnessSelectLazyRow(
+            checkedDiseaseList = checkedDiseaseList,
+            onItemClicked = onItemClicked
+        )
 
         UserOnboardingBtn(
             modifier = Modifier,
@@ -140,17 +163,18 @@ fun IllnessBody(
 @Composable
 fun IllnessSearchResultItem(
     modifier: Modifier = Modifier,
-    item: String
+    item: DiseaseItemData,
+    onItemClicked: (Boolean, DiseaseItemData) -> Unit
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable {  },
+            .clickable { onItemClicked(true, item) },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = item,
+            text = item.name,
             style = Typography.bodyMedium,
             color = Color.Black.copy(alpha = 0.5f)
         )
@@ -171,24 +195,35 @@ fun IllnessSearchResultItem(
 @Composable
 fun IllnessSelectLazyRow(
     modifier: Modifier = Modifier,
+    checkedDiseaseList: List<DiseaseItemData>,
+    onItemClicked: (Boolean, DiseaseItemData) -> Unit
 ) {
+    val lazyListState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+
     LazyRow(
         modifier = modifier
             .padding(vertical = 20.dp),
-        horizontalArrangement = Arrangement.spacedBy(5.dp)
+        horizontalArrangement = Arrangement.spacedBy(5.dp),
+        reverseLayout = true,
+        state = lazyListState
     ) {
+        coroutineScope.launch {
+            if (checkedDiseaseList.isNotEmpty()) {
+                lazyListState.scrollToItem(checkedDiseaseList.lastIndex)
+            }
+        }
+
         itemsIndexed(
-            items = listOf<String>(
-                "고혈압"
-            ),
+            items = checkedDiseaseList,
             key = { _, item ->
-                item
+                item.diseaseId
             }
         ) { _, item ->
             IllnessSelectItem(
                 modifier = Modifier,
                 item = item,
-                onClick = {  }
+                onItemClicked = onItemClicked
             )
         }
     }
@@ -197,8 +232,8 @@ fun IllnessSelectLazyRow(
 @Composable
 fun IllnessSelectItem(
     modifier: Modifier = Modifier,
-    item: String,
-    onClick: () -> Unit
+    item: DiseaseItemData,
+    onItemClicked: (Boolean, DiseaseItemData) -> Unit,
 ) {
     Card(
         modifier = modifier
@@ -210,13 +245,13 @@ fun IllnessSelectItem(
     ) {
         Row(
             modifier = modifier
-                .clickable { onClick() }
+                .clickable { onItemClicked(false, item) }
                 .padding(vertical = 5.dp, horizontal = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             Text(
-                text = item,
+                text = item.name,
                 style = Typography.bodyMedium,
                 color = Color.Black.copy(alpha = 0.5f)
             )
@@ -239,22 +274,19 @@ fun UserProfileTextField(
     modifier: Modifier = Modifier,
     content: String,
     setContent: (String) -> Unit,
-    hintText: String
+    hintText: String,
+    hasTopPadding: Boolean = true
 ) {
-    // TODO. 진짜 텍스트로 변경 필요
-    val text = remember {
-        mutableStateOf("")
-    }
     val interactionSource = remember {
         MutableInteractionSource()
     }
 
     BasicTextField(
-        value = text.value,
-        onValueChange = { text.value = it },
+        value = content,
+        onValueChange = { setContent(it) },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 30.dp)
+            .padding(top = if (hasTopPadding) 30.dp else 0.dp)
             .clip(RoundedCornerShape(50.dp))
             .background(Color.Transparent)
             .border(2.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(50.dp)),
@@ -265,7 +297,7 @@ fun UserProfileTextField(
         cursorBrush = SolidColor(MaterialTheme.colorScheme.primary)
     ) {
         TextFieldDefaults.DecorationBox(
-            value = text.value,
+            value = content,
             innerTextField = it,
             enabled = true,
             singleLine = true,

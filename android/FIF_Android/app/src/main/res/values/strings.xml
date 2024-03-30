@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FIF_Android</string>
+    <string name="app_name">Freezia</string>
     <string name="text_select_user">사용자를 선택해주세요</string>
     <string name="text_add_user">사용자 추가</string>
     <string name="text_skip_onboarding">건너뛰기</string>
@@ -8,6 +8,8 @@
     <string name="text_illness_title">가지고 계신 지병이 있으신가요?</string>
     <string name="text_btn_next">다음</string>
     <string name="text_btn_save">저장</string>
+    <string name="text_btn_edit">수정하기</string>
+    <string name="text_btn_add">추가하기</string>
     <string name="text_btn_complete">완료</string>
     <string name="text_btn_start">시작하기</string>
     <string name="text_field_hint_dislike_ingredient">식재료명을 입력하세요</string>
@@ -21,7 +23,8 @@
     <string name="text_dislike_ingredient_setting_hint">이러한 재료는 피하고 싶어요</string>
     <string name="text_illness">지병</string>
     <string name="text_illness_setting_hint">이러한 지병을 갖고 있어요</string>
-    <string name="text_health_title">안녕하세요 %1$s님</string>
+    <string name="text_health_title">안녕하세요. %1$s님</string>
+    <string name="text_recipe_name">레시피명</string>
     <string name="text_recipe_preference_title">레시피 선호도</string>
     <string name="text_recipe_preference_setting_title">레시피 선호도 설정</string>
     <string name="text_list_title">목록</string>
@@ -29,6 +32,7 @@
     <string name="text_go_to_recipe_history">레시피 히스토리</string>
     <string name="text_go_to_shopping_list_full">쇼핑 리스트로 이동하기</string>
     <string name="text_go_to_shopping_list">쇼핑 리스트</string>
+    <string name="text_edit_shopping_list">쇼핑 리스트 수정하기</string>
     <string name="text_saved_recipe">저장한 레시피</string>
     <string name="text_completed_food">완료한 요리</string>
     <string name="text_recipe_recommend_title">당신을 위한 레시피</string>
@@ -51,11 +55,18 @@
     <string name="text_add_ingredient">추가한 재료</string>
     <string name="text_remove_ingredient">제거한 재료</string>
     <string name="text_record_recipe">요리 기록하기</string>
+    <string name="text_recipe_end">요리 완료하기</string>
     <string name="text_go_to_recipe_list_2">레시피 목록으로 이동</string>
     <string name="text_complete_recipe_title">요리가 완성되었습니다</string>
     <string name="text_add_ingredient_btn">재료 추가하기</string>
     <string name="text_add_ingredient_title">재료를 추가해주세요</string>
     <string name="text_remove_ingredient_title">삭제할 재료를 선택해 주세요</string>
+    <string name="text_exit_app">뒤로가기 버튼을 한번 더 누르면 종료됩니다</string>
+    <string name="text_no_recipe_history">해당 레시피의 요리 기록이 없습니다</string>
+    <string name="text_no_recommend_recipe">\n추천 레시피가 없습니다\n</string>
+    <string name="text_wait_prompt">이전 요청이 완료된 후 다시 시도해주세요</string>
+    <string name="text_recipe_progress">레시피를 생성하고 있습니다</string>
+    <string name="text_no_calorie_data">칼로리 정보 없음</string>
 
     <string name="description_btn_go_back">뒤로가기 버튼</string>
     <string name="description_btn_bookmark">북마크 버튼</string>
@@ -81,4 +92,5 @@
     <string name="description_add_ingredient">추가한 재료 아이콘</string>
     <string name="description_remove_ingredient">제거한 재료 아이콘</string>
     <string name="description_btn_tts">TTS 버튼 이미지</string>
+    <string name="description_recipe_step_image">레시피 단계 이미지</string>
 </resources>

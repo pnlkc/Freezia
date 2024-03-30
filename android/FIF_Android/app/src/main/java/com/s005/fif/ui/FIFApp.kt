@@ -10,6 +10,6 @@ fun FIFApp(
     navController: NavHostController = rememberNavController(),
 ) {
     FIFNavHost(
-        navController = navController
+        navController = navController,
     )
 }

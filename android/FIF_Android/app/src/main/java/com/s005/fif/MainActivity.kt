@@ -5,15 +5,25 @@ import android.os.Bundle
 import android.util.DisplayMetrics
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
+import com.s005.fif.di.FIFPreferenceModule
+import com.s005.fif.di.LoginUser
 import com.s005.fif.ui.FIFApp
 import com.s005.fif.ui.theme.FIF_AndroidTheme
+import com.s005.fif.user.ui.UserViewModel
 import com.s005.fif.utils.ScreenSizeUtil
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

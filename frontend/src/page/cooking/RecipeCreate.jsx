@@ -1,38 +1,48 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { EventSourcePolyfill, NativeEventSource } from 'event-source-polyfill';
 
 import UserMessage from '../../components/cooking/chat/UserMessage';
 import { chatExample, diseasesData, ingredientData } from '../../utils/data';
-import parser from '../../utils/replyParser';
 
 import '../../assets/styles/cooking/recipecreate.css';
 import RealTimeMessage from '../../components/cooking/chat/RealTimeMessage';
+import sendMessage, { registHook } from '../../apis/chat';
 
 export default function RecipeCreate() {
   const [text, setText] = useState('');
-  const [chatLog, setChatLog] = useState([]);
-  const [newMessage, setNewMessage] = useState({ message: '' });
-  const [isProgress, setIsProgress] = useState(false);
+  const [chatLog, setChatLog] = useState(
+    sessionStorage.chatLog ? JSON.parse(sessionStorage.chatLog) : [],
+  );
+  // const [newMessage, setNewMessage] = useState({ message: '' });
+  const [isProgress, setIsProgress] = useState(
+    sessionStorage.isProgress === 'true',
+  );
   const textareaRef = useRef(null);
   const messagesEndRef = useRef(null);
   const navigate = useNavigate();
-  const [reply, setReply] = useState('답변을 기다리고 있습니다...');
-  const [recipe, setRecipe] = useState({
-    reply: '',
-    recommendList: [],
-    recipeList: [],
-  });
-  const [recommendList, setRecommendList] = useState([]);
+  const [recipe, setRecipe] = useState(
+    sessionStorage.replyRecipe
+      ? JSON.parse(sessionStorage.replyRecipe)
+      : {
+          reply: '',
+          recommendList: [],
+          recipeList: [],
+        },
+  );
+  const [recommendList, setRecommendList] = useState(
+    sessionStorage.recommendList
+      ? JSON.parse(sessionStorage.recommendList)
+      : [],
+  );
 
-  useEffect(() => {
-    const { message } = newMessage;
-    if (message.trim() === '') return;
-    setReply(reply + message);
-    parser.parse({ chunk: message, recipe, setRecipe, setIsProgress });
-  }, [newMessage]);
+  // useEffect(() => {
+  //   const { message } = newMessage;
+  //   if (message.trim() === '') return;
+  //   parser.parse({ chunk: message, recipe, setRecipe, setIsProgress });
+  // }, [newMessage]);
 
   const handleChange = (event) => {
+    if (isProgress) return;
     if (event.key === 'Enter' && !event.shiftKey) {
       textareaRef.current.value = '';
       setText('');
@@ -49,9 +59,12 @@ export default function RecipeCreate() {
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    sessionStorage.setItem('chatLog', JSON.stringify(chatLog));
   }, [chatLog]);
 
   useEffect(() => {
+    registHook(setRecipe, setIsProgress);
+
     const event = window.addEventListener('resize', () => {
       if (textareaRef.current) {
         textareaRef.current.style.height = '2.6vw'; // 높이를 초기화
@@ -67,24 +80,31 @@ export default function RecipeCreate() {
   useEffect(() => {
     if (!isProgress) {
       if (chatLog.length === 0) return;
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
 
-      setChatLog([
-        ...chatLog,
-        {
-          recipeInfo: JSON.parse(JSON.stringify(recipe)),
-          isReply: true,
-          id: chatLog.length + 1,
-        },
-      ]);
+      if (recipe.reply !== '' && sessionStorage.isDone === 'true') {
+        setChatLog([
+          ...chatLog,
+          {
+            recipeInfo: JSON.parse(JSON.stringify(recipe)),
+            isReply: true,
+            id: chatLog.length + 1,
+          },
+        ]);
 
-      setRecommendList([...recipe.recommendList]);
+        setRecommendList([...recipe.recommendList]);
+        sessionStorage.setItem(
+          'recommendList',
+          JSON.stringify(recipe.recommendList),
+        );
 
-      setRecipe({
-        reply: '',
-        recommendList: [],
-        recipeList: [],
-      });
+        setRecipe({
+          reply: '',
+          recommendList: [],
+          recipeList: [],
+        });
+
+        sessionStorage.removeItem('replyRecipe');
+      }
     } else {
       const userInfo = JSON.parse(sessionStorage.getItem('profile'));
       const diseases = userInfo.diseases
@@ -109,50 +129,30 @@ export default function RecipeCreate() {
       textareaRef.current.style.height = '2.6vw';
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
 
-      ('```json' + JSON.stringify(chatExample) + '```')
-        .split('')
-        .map((chunk, idx) => {
-          setTimeout(
-            () => {
-              setNewMessage({ message: chunk });
-            },
-            idx * 30 + 1000,
-          );
-        });
+      // ('```json' + JSON.stringify(chatExample) + '```')
+      //   .split('')
+      //   .map((chunk, idx) => {
+      //     setTimeout(
+      //       () => {
+      //         setNewMessage({ message: chunk });
+      //       },
+      //       idx * 30 + 1000,
+      //     );
+      //   });
 
-      return;
-
-      const EventSource = EventSourcePolyfill || NativeEventSource;
-
-      const eventSource = new EventSource(
-        `${import.meta.env.VITE_BASE_URL}/${url}`,
-        {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
-          },
-        },
-      );
-
-      eventSource.onmessage = (event) => {
-        setNewMessage({ message: event.data });
-      };
-
-      eventSource.onerror = (event) => {
-        eventSource.close();
-        setIsProgress(false);
-      };
-
-      return () => {
-        eventSource.close();
-      };
+      if (sessionStorage.isDone !== 'false') {
+        sendMessage(url, setRecipe, setIsProgress);
+      }
     }
   }, [isProgress]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView();
   }, [recipe]);
 
   const enterMessage = () => {
+    if (isProgress) return;
     if (textareaRef.current.value.trim() === '') return;
 
     setIsProgress(true);
@@ -165,10 +165,6 @@ export default function RecipeCreate() {
         id: chatLog.length + 1,
       },
     ]);
-
-    textareaRef.current.value = '';
-    textareaRef.current.style.height = '2.6vw';
-    textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
   };
 
   const preventEnter = (event) => {
@@ -176,12 +172,6 @@ export default function RecipeCreate() {
       event.preventDefault();
     }
   };
-
-  const recommendChat = [
-    '가장 최근에 만든 요리와 비슷한 재료를 사용하는 레시피를 알려줘',
-    '간식으로 먹고 싶은데 칼로리를 절반으로 줄인 레시피를 알려줘',
-    '덮밥말고 볶음밥 레시피로 알려줘',
-  ];
 
   const selectRecommend = (chat) => {
     textareaRef.current.value = chat;
@@ -238,7 +228,11 @@ export default function RecipeCreate() {
           onKeyDown={preventEnter}
         />
         <img
-          src="/images/cooking/send.svg"
+          src={
+            isProgress
+              ? '/images/cooking/send_disabled.svg'
+              : '/images/cooking/send.svg'
+          }
           className="recipe-create-send-icon"
           alt="대화 전송하기"
           onClick={() => {

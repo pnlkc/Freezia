@@ -33,9 +33,13 @@ export default function RecommendRecipeCarousel() {
   };
 
   useEffect(() => {
-    setWidth(slideRef.current.getBoundingClientRect().width);
-    const event = window.addEventListener('resize', () => {
+    if (slideRef.current) {
       setWidth(slideRef.current.getBoundingClientRect().width);
+    }
+    const event = window.addEventListener('resize', () => {
+      if (slideRef.current) {
+        setWidth(slideRef.current.getBoundingClientRect().width);
+      }
     });
 
     return () => {

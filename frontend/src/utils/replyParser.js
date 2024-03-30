@@ -13,9 +13,14 @@ class ReplyParser {
     this.isValue = false;
     this.keyStack = [];
     this.total = '';
+    this.recipe = {
+      reply: '',
+      recommendList: [],
+      recipeList: [],
+    };
   }
 
-  processCharacter(char, recipe, setRecipe, setIsProgress) {
+  processCharacter(char) {
     if (char !== '{' && this.stack.length === 0) return;
     this.total += char;
 
@@ -31,19 +36,19 @@ class ReplyParser {
           this.currentKey = this.buffer;
           this.currentKey = this.currentKey.trim();
         } else {
-          this.assignValue(this.buffer, recipe, setRecipe);
+          this.assignValue(this.buffer);
         }
         this.buffer = '';
       }
     } else if (!this.inString && (char === '{' || char === '[')) {
-      this.pushCurrentContext(char, recipe, setRecipe);
+      this.pushCurrentContext(char);
     } else if (!this.inString && (char === '}' || char === ']')) {
-      this.popContext(setIsProgress);
+      this.popContext();
     } else if (!this.inString && char === ':') {
       this.isValue = true;
     } else if (!this.inString && char === ',') {
       const context = this.stack[this.stack.length - 1];
-      if (context.type === 'array') this.extendArray(recipe, setRecipe);
+      if (context.type === 'array') this.extendArray();
       if (this.buffer.trim() === '') return;
 
       if (this.isValue) {
@@ -52,7 +57,7 @@ class ReplyParser {
           this.currentKey = this.currentKey.trim();
           this.isValue = false;
         } else {
-          this.assignValue(this.buffer, recipe, setRecipe);
+          this.assignValue(this.buffer);
         }
         this.buffer = '';
       } else {
@@ -62,15 +67,11 @@ class ReplyParser {
     } else {
       this.buffer += char;
       if (this.currentKey !== '') {
-        this.addValue(
-          {
-            key: this.currentKey,
-            value: char,
-            keyStack: this.keyStack,
-          },
-          recipe,
-          setRecipe,
-        );
+        this.addValue({
+          key: this.currentKey,
+          value: char,
+          keyStack: this.keyStack,
+        });
       }
     }
   }
@@ -89,14 +90,14 @@ class ReplyParser {
     }
   }
 
-  pushCurrentContext(char, recipe, setRecipe) {
+  pushCurrentContext(char) {
     const newContext = {
       type: char === '{' ? 'object' : 'array',
       object: char === '{' ? {} : [],
     };
     if (newContext.type === 'array') {
       this.keyStack.push(this.currentKey);
-      this.extendArray(recipe, setRecipe);
+      this.extendArray();
       this.isValue = true;
     } else this.isValue = false;
 
@@ -114,7 +115,7 @@ class ReplyParser {
     this.currentObject = newContext.object;
   }
 
-  popContext(setIsProgress) {
+  popContext() {
     const finishedContext = this.stack.pop();
     if (finishedContext.type === 'array') {
       this.keyStack.pop();
@@ -128,7 +129,6 @@ class ReplyParser {
       // At this point, finishedContext.object contains the fully parsed object or array
       console.log('Finished parsing:', finishedContext.object);
       console.log(this.total);
-      setIsProgress(false);
       try {
         console.log(JSON.parse(this.total));
       } catch (e) {
@@ -137,9 +137,9 @@ class ReplyParser {
     }
   }
 
-  addValue(result, recipe, setRecipe) {
+  addValue(result) {
     try {
-      let context = recipe;
+      let context = this.recipe;
       result.keyStack.forEach((key) => {
         if (context?.length > 0) context = context[context.length - 1][key];
         else context = context[key];
@@ -151,15 +151,17 @@ class ReplyParser {
           context[context.length - 1][result.key] += result.value;
         } else context[context.length - 1] += result.value;
       }
-    } finally {
+    } catch (error) {
       // console.log(result);
       // console.log(recipe);
-      setRecipe({ ...recipe });
+      console.error(error);
+    } finally {
+      sessionStorage.setItem('replyRecipe', JSON.stringify(this.recipe));
     }
   }
 
-  extendArray(recipe, setRecipe) {
-    let recipeContext = recipe;
+  extendArray() {
+    let recipeContext = this.recipe;
 
     this.keyStack.forEach((key) => {
       if (recipeContext?.length > 0) {
@@ -191,13 +193,11 @@ class ReplyParser {
     } else {
       recipeContext.push('');
     }
-
-    setRecipe(recipe);
   }
 
-  parse({ chunk, recipe, setRecipe, setIsProgress }) {
+  parse(chunk) {
     for (const char of chunk) {
-      this.processCharacter(char, recipe, setRecipe, setIsProgress);
+      this.processCharacter(char);
     }
   }
 }

@@ -31,3 +31,7 @@
 .create-recipe-name {
   margin: 0.3vw 0;
 }
+
+.create-recipe-step-description {
+  margin-bottom: 0.3vw !important;
+}

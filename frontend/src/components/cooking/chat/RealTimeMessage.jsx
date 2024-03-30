@@ -18,7 +18,8 @@ export default function RealTimeMessage({ recipe }) {
             {recipeInfo.ingredientList.map(({ name, amounts, unit }) => (
               <div key={name}>{`${name} ${amounts} ${unit}`}</div>
             ))}
-            {recipeInfo.seasoningList.length > 0 && <h4>필요 조미료</h4>}
+            {recipeInfo.seasoningList.length > 0 &&
+              recipeInfo.seasoningList[0].name !== '' && <h4>필요 조미료</h4>}
             {recipeInfo.seasoningList.map(({ name, amounts, unit }) => (
               <div key={name}>{`${name} ${amounts} ${unit}`}</div>
             ))}
@@ -32,13 +33,16 @@ export default function RealTimeMessage({ recipe }) {
               <span>{`, 칼로리: ${recipeInfo.calorie}`}</span>
             )}
             {recipeInfo.servings !== '' && (
-              <span>{`, 제공량: ${recipeInfo.servings}`}</span>
+              <span>{`, 제공량: ${recipeInfo.servings}인분`}</span>
             )}
           </div>
           <div className="create-recipe-steps">
             {recipeInfo.recipeSteps.length > 0 && <h4>요리 방법</h4>}
             {recipeInfo.recipeSteps.map(({ name, description }, idx) => (
-              <div key={name}>{`${idx + 1}. ${description}`}</div>
+              <div
+                className="create-recipe-step-description"
+                key={name}
+              >{`${idx + 1}. ${description}`}</div>
             ))}
           </div>
         </div>

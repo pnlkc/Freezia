@@ -1,13 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { onMessage } from 'firebase/messaging';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import '../../assets/styles/cooking/recipesteps.css';
 import ContentCard from '../../components/cooking/ContentCard';
 import registDragEvent, { inrange } from '../../utils/registDragEvent';
 import RecipeFinsishCard from '../../components/cooking/RecipeFinishCard';
 import { disconnectWatch, moveStep } from '../../apis/firebase';
-import messaging from '../../utils/firebase';
+import { registMessageEvent } from '../../utils/messageEventHandler';
 
 export default function RecipeSteps() {
   const isConnected = sessionStorage.getItem('isConnected') === 'true';
@@ -17,23 +16,33 @@ export default function RecipeSteps() {
   const [transX, setTransX] = useState(0);
   const [animate, setAnimate] = useState(false);
   const [width, setWidth] = useState(700);
+  const navigate = useNavigate();
   const slideRef = useRef();
 
   useEffect(() => {
     setWidth(slideRef.current.getBoundingClientRect().width);
-    onMessage(messaging, (payload) => {
-      const message = JSON.parse(payload.data.json);
-      if (message.type !== 4 || message.sender === 0) return;
+
+    registMessageEvent((message) => {
+      if (message.sender === 0 && sessionStorage.isConnected !== 'true') return;
       setStep(message.step - 1);
+    }, 4);
+
+    // registMessageEvent((message) => {
+    //   navigate(`/Cooking/recipe/${recipeDetail.recipeId}/save`);
+    // }, 3);
+
+    const event = window.addEventListener('resize', () => {
+      setWidth(slideRef.current.getBoundingClientRect().width);
     });
 
     return () => {
       disconnectWatch(recipeDetail.recipeId);
+      window.removeEventListener('resize', event);
     };
   }, []);
 
   useEffect(() => {
-    if (isConnected) moveStep(step + 1);
+    if (sessionStorage.getItem('isConnected') === 'true') moveStep(step + 1);
   }, [step]);
 
   const recipeSteps = JSON.parse(sessionStorage.getItem('recipeSteps'));
@@ -90,8 +99,8 @@ export default function RecipeSteps() {
             setTransX(inrange(deltaX, -width + 10, width - 10));
           },
           onDragEnd: (deltaX) => {
-            if (deltaX < -200) setStep(inrange(step + 1, 0, maxStep));
-            if (deltaX > 200) setStep(inrange(step - 1, 0, maxStep));
+            if (deltaX < -100) setStep(inrange(step + 1, 0, maxStep));
+            if (deltaX > 100) setStep(inrange(step - 1, 0, maxStep));
 
             setAnimate(true);
             setTransX(0);

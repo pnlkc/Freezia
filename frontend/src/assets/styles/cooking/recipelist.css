@@ -21,11 +21,12 @@
 
 .cooking-recipe-list {
   width: 100%;
-  max-height: calc(100% - 6vw - 4.6vw);
+  max-height: calc(100% - 12vw);
   display: flex;
   flex-wrap: wrap;
-  padding: 1.3vw 0.8vw 1.3vw 1.5vw;
+  padding: 0.5vw 0.8vw 1.3vw 1.5vw;
   overflow-y: scroll;
+  margin-top: 0.5vw;
 }
 
 .cooking-recipe-list-container {

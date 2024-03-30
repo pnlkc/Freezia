@@ -118,4 +118,10 @@ object IngredientListData {
     val nameMap = list.associate { it.name to it.imgUrl }
 
     val mapIdToItem = list.associateBy { it.ingredientId }
+
+    private val mapNameToItem = list.associateBy { it.name }
+
+    fun getImageByName(name: String): String {
+        return mapNameToItem[name]?.imgUrl ?: ""
+    }
 }

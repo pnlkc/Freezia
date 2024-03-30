@@ -170,6 +170,7 @@ class UserViewModel @Inject constructor(
 
     fun clearOnboarding() {
         onboardingState = Onboarding()
+        clearInputText()
     }
 
     fun clickDislikeIngredientItem(isAdd: Boolean, item: IngredientItemData) {
@@ -250,5 +251,10 @@ class UserViewModel @Inject constructor(
 
             Log.d("로그", "FridgeIngredientViewModel - getFridgeIngredientList() 호출됨 / 응답 실패 : ${body}")
         }
+    }
+
+    fun clearInputText() {
+        diseaseInputText = ""
+        dislikeInputText = ""
     }
 }

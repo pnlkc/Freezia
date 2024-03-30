@@ -79,6 +79,7 @@ fun RecipePreferenceSettingScreen(
             memberInfo = userViewModel.memberInfo,
             navigateToUserOnboarding = {
                 userViewModel.getOnboardingData()
+                userViewModel.clearInputText()
                 navigateToUserOnboarding()
             }
         )

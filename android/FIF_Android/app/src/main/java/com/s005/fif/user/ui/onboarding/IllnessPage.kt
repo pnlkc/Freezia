@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -48,6 +49,7 @@ import com.s005.fif.common.data.DiseaseItemData
 import com.s005.fif.common.data.DiseaseListData
 import com.s005.fif.ui.theme.Typography
 import com.s005.fif.user.ui.UserViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun IllnessPage(
@@ -196,12 +198,22 @@ fun IllnessSelectLazyRow(
     checkedDiseaseList: List<DiseaseItemData>,
     onItemClicked: (Boolean, DiseaseItemData) -> Unit
 ) {
+    val lazyListState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+
     LazyRow(
         modifier = modifier
             .padding(vertical = 20.dp),
         horizontalArrangement = Arrangement.spacedBy(5.dp),
-        reverseLayout = true
+        reverseLayout = true,
+        state = lazyListState
     ) {
+        coroutineScope.launch {
+            if (checkedDiseaseList.isNotEmpty()) {
+                lazyListState.scrollToItem(checkedDiseaseList.lastIndex)
+            }
+        }
+
         itemsIndexed(
             items = checkedDiseaseList,
             key = { _, item ->

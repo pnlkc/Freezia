@@ -36,7 +36,6 @@ object AnnotatedStringUtil {
         }
     }
 
-
     // TODO. 다국어 지원을 위해 하드 코딩된 문자열 처리 필요
     @Composable
     fun makeMainRecommendRecipeString(recommendType: Int, name: String) : AnnotatedString {

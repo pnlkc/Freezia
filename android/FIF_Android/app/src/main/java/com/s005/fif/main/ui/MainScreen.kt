@@ -50,6 +50,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.s005.fif.R
+import com.s005.fif.chat.ui.ChatViewModel
 import com.s005.fif.main.dto.RecommendRecipeListItem
 import com.s005.fif.recipe.dto.RecipeListItem
 import com.s005.fif.recipe.ui.RecipeViewModel
@@ -68,6 +69,7 @@ fun MainScreen(
     userViewModel: UserViewModel,
     mainViewModel: MainViewModel,
     recipeViewModel: RecipeViewModel,
+    chatViewModel: ChatViewModel,
     navigateToUserProfile: () -> Unit,
     navigateToRecipeList: () -> Unit,
     navigateToRecipeChat: () -> Unit,
@@ -114,6 +116,7 @@ fun MainScreen(
             navigateToRecipeChat = {
                 coroutineScope.launch {
                     userViewModel.getFridgeIngredientList()
+                    chatViewModel.clearData()
                     navigateToRecipeChat()
                 }
             },

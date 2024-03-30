@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -23,6 +24,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +43,7 @@ import com.s005.fif.common.data.IngredientItemData
 import com.s005.fif.common.data.IngredientListData
 import com.s005.fif.ui.theme.Typography
 import com.s005.fif.user.ui.UserViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun DislikeIngredientPage(
@@ -209,12 +212,22 @@ fun DislikeIngredientSelectLazyRow(
     dislikeIngredientList: List<IngredientItemData>,
     onItemClicked: (Boolean, IngredientItemData) -> Unit
 ) {
+    val lazyListState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+
     LazyRow(
         modifier = modifier
             .padding(vertical = 20.dp),
         horizontalArrangement = Arrangement.spacedBy(5.dp),
-        reverseLayout = true
+        reverseLayout = true,
+        state = lazyListState
     ) {
+        coroutineScope.launch {
+            if (dislikeIngredientList.isNotEmpty()) {
+                lazyListState.scrollToItem(dislikeIngredientList.lastIndex)
+            }
+        }
+
         itemsIndexed(
             items = dislikeIngredientList,
             key = { _, item ->

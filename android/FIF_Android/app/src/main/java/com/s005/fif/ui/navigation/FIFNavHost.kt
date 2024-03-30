@@ -15,11 +15,14 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.s005.fif.chat.ui.ChatRecipeDetailScreen
+import com.s005.fif.chat.ui.ChatRecipeStepScreen
 import com.s005.fif.main.ui.MainScreen
 import com.s005.fif.main.ui.MainViewModel
 import com.s005.fif.main.ui.SplashScreen
 import com.s005.fif.recipe.ui.RecipeViewModel
-import com.s005.fif.recipe.ui.chat.RecipeChatScreen
+import com.s005.fif.chat.ui.ChatScreen
+import com.s005.fif.chat.ui.ChatViewModel
 import com.s005.fif.recipe.ui.complete.IngredientAddScreen
 import com.s005.fif.recipe.ui.complete.IngredientRemoveScreen
 import com.s005.fif.recipe.ui.complete.RecipeCompleteScreen
@@ -62,6 +65,7 @@ fun FIFNavHost(
     val recipeViewModel: RecipeViewModel = hiltViewModel()
     val recipeHistoryViewModel: RecipeHistoryViewModel = hiltViewModel()
     val shoppingListViewModel: ShoppingListViewModel = hiltViewModel()
+    val chatViewModel: ChatViewModel = hiltViewModel()
 
     val coroutineScope = rememberCoroutineScope()
     val navigateToUserSelect = {
@@ -107,6 +111,7 @@ fun FIFNavHost(
                 userViewModel = userViewModel,
                 mainViewModel = mainViewModel,
                 recipeViewModel = recipeViewModel,
+                chatViewModel = chatViewModel,
                 navigateToUserProfile = {
                     navController.navigate(NavigationDestination.UserProfile.route) {
                         launchSingleTop = true
@@ -118,7 +123,7 @@ fun FIFNavHost(
                     }
                 },
                 navigateToRecipeChat = {
-                    navController.navigate(NavigationDestination.RecipeChat.route) {
+                    navController.navigate(NavigationDestination.Chat.route) {
                         launchSingleTop = true
                     }
                 },
@@ -324,7 +329,7 @@ fun FIFNavHost(
                     navController.navigateUp()
                 },
                 navigateToRecipeChat = {
-                    navController.navigate(NavigationDestination.RecipeChat.route) {
+                    navController.navigate(NavigationDestination.Chat.route) {
                         launchSingleTop = true
                     }
                 },
@@ -342,14 +347,73 @@ fun FIFNavHost(
             )
         }
 
-        composable(route = NavigationDestination.RecipeChat.route) {
+        composable(route = NavigationDestination.Chat.route) {
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
 
-            RecipeChatScreen(
+            ChatScreen(
                 modifier = modifierSNI,
                 userViewModel = userViewModel,
+                chatViewModel = chatViewModel,
                 navigateUp = {
                     navController.navigateUp()
+                },
+                navigateToChatRecipeDetail = { recipeIdx ->
+                    navController.navigate(route = "${NavigationDestination.ChatRecipeDetail.route}/${recipeIdx}") {
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        composable(
+            route = "${NavigationDestination.ChatRecipeDetail.route}/{${NavigationDestination.ChatRecipeDetail.RECIPE_IDX}}",
+            arguments = listOf(
+                navArgument(NavigationDestination.ChatRecipeDetail.RECIPE_IDX) { type = NavType.IntType }
+            )
+        ) { navBackStackEntry ->
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
+
+            val recipeIdx =
+                navBackStackEntry.arguments?.getInt(NavigationDestination.ChatRecipeDetail.RECIPE_IDX)
+                    ?: 0
+
+            ChatRecipeDetailScreen(
+                modifier = modifierN,
+                chatViewModel = chatViewModel,
+                recipeViewModel = recipeViewModel,
+                recipeIdx = recipeIdx,
+                navigateUp = {
+                    navController.navigateUp()
+                },
+                navigateToChatRecipeStep = { idx ->
+                    navController.navigate(route = "${NavigationDestination.ChatRecipeStep.route}/${idx}") {
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        composable(
+            route = "${NavigationDestination.ChatRecipeStep.route}/{${NavigationDestination.ChatRecipeStep.RECIPE_IDX}}",
+            arguments = listOf(
+                navArgument(NavigationDestination.ChatRecipeStep.RECIPE_IDX) { type = NavType.IntType }
+            )
+        ) { navBackStackEntry ->
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
+
+            val recipeIdx =
+                navBackStackEntry.arguments?.getInt(NavigationDestination.ChatRecipeStep.RECIPE_IDX)
+                    ?: 0
+
+            ChatRecipeStepScreen(
+                modifier = modifierSN,
+                chatViewModel = chatViewModel,
+                recipeIdx = recipeIdx,
+                navigateUp = {
+                    navController.navigateUp()
+                },
+                popBackStackToChat = {
+                    navController.popBackStack(NavigationDestination.Chat.route, false)
                 }
             )
         }

@@ -89,7 +89,10 @@ fun RecipeCompleteScreen(
 
                 navigateToRecipeHistory()
             },
-            navigateToIngredientAdd = navigateToIngredientAdd,
+            navigateToIngredientAdd = {
+                recipeViewModel.inputText
+                navigateToIngredientAdd()
+            },
             navigateToIngredientRemove = {
                 navigateToIngredientRemove(recipeId)
             },

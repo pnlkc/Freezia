@@ -2,6 +2,9 @@ package com.s005.fif.di
 
 import android.content.Context
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.s005.fif.chat.data.ChatRepository
+import com.s005.fif.chat.data.DefaultChatRepository
+import com.s005.fif.chat.network.ChatService
 import com.s005.fif.di.LoginUser.memberId
 import com.s005.fif.main.data.DefaultMainRepository
 import com.s005.fif.main.data.MainRepository
@@ -185,6 +188,18 @@ object AppModule {
     @Provides
     fun provideRecipeRepository(recipeService: RecipeService): RecipeRepository {
         return DefaultRecipeRepository(recipeService)
+    }
+
+    @Singleton
+    @Provides
+    fun provideChatService(retrofit: Retrofit): ChatService {
+        return retrofit.create(ChatService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideChatRepository(chatService: ChatService): ChatRepository {
+        return DefaultChatRepository(chatService)
     }
 
     @Singleton

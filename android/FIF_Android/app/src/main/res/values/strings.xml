@@ -55,6 +55,7 @@
     <string name="text_add_ingredient">추가한 재료</string>
     <string name="text_remove_ingredient">제거한 재료</string>
     <string name="text_record_recipe">요리 기록하기</string>
+    <string name="text_recipe_end">요리 완료하기</string>
     <string name="text_go_to_recipe_list_2">레시피 목록으로 이동</string>
     <string name="text_complete_recipe_title">요리가 완성되었습니다</string>
     <string name="text_add_ingredient_btn">재료 추가하기</string>
@@ -63,6 +64,9 @@
     <string name="text_exit_app">뒤로가기 버튼을 한번 더 누르면 종료됩니다</string>
     <string name="text_no_recipe_history">해당 레시피의 요리 기록이 없습니다</string>
     <string name="text_no_recommend_recipe">\n추천 레시피가 없습니다\n</string>
+    <string name="text_wait_prompt">이전 요청이 완료된 후 다시 시도해주세요</string>
+    <string name="text_recipe_progress">레시피를 생성하고 있습니다</string>
+    <string name="text_no_calorie_data">칼로리 정보 없음</string>
 
     <string name="description_btn_go_back">뒤로가기 버튼</string>
     <string name="description_btn_bookmark">북마크 버튼</string>

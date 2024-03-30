@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
-import { onMessage } from 'firebase/messaging';
 // import startRecognition from './utils/voiceRecognization';
 import ScreenFrame from './components/ScreenFrame';
 
 import './assets/styles/main.css';
-import messaging, { setToken } from './utils/firebase';
-import { sendWarning, setWatchToken } from './apis/firebase';
+import { setToken } from './utils/firebase';
 import navigateInstance from './utils/navigate';
+
+import { sendWarning } from './apis/firebase';
+import { registMessageEvent } from './utils/messageEventHandler';
 
 function App() {
   const [focused, setFocused] = useState(
@@ -20,16 +21,12 @@ function App() {
   useEffect(() => {
     // startRecognition();
     setToken();
-    onMessage(messaging, (payload) => {
-      const message = JSON.parse(payload.data.json);
-      console.log(message);
-      if (message.type === 1) {
-        sessionStorage.setItem('warning', JSON.stringify(message));
-        const { navigate } = navigateInstance;
-        navigate('/Cooking/warning');
-        setFocused(true);
-      }
-    });
+    registMessageEvent((message) => {
+      sessionStorage.setItem('warning', JSON.stringify(message));
+      const { navigate } = navigateInstance;
+      navigate('/Cooking/warning');
+      setFocused(true);
+    }, 1);
   }, []);
   useEffect(() => {
     if (focused) {
@@ -62,9 +59,6 @@ function App() {
           } ${focused ? 'focus-in' : 'focus-out'}`}
           src="/images/background.png"
           alt="background"
-          onClick={() => {
-            setFocused(!focused);
-          }}
         />
       </div>
       <ScreenFrame onScreen={onScreen} />
@@ -80,6 +74,32 @@ function App() {
         >
           문 열기
         </div>
+      )}
+      {!focused && (
+        <div
+          className="focus-button"
+          onClick={() => {
+            setFocused(!focused);
+          }}
+        >
+          패널 사용하기
+        </div>
+      )}
+      {onScreen && (
+        <div
+          className="focus-out-left-button"
+          onClick={() => {
+            setFocused(!focused);
+          }}
+        />
+      )}
+      {onScreen && (
+        <div
+          className="focus-out-right-button"
+          onClick={() => {
+            setFocused(!focused);
+          }}
+        />
       )}
     </div>
   );

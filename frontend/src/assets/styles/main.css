@@ -99,14 +99,55 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 3px solid white;
+  border: 3px solid rgba(255, 255, 255, 0.548);
+  color: white;
   border-style: dashed;
   transition: all 0.5s;
 }
 
 .open-door-button:hover {
-  opacity: 0.5;
+  opacity: 1;
+}
+
+.focus-button {
+  position: absolute;
+  width: 11.2%;
+  height: 35.8%;
+  top: 16.9%;
+  left: 48.2%;
+  cursor: pointer;
+  opacity: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid rgba(255, 255, 255, 0.548);
+  border-style: dashed;
+  transition: all 0.5s;
   color: white;
+}
+
+.focus-button:hover {
+  opacity: 1;
+}
+.focus-out-right-button,
+.focus-out-left-button {
+  position: absolute;
+  width: 32%;
+  height: 100%;
+  top: 0;
+  background-color: white;
+  opacity: 0;
+  transition: all 0.5s;
+  cursor: pointer;
+}
+
+.focus-out-right-button {
+  right: 0;
+}
+
+.focus-out-right-button:hover,
+.focus-out-left-button:hover {
+  opacity: 0.4;
 }
 
 @keyframes slide-in {

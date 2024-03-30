@@ -24,3 +24,9 @@ export const getRecipeHistory = async (recipeId) => {
 
   return data.completeCooks;
 };
+
+export const toggleBookmark = async (recipeId) => {
+  const { data } = await axios.patch(`recipes/${recipeId}/save`);
+
+  return data;
+};

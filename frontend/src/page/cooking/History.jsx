@@ -33,7 +33,7 @@ export default function History() {
     getCompleteRecipeList().then((recipeList) => {
       setCompleteRecipeList(recipeList);
     });
-  });
+  }, []);
 
   return (
     <div className="profile-history-container">

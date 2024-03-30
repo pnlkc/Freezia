@@ -7,7 +7,7 @@ import RecipeHistoryList from '../../components/cooking/RecipeHistoryList';
 import '../../assets/styles/cooking/recipe.css';
 import registDragEvent, { inrange } from '../../utils/registDragEvent';
 import { getRecipeDetail, getRecipeSteps } from '../../apis/recipe';
-import { getRecipeHistory } from '../../apis/history';
+import { getRecipeHistory, toggleBookmark } from '../../apis/history';
 
 export default function Recipe() {
   const [listType, setListType] = useState('component');
@@ -18,9 +18,13 @@ export default function Recipe() {
   const draggableRef = useRef();
   const { recipeId } = useParams();
 
-  const [recipeDetail, setRecipeDetail] = useState(null);
+  const recipe = JSON.parse(sessionStorage.getItem('recipeList')).filter(
+    ({ id }) => recipeId !== id,
+  )[0];
+  const [recipeDetail, setRecipeDetail] = useState(recipe);
   const [recipeSteps, setRecipeSteps] = useState(null);
   const [recipeHistory, setRecipeHistory] = useState([]);
+  const [saveYn, setSaveYn] = useState(recipe.saveYn);
 
   useEffect(() => {
     const startTop = draggableRef.current.getBoundingClientRect().top;
@@ -38,6 +42,20 @@ export default function Recipe() {
     });
   }, []);
 
+  useEffect(() => {
+    setSaveYn(recipeDetail.saveYn);
+  }, [recipeDetail]);
+
+  useEffect(() => {
+    const recipeList = JSON.parse(sessionStorage.getItem('recipeList'));
+    const changedRecipe = { ...recipe, saveYn };
+    const newRecipeList = recipeList.map((oldRecipe) => {
+      if (oldRecipe.recipeId === recipeId) return changedRecipe;
+      return oldRecipe;
+    });
+    sessionStorage.setItem('recipeList', JSON.stringify(newRecipeList));
+  }, [saveYn]);
+
   return (
     <div className="cooking-recipe-container">
       <div
@@ -51,15 +69,22 @@ export default function Recipe() {
           <div
             className="f-5 recipe-header-icon"
             onClick={() => {
-              navigate('/Cooking/recipe/list');
+              navigate(-1);
             }}
           >
             {'<'}
           </div>
           <img
-            src="/images/cooking/bookmark.svg"
+            src={
+              saveYn
+                ? '/images/cooking/bookmark_orange.svg'
+                : '/images/cooking/bookmark.svg'
+            }
             alt="북마크"
             className="header-icon-bookmark recipe-header-icon"
+            onClick={() => {
+              toggleBookmark(recipeId).then(setSaveYn(!saveYn));
+            }}
           />
         </div>
         <div className="recipe-header-description-box">

@@ -30,7 +30,9 @@ export default function PreferenceBox() {
           <div className="preference-type">선호 메뉴</div>
           <div className="preference-tags">
             {profile?.preferMenu.split(',').map((menu) => (
-              <div className="preference-tag">{menu.trim()}</div>
+              <div className="preference-tag" key={menu.trim()}>
+                {menu.trim()}
+              </div>
             ))}
           </div>
         </div>
@@ -38,7 +40,9 @@ export default function PreferenceBox() {
           <div className="preference-type">기피 식재료</div>
           <div className="preference-tags">
             {dislikeIngredients.map((ingredient) => (
-              <div className="preference-tag">{ingredient}</div>
+              <div className="preference-tag" key={ingredient}>
+                {ingredient}
+              </div>
             ))}
           </div>
         </div>
@@ -47,7 +51,9 @@ export default function PreferenceBox() {
 
           <div className="preference-tags">
             {diseases.map((disease) => (
-              <div className="preference-tag">{disease}</div>
+              <div className="preference-tag" key={disease}>
+                {disease}
+              </div>
             ))}
           </div>
         </div>

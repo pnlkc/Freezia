@@ -75,7 +75,7 @@ public class GeneAIRecipeScheduler {
 		int cntNewRecipes = 0;
 
 		// TODO: 모든 사용자에 대해 생성
-		int[] memberIds = {1, 2};
+		int[] memberIds = {1};
 
 		for (int memberId : memberIds) {
 			MemberDetailResponseDto memberDetail = memberService.getMemberDetail(memberId);

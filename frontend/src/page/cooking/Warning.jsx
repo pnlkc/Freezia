@@ -3,10 +3,10 @@ import '../../assets/styles/cooking/warning.css';
 
 export default function Warning() {
   const navigate = useNavigate();
-  const { description, imgUrl, name, type } = JSON.parse(
+  const { description, imgUrl, name, disease } = JSON.parse(
     sessionStorage.getItem('warning'),
   );
-  const disease = '지병';
+  // const disease = '지병';
 
   return (
     <div className="warning-container">
@@ -23,11 +23,11 @@ export default function Warning() {
         src="/images/cooking/warn.svg"
         alt="위험 음식 알림"
       />
-      <img className="warning-ingredient-image" src={imgUrl} alt="복숭아" />
+      <img className="warning-ingredient-image" src={imgUrl} alt={name} />
       <div className="warning-title">
         <span className="bold">{name}</span>
         <span className="o-9"> 는 </span>
-        <span className="o-9">{disease} </span>
+        <span className="bold">{disease} </span>
         <span className="o-9">에 좋지 않아요!</span>
       </div>
       <div className="warning-description">{description}</div>

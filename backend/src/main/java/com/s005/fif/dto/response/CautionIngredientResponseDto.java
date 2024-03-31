@@ -8,6 +8,7 @@ import lombok.Getter;
 public class CautionIngredientResponseDto {
 	private Integer type;
 	private String name;
+	private String disease;
 	private String description;
 	private String imgUrl;
 }

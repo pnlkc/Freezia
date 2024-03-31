@@ -84,6 +84,7 @@ object NotificationUtil {
         notificationTitle: String,
         notificationContent: String,
         ingredient: String,
+        disease: String
     ) {
         createNotificationChannel(context)
 
@@ -91,6 +92,7 @@ object NotificationUtil {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
             putExtra("fullText", notificationContent)
             putExtra("ingredient", ingredient)
+            putExtra("disease", disease)
         }
 
         val pendingIntent: PendingIntent = PendingIntent.getActivity(

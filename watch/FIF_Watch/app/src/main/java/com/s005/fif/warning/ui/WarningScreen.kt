@@ -25,6 +25,7 @@ import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import com.s005.fif.R
 import com.s005.fif.main.ui.MainViewModel
+import com.s005.fif.ui.theme.Typography
 import com.s005.fif.utils.ColorCombineTextUtil
 import com.s005.fif.utils.ScreenSize
 import com.s005.fif.utils.ScreenSize.toDpSize
@@ -35,7 +36,8 @@ fun WarningScreen(
     modifier: Modifier = Modifier,
     mainViewModel: MainViewModel = hiltViewModel(),
     ingredient: String = "",
-    fullText: String = ""
+    fullText: String = "",
+    disease: String = ""
 ) {
     Column(
         modifier = modifier
@@ -50,12 +52,13 @@ fun WarningScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(ScreenSize.screenHeightDp.toDpSize(2))
         ) {
             Icon(
                 modifier = Modifier
                     .clip(CircleShape)
-                    .size(ScreenSize.screenHeightDp.toDpSize(25))
+                    .size(ScreenSize.screenHeightDp.toDpSize(20))
                     .background(MaterialTheme.colors.error)
                     .padding(5.dp),
                 painter = painterResource(id = R.drawable.warning),
@@ -69,7 +72,7 @@ fun WarningScreen(
                 text = "${mainViewModel.mainUiState.member?.name ?: "닉네임"}님",
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
-                fontSize = ScreenSize.screenHeightDp.toSpSize(10),
+                fontSize = ScreenSize.screenHeightDp.toSpSize(8),
                 color = Color.White,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -80,7 +83,7 @@ fun WarningScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = ScreenSize.screenWidthDp.toDpSize(10)),
-            text = ColorCombineTextUtil.makeWarningText(ingredient, stringResource(id = R.string.text_danger_ingredient_body, ingredient)),
+            text = ColorCombineTextUtil.makeWarningText(ingredient, disease, stringResource(id = R.string.text_danger_ingredient_body, ingredient, disease)),
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             fontSize = ScreenSize.screenHeightDp.toSpSize(10),

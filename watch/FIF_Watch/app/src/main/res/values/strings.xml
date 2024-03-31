@@ -41,6 +41,6 @@
     <string name="text_user_name">%1$s님</string>
     <string name="description_warning_ingredient_icon">위험 식재료 아이콘</string>
     <string name="text_danger_ingredient">위험 식재료 알림</string>
-    <string name="text_danger_ingredient_body">방금 꺼내신 %1$s는 지병에 좋지 않아요</string>
+    <string name="text_danger_ingredient_body">방금 꺼내신 %1$s는 %2$s에 좋지 않아요</string>
     <string name="exit_toast_message">뒤로가기 버튼을 한번 더 누르면 종료됩니다</string>
 </resources>

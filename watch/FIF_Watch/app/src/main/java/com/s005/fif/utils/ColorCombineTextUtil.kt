@@ -34,57 +34,51 @@ object ColorCombineTextUtil {
         return annotatedString
     }
 
-    fun makeWarningText(ingredient: String, fullText: String): AnnotatedString {
-        val start = fullText.indexOf(ingredient)
-        val end = start + ingredient.lastIndex
-
-        val annotatedString = buildAnnotatedString {
-            withStyle(style = SpanStyle(color = Color.White)) {
-                append(fullText.slice(0 until start))
-            }
-            withStyle(style = SpanStyle(color = fifWatchColorPalette.primary)) {
-                append(fullText.slice(start..end))
-            }
-            withStyle(style = SpanStyle(color = Color.White)) {
-                append(fullText.slice(end+ 1..fullText.lastIndex))
-            }
-        }
-
-        return annotatedString
-    }
-
-//    fun makeWarningText(ingredient: String, illness: String, context: Context): AnnotatedString {
-//        val text = context.getString(
-//            R.string.warning_text,
-//            ingredient,
-//            illness
-//        )
-//
-//        val startOne = text.indexOf(ingredient)
-//        val endOne = startOne + ingredient.lastIndex
-//        val startTwo = text.indexOf(illness)
-//        val endTwo = startTwo + illness.lastIndex
+//    fun makeWarningText(ingredient: String, fullText: String): AnnotatedString {
+//        val start = fullText.indexOf(ingredient)
+//        val end = start + ingredient.lastIndex
 //
 //        val annotatedString = buildAnnotatedString {
 //            withStyle(style = SpanStyle(color = Color.White)) {
-//                append(text.slice(0 until startOne))
+//                append(fullText.slice(0 until start))
 //            }
 //            withStyle(style = SpanStyle(color = fifWatchColorPalette.primary)) {
-//                append(text.slice(startOne..endOne))
+//                append(fullText.slice(start..end))
 //            }
 //            withStyle(style = SpanStyle(color = Color.White)) {
-//                append(text.slice(endOne + 1 until startTwo))
-//            }
-//            withStyle(style = SpanStyle(color = fifWatchColorPalette.primary)) {
-//                append(text.slice(startTwo..endTwo))
-//            }
-//            withStyle(style = SpanStyle(color = Color.White)) {
-//                append(text.slice(endTwo + 1..text.lastIndex))
+//                append(fullText.slice(end+ 1..fullText.lastIndex))
 //            }
 //        }
 //
 //        return annotatedString
 //    }
+
+    fun makeWarningText(ingredient: String, disease: String, fullText: String): AnnotatedString {
+        val startOne = fullText.indexOf(ingredient)
+        val endOne = startOne + ingredient.lastIndex
+        val startTwo = fullText.indexOf(disease)
+        val endTwo = startTwo + disease.lastIndex
+
+        val annotatedString = buildAnnotatedString {
+            withStyle(style = SpanStyle(color = Color.White)) {
+                append(fullText.slice(0 until startOne))
+            }
+            withStyle(style = SpanStyle(color = fifWatchColorPalette.primary)) {
+                append(fullText.slice(startOne..endOne))
+            }
+            withStyle(style = SpanStyle(color = Color.White)) {
+                append(fullText.slice(endOne + 1 until startTwo))
+            }
+            withStyle(style = SpanStyle(color = fifWatchColorPalette.primary)) {
+                append(fullText.slice(startTwo..endTwo))
+            }
+            withStyle(style = SpanStyle(color = Color.White)) {
+                append(fullText.slice(endTwo + 1..fullText.lastIndex))
+            }
+        }
+
+        return annotatedString
+    }
 
     fun makeTimerDoneText(timerName: String, context: Context): AnnotatedString {
         val text = context.getString(

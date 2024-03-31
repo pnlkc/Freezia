@@ -309,6 +309,18 @@ ex) {
 """
 
 
+EXPIRATION_DATE_JSON= """
+현재 유통기한 임박한 냉장고 재고 정보를 활용하여 즉시 만들 수 있는 요리 레시피 20개를 아래와 같은 JSON 형식으로 반환해주고 이외의 말은 하지마:
+{
+     레시피 제목 : 확률(int값으로 반환)
+}
+
+ex) {
+    만들 수 있는 레시피 : 100
+}
+"""
+
+
 define = {
     "중식" : CHINA,
     "양식" : RESTAURANT,
@@ -323,9 +335,10 @@ answer = {
     "한식" : KOREA_ANSWER_JSON,
     "일식" : JAPAN_ANSWER_JSON,
     "면요리" : NOODLE_ANSWER_JSON,
-    "국물 요리": SOUP_ANSWER_JSON,
-    "찜 요리": STEAM_ANSWER_JSON,
-    "볶음 요리": STIR_FRY_ANSWER_JSON,
-    "튀김 요리": FRY_ANSWER_JSON,
-    "밑반찬": SIDE_ANSWER_JSON
+    "국물요리": SOUP_ANSWER_JSON,
+    "찜요리": STEAM_ANSWER_JSON,
+    "볶음요리": STIR_FRY_ANSWER_JSON,
+    "튀김요리": FRY_ANSWER_JSON,
+    "밑반찬": SIDE_ANSWER_JSON,
+    "유통기한 임박": EXPIRATION_DATE_JSON
 }

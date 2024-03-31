@@ -8,4 +8,5 @@ data class FCMIngredientDTO(
     val name: String,
     val imgUrl: String,
     val description: String,
+    val disease: String
 )

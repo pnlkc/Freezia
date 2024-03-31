@@ -36,7 +36,7 @@ class FIFFirebaseMessagingService : FirebaseMessagingService() {
 
                 Log.d("로그", "FIFFirebaseMessagingService - onMessageReceived() 호출됨 / 위험 식재료 알림 : ${ingredient}")
 
-                showIngredientWarningNotification(this, this.getString(R.string.text_danger_ingredient), ingredient.description, ingredient.name)
+                showIngredientWarningNotification(this, this.getString(R.string.text_danger_ingredient), ingredient.description, ingredient.name, ingredient.disease)
             }
             2 -> { // 패널과 연동 알림
                 Log.d("로그", "FIFFirebaseMessagingService - onMessageReceived() 호출됨 / 패널과 연동 알림 - ${message.data["json"]!!}")

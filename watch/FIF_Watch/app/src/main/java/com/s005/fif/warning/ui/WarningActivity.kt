@@ -35,6 +35,7 @@ class WarningActivity : ComponentActivity() {
 
         val fullText = intent.getStringExtra("fullText") ?: ""
         val ingredient = intent.getStringExtra("ingredient") ?: ""
+        val disease = intent.getStringExtra("disease") ?: ""
 
         setContent {
             FIF_WatchTheme {
@@ -46,7 +47,8 @@ class WarningActivity : ComponentActivity() {
                 ) {
                     WarningScreen(
                         fullText = fullText,
-                        ingredient = ingredient
+                        ingredient = ingredient,
+                        disease = disease
                     )
                 }
             }
@@ -71,6 +73,7 @@ class WarningActivity : ComponentActivity() {
 
         val fullText = intent.getStringExtra("fullText") ?: ""
         val ingredient = intent.getStringExtra("ingredient") ?: ""
+        val disease = intent.getStringExtra("disease") ?: ""
 
         setContent {
             FIF_WatchTheme {
@@ -81,8 +84,9 @@ class WarningActivity : ComponentActivity() {
                     contentAlignment = Alignment.Center
                 ) {
                     WarningScreen(
+                        fullText = fullText,
                         ingredient = ingredient,
-                        fullText = fullText
+                        disease = disease
                     )
                 }
             }

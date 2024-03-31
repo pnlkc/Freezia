@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Freezia</string>
+    <string name="app_name">FREEZIA</string>
     <string name="text_select_user">사용자를 선택해주세요</string>
     <string name="text_add_user">사용자 추가</string>
     <string name="text_skip_onboarding">건너뛰기</string>

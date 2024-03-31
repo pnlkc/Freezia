@@ -24,6 +24,7 @@ import com.s005.fif.common.exception.ExceptionType;
 import com.s005.fif.dto.fcm.FcmMessageDto;
 import com.s005.fif.dto.fcm.FcmMessageNotificationDto;
 import com.s005.fif.dto.fcm.FcmRecipeDto;
+import com.s005.fif.dto.fcm.FcmRecipeSenderDto;
 import com.s005.fif.dto.fcm.FcmSendDto;
 import com.s005.fif.dto.fcm.FcmStepShiftingDto;
 import com.s005.fif.dto.response.CautionIngredientResponseDto;
@@ -93,6 +94,8 @@ public class FirebaseCloudMessageService {
 		Object data = fcmSendDto.getData();
 		if (data instanceof FcmRecipeDto) {
 			map.put("type", ((FcmRecipeDto)data).getType().toString());
+		} else if (data instanceof FcmRecipeSenderDto) {
+			map.put("type", ((FcmRecipeSenderDto)data).getType().toString());
 		} else if (data instanceof FcmStepShiftingDto) {
 			map.put("type", ((FcmStepShiftingDto)data).getType().toString());
 		} else if (data instanceof CautionIngredientResponseDto) {

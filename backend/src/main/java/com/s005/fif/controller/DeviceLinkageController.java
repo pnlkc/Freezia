@@ -41,6 +41,13 @@ public class DeviceLinkageController {
 		return new Response(Response.MESSAGE, "연동이 종료되었습니다.");
 	}
 
+	@PostMapping("/recipes/{recipeId}/galaxy-watch/close")
+	@Operation(summary = "갤럭시 워치 연동 종료")
+	public Response disconnectWithGalaxyWatchFromSender(@Parameter(hidden = true) MemberDto memberDto, @PathVariable Integer recipeId, @Valid @RequestBody FCMStepShiftingRequestDto fcmStepShiftingRequestDto) {
+		deviceLinkageService.disconnectWithGalaxyWatch(memberDto.getMemberId(), recipeId, fcmStepShiftingRequestDto.getSender());
+		return new Response(Response.MESSAGE, "연동이 종료되었습니다.");
+	}
+
 	@PostMapping("/recipes/steps/{step}")
 	@Operation(summary = "워치&패널 레시피 단계 이동")
 	public Response moveToNextStep(@Parameter(hidden = true) MemberDto memberDto, @PathVariable Integer step, @Valid @RequestBody FCMStepShiftingRequestDto fcmStepShiftingRequestDto) {

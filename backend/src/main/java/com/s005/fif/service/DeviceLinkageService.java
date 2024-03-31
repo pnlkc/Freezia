@@ -9,6 +9,7 @@ import com.s005.fif.common.exception.CustomException;
 import com.s005.fif.common.exception.ExceptionType;
 import com.s005.fif.dto.fcm.DeviceType;
 import com.s005.fif.dto.fcm.FcmRecipeDto;
+import com.s005.fif.dto.fcm.FcmRecipeSenderDto;
 import com.s005.fif.dto.fcm.FcmSendDto;
 import com.s005.fif.dto.fcm.FcmStepShiftingDto;
 import com.s005.fif.dto.fcm.FcmTokenDto;
@@ -65,6 +66,33 @@ public class DeviceLinkageService {
 		// 메시지 설정
 		FcmRecipeDto fcmRecipeDto = FcmRecipeDto.builder()
 			.type(3)
+			.build();
+		FcmSendDto fcmSendDto = FcmSendDto.builder()
+			.title("삼성 비스포크 패밀리허브 냉장고 연동 종료")
+			.body("냉장고 레시피와 워치 연동을 종료합니다.")
+			.data(fcmRecipeDto)
+			.build();
+
+		// 워치로 전송
+		fcmSendDto.setToken(watchToken);
+		firebaseCloudMessageService.sendMessageTo(fcmSendDto);
+
+		// 웹으로 전송
+		fcmSendDto.setToken(webToken);
+		firebaseCloudMessageService.sendMessageTo(fcmSendDto);
+	}
+
+	public void disconnectWithGalaxyWatch(Integer memberId, Integer recipeId, Integer senderId) {
+		// 웹, 워치 토큰 조회
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new CustomException(ExceptionType.MEMBER_NOT_FOUND));
+		String watchToken = member.getWatchToken();
+		String webToken = member.getFridge().getFridgeToken();
+
+		// 메시지 설정
+		FcmRecipeSenderDto fcmRecipeDto = FcmRecipeSenderDto.builder()
+			.type(3)
+			.sender(senderId)
 			.build();
 		FcmSendDto fcmSendDto = FcmSendDto.builder()
 			.title("삼성 비스포크 패밀리허브 냉장고 연동 종료")

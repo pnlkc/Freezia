@@ -16,12 +16,16 @@ export default function RecipeList() {
 
   useEffect(() => {
     const filterSet = new Set(selectedList);
-    setFilteredList(
-      recipeList.filter((recipe) => {
-        const typeSet = new Set(recipe.recipeTypes.split(','));
-        return typeSet.intersection(filterSet) !== 0;
-      }),
-    );
+    if (selectedList.length === 0) {
+      setFilteredList([...recipeList]);
+    } else {
+      setFilteredList(
+        recipeList.filter((recipe) => {
+          const typeSet = new Set(recipe.recipeTypes.split(','));
+          return typeSet.intersection(filterSet).size !== 0;
+        }),
+      );
+    }
   }, [selectedList]);
 
   return (

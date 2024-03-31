@@ -11,12 +11,12 @@ export default function FilterList({
 
   return (
     <div className="filter-list-container">
-      {recipeTypeList.map((filter, idx) => (
+      {recipeTypeList.map((filter) => (
         <div
-          className={`filter-item f-0 box-shadow ${selectedList.includes(idx) ? 'filter-item-selected' : ''}`}
+          className={`filter-item f-0 box-shadow ${selectedList.includes(filter) ? 'filter-item-selected' : ''}`}
           key={filter}
           onClick={() => {
-            selectItem(idx);
+            selectItem(filter);
           }}
         >
           {filter}

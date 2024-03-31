@@ -107,10 +107,13 @@ fun RecipeStepScreen(
         snapshotFlow { pagerState.currentPage }.collect { page ->
             selectedPage = page
 
+            Log.d("로그", " - RecipeStepScreen() 호출됨 / isFcmNotification : ${RecipeLiveData.isFcmNotification}")
+
             if (RecipeLiveData.isFcmNotification) {
                 RecipeLiveData.isFcmNotification = false
             } else if (page <= maxPages + 1) {
                 recipeViewModel.moveRecipeStep(page + 1)
+                RecipeLiveData.isFcmNotification = false
             }
         }
     }

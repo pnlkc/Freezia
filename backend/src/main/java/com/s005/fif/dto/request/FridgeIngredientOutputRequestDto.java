@@ -3,9 +3,7 @@ package com.s005.fif.dto.request;
 import lombok.Getter;
 
 @Getter
-public class FridgeIngredientRequestDto {
+public class FridgeIngredientOutputRequestDto {
 
 	private Integer fridgeIngredientId;
-
-	private String name;
 }

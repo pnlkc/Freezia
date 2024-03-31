@@ -10,4 +10,6 @@ public class FcmStepShiftingDto {
 	private Integer type;
 
 	private Integer step;
+
+	private Integer sender;
 }

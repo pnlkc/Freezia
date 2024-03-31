@@ -18,5 +18,5 @@ public interface CautionIngredientRelRepository extends JpaRepository<CautionIng
 		+ "\twhere member_id = :memberId\n"
 		+ ")",
 			nativeQuery = true)
-	Optional<CautionIngredientRel> findByMemberIdAndIngredientId(Integer memberId, Integer ingredientId);
+	List<CautionIngredientRel> findAllByMemberIdAndIngredientId(Integer memberId, Integer ingredientId);
 }

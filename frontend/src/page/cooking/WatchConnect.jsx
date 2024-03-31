@@ -14,7 +14,7 @@ export default function WatchConnect() {
       <div
         className="connect-recipe-back-button f-5"
         onClick={() => {
-          navigate(`/Cooking/recipe/${recipeDetail?.recipeId}`);
+          navigate(-1);
         }}
       >
         {'<'}

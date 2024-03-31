@@ -35,7 +35,7 @@ export default function WaitingConnect() {
             clearTimeout(timer);
             setTimer(null);
           }
-          navigate(`/Cooking/recipe/${recipeId}/connect`);
+          navigate(-1);
         }}
       >
         {'<'}

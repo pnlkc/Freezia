@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import '../../assets/styles/cooking/recipesteps.css';
 import ContentCard from '../../components/cooking/ContentCard';
@@ -9,7 +9,6 @@ import { disconnectWatch, moveStep } from '../../apis/firebase';
 import { registMessageEvent } from '../../utils/messageEventHandler';
 
 export default function RecipeSteps() {
-  const isConnected = sessionStorage.getItem('isConnected') === 'true';
   const currentStep = useParams().step;
   const recipeDetail = JSON.parse(sessionStorage.getItem('recipeInfo'));
   const [step, setStep] = useState(+currentStep);
@@ -21,7 +20,6 @@ export default function RecipeSteps() {
 
   useEffect(() => {
     setWidth(slideRef.current.getBoundingClientRect().width);
-
     registMessageEvent((message) => {
       if (message.sender === 0 && sessionStorage.isConnected !== 'true') return;
       setStep(message.step - 1);
@@ -41,21 +39,19 @@ export default function RecipeSteps() {
     };
   }, []);
 
-  useEffect(() => {
-    if (sessionStorage.getItem('isConnected') === 'true') moveStep(step + 1);
-  }, [step]);
-
   const recipeSteps = JSON.parse(sessionStorage.getItem('recipeSteps'));
   const maxStep = recipeSteps.length;
 
   return (
     <div className="recipe-step-container">
-      <Link
-        to={`/Cooking/recipe/${recipeDetail.recipeId}`}
+      <div
         className="recipe-step-back-button f-5 link"
+        onClick={() => {
+          navigate(-1);
+        }}
       >
         {'<'}
-      </Link>
+      </div>
 
       <div
         className="recipe-step-finish-phrase f-3 bold"
@@ -99,8 +95,16 @@ export default function RecipeSteps() {
             setTransX(inrange(deltaX, -width + 10, width - 10));
           },
           onDragEnd: (deltaX) => {
-            if (deltaX < -100) setStep(inrange(step + 1, 0, maxStep));
-            if (deltaX > 100) setStep(inrange(step - 1, 0, maxStep));
+            if (deltaX < -100) {
+              const nextStep = inrange(step + 1, 0, maxStep);
+              setStep(nextStep);
+              moveStep(nextStep + 1);
+            }
+            if (deltaX > 100) {
+              const nextStep = inrange(step - 1, 0, maxStep);
+              setStep(nextStep);
+              moveStep(nextStep + 1);
+            }
 
             setAnimate(true);
             setTransX(0);

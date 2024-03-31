@@ -67,9 +67,9 @@ export default function Recipe() {
         <div className="cooking-recipe-background-filter" />
         <div className="cooking-recipe-header-icon-box">
           <div
-            className="f-5 recipe-header-icon"
+            className="f-5 recipe-header-icon cooking-recipe-back-button"
             onClick={() => {
-              navigate('/Cooking/recipe/list');
+              navigate(-1);
             }}
           >
             {'<'}

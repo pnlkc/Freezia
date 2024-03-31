@@ -166,6 +166,10 @@
   cursor: pointer;
 }
 
+.cooking-recipe-back-button {
+  /* color: var(--primary-color); */
+}
+
 .header-icon-bookmark {
   height: 1.5vw;
 }

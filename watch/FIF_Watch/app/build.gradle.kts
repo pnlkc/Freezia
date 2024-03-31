@@ -74,9 +74,6 @@ dependencies {
     // 화면 이동 라이브러리
     implementation(libs.compose.navigation)
 
-    // 화면 미리보기 라이브러리
-    implementation(libs.wear.tooling.preview)
-
     // Hilt - DI 라이브러리
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)

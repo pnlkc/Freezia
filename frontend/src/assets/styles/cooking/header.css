@@ -7,9 +7,14 @@
   padding: 1vw;
 }
 
+.cooking-header-logo {
+  height: 2vw;
+}
+
 .cooking-header-title {
   color: var(--primary-color);
   cursor: pointer;
+  display: flex;
 }
 
 .cooking-header-icon-box {

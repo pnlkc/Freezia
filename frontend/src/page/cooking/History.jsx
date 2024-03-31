@@ -8,7 +8,9 @@ import RecipeListBox from '../../components/cooking/RecipeListBox';
 import { getCompleteRecipeList, getSaveRecipeList } from '../../apis/user';
 
 export default function History() {
-  const [selected, setSelected] = useState('saved');
+  const [selected, setSelected] = useState(
+    sessionStorage.historyPage === 'completed' ? 'completed' : 'saved',
+  );
   const location = useLocation();
 
   useEffect(() => {

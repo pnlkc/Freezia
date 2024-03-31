@@ -18,6 +18,11 @@ export default function Header({ isHome }) {
         </div>
       ) : (
         <Link to="/Cooking/main" className="cooking-header-title bold f-4 link">
+          <img
+            className="cooking-header-logo"
+            src="/images/logo.png"
+            alt="FREEZIA"
+          />
           FREEZIA
         </Link>
       )}

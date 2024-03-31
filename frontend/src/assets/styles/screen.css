@@ -11,6 +11,7 @@
   flex-direction: column;
   border-radius: 2px;
   overflow: hidden;
+  border: 0.14vw solid rgba(56, 56, 56, 0.777);
 }
 
 .screen-container {

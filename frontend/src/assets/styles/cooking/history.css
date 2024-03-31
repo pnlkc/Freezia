@@ -71,6 +71,7 @@
   padding: 1.3vw 0.8vw 1.3vw 1.5vw;
   overflow-y: scroll;
   flex-shrink: 0;
+  align-content: flex-start;
 }
 
 .history-recipe-list:first-child {

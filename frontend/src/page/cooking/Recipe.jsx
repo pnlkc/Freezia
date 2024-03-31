@@ -38,7 +38,7 @@ export default function Recipe() {
       setRecipeSteps(recipe);
     });
     getRecipeHistory(recipeId).then((recipeHistoryList) => {
-      setRecipeHistory(recipeHistoryList);
+      setRecipeHistory(recipeHistoryList.reverse());
     });
   }, []);
 

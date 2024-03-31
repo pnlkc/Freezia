@@ -27,13 +27,13 @@ export default function RealTimeMessage({ recipe }) {
           <div className="create-recipe-info-box">
             {recipeInfo.cookTime !== '' && <h4>요리 정보</h4>}
             {recipeInfo.cookTime !== '' && (
-              <span>{`요리 시간: ${recipeInfo.cookTime}`}</span>
+              <span>{`요리 시간: ${Math.floor(recipeInfo.cookTime / 60)} 분`}</span>
             )}
             {recipeInfo.calorie !== '' && (
               <span>{`, 칼로리: ${recipeInfo.calorie}`}</span>
             )}
             {recipeInfo.servings !== '' && (
-              <span>{`, 제공량: ${recipeInfo.servings}인분`}</span>
+              <span>{`, 제공량: ${recipeInfo.servings} 인분`}</span>
             )}
           </div>
           <div className="create-recipe-steps">

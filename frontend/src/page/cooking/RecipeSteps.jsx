@@ -9,7 +9,9 @@ import { disconnectWatch, moveStep } from '../../apis/firebase';
 import { registMessageEvent } from '../../utils/messageEventHandler';
 
 export default function RecipeSteps() {
-  const currentStep = useParams().step;
+  const currentStep = sessionStorage.currentStep
+    ? JSON.parse(sessionStorage.currentStep)
+    : 0;
   const recipeDetail = JSON.parse(sessionStorage.getItem('recipeInfo'));
   const [step, setStep] = useState(+currentStep);
   const [transX, setTransX] = useState(0);

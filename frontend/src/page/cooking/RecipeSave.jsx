@@ -53,7 +53,9 @@ export default function RecipeSave() {
             const maxStep = JSON.parse(
               sessionStorage.getItem('recipeSteps'),
             ).length;
-            navigate(`/Cooking/recipe/${recipeId}/steps/${maxStep}`);
+
+            sessionStorage.setItem('currentStep', maxStep);
+            navigate(-1);
           }}
         >
           {'<'}
@@ -143,7 +145,7 @@ export default function RecipeSave() {
         </div>
       </div>
       <Link
-        to="/Cooking/recipe/list"
+        to="/Cooking/profile/history"
         className="recipe-save-button link box-shadow"
         onClick={() => {
           saveCompleteRecipe({
@@ -159,6 +161,7 @@ export default function RecipeSave() {
 
           disconnectWatch(recipeDetail.recipeId);
 
+          sessionStorage.setItem('historyPage', 'completed');
           sessionStorage.removeItem('addIngredientList');
           sessionStorage.removeItem('removeIngredientList');
         }}

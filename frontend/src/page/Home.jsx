@@ -4,8 +4,8 @@ import Widget from '../components/Widget';
 
 export default function Home() {
   const applicationList = [
-    { url: '/images/home.svg', name: 'Home' },
-    { url: '/images/food.png', name: 'Cooking' },
+    { url: '/images/home.svg', name: 'Home', path: 'home' },
+    { url: '/images/logo.svg', name: 'FREEZIA', path: 'Cooking' },
   ];
 
   return (
@@ -14,8 +14,8 @@ export default function Home() {
       <div className="screen-body">
         <Widget />
         <div className="applications-box">
-          {applicationList.map(({ url, name }) => (
-            <Application url={url} name={name} key={url} />
+          {applicationList.map(({ url, name, path }) => (
+            <Application url={url} name={name} key={url} path={path} />
           ))}
         </div>
       </div>

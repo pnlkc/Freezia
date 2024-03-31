@@ -28,5 +28,6 @@ export const setWatchToken = async (token) => {
 };
 
 export const sendWarning = async () => {
-  axios.get('fridge-ingredients/fcmtest/1');
+  const { data } = await axios.get('fridge-ingredients/fcmtest/1');
+  return data;
 };

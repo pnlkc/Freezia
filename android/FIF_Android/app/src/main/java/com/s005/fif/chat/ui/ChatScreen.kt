@@ -118,15 +118,23 @@ fun ChatScreen(
             canChat = chatViewModel.canChat,
             isReplyDone = chatViewModel.isReplyDone,
             onRecommendPromptClicked = { text ->
-                coroutineScope.launch {
-                    chatViewModel.prompt = text
-                    chatViewModel.getChatResponse(
-                        userViewModel.fridgeIngredientList.distinct().joinToString(", "),
-                        userViewModel.memberInfo!!.diseases.map { DiseaseListData.mapIdToItem[it]!! }
-                            .joinToString(", "),
-                        userViewModel.memberInfo!!.dislikeIngredients.map { IngredientListData.mapIdToItem[it]!! }
-                            .joinToString(", "),
-                    )
+                if (chatViewModel.canChat) {
+                    coroutineScope.launch {
+                        chatViewModel.prompt = text
+                        chatViewModel.getChatResponse(
+                            userViewModel.fridgeIngredientList.distinct().joinToString(", "),
+                            userViewModel.memberInfo!!.diseases.map { DiseaseListData.mapIdToItem[it]!! }
+                                .joinToString(", "),
+                            userViewModel.memberInfo!!.dislikeIngredients.map { IngredientListData.mapIdToItem[it]!! }
+                                .joinToString(", "),
+                        )
+                    }
+                } else {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.text_wait_prompt),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         )

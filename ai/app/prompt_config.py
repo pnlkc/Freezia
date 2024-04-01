@@ -21,7 +21,7 @@ CONVERSATION_JSON_FORMAT = """
                                 }
                             ],
                             cookTime : '총 요리에 필요한 시간', 
-                            carlorie : '요리의 칼로리 수치', // kcal
+                            calorie : '요리의 칼로리 수치', // kcal
                             servings : '요리 제공량' // 몇 인분인지, 
                             recipeType : '요리 유형', // 이 예시 내에서만 반환 - 한식, 양식, 중식, 일식, 밑반찬, 면요리, 볶음요리, 찜요리, 국물요리, 유통기한 임박 중 하나로 리턴해줘.
                             recipeSteps: [
@@ -31,6 +31,7 @@ CONVERSATION_JSON_FORMAT = """
                                     description : '해당 단계 설명',
                                     duration : '해당 단계 진행 시간, 타이머에 사용할 것이므로 초 단위로 숫자만 제공', ex: 300
                                     tip : '해당 단계에 도움이 되는 요리 팁',
+                                    timer : '해당 단계에서 걸리는 시간' 
                                 },
                             ]
                         },
@@ -68,7 +69,7 @@ RECIPE_JSON_FORMAT = """
                 }
             ],
             cookTime : '총 요리에 필요한 시간',
-            carlorie : '요리의 칼로리', // kcal
+            calorie : '요리의 칼로리', // kcal
             servings : '요리 제공량' // 몇 인분인지, 
             recipeType : '요리 유형', // 이 예시 내에서만 반환 - 한식, 양식, 중식, 일식, 밑반 찬, 면요리, 볶음요리, 찜요리, 국물요리, 유통기한 임박 중 하나로 리턴해줘.
             recipeSteps: [

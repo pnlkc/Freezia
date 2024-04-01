@@ -76,7 +76,9 @@ public class GeneAIController {
     @Operation(summary = "레시피 이름 업데이트 및 이미지 생성 후 저장")
     public Response generateRecipeImageWithName(@RequestBody @Valid GeneAIRecipeImageRequestDto dto) throws IOException {
         recipeService.updateRecipeName(dto.getRecipeId(), dto.getRecipeName());
-        return new Response("imgUrl", recipeService.generateAndSaveImage(dto.getRecipeId()));
+        String imgUrl = recipeService.generateAndSaveImage(dto.getRecipeId());
+        recipeService.updateRecipeImage(dto.getRecipeId(), imgUrl);
+        return new Response("imgUrl", imgUrl);
     }
     
     @PostMapping("/generate-recipes")

@@ -145,7 +145,7 @@ export default function RecipeSave() {
         </div>
       </div>
       <Link
-        to="/Cooking/profile/history"
+        to={`/Cooking/recipe/${recipeDetail.recipeId}?listType=history`}
         className="recipe-save-button link box-shadow"
         onClick={() => {
           saveCompleteRecipe({
@@ -161,7 +161,6 @@ export default function RecipeSave() {
 
           disconnectWatch(recipeDetail.recipeId);
 
-          sessionStorage.setItem('historyPage', 'completed');
           sessionStorage.removeItem('addIngredientList');
           sessionStorage.removeItem('removeIngredientList');
         }}

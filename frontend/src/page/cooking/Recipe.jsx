@@ -1,5 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from 'react-router-dom';
 
 import RecipeComponentList from '../../components/cooking/RecipeComponentList';
 import RecipeHistoryList from '../../components/cooking/RecipeHistoryList';
@@ -10,7 +15,10 @@ import { getRecipeDetail, getRecipeSteps } from '../../apis/recipe';
 import { getRecipeHistory, toggleBookmark } from '../../apis/history';
 
 export default function Recipe() {
-  const [listType, setListType] = useState('component');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [listType, setListType] = useState(
+    searchParams.get('listType') ? searchParams.get('listType') : 'component',
+  );
   const [transY, setTransY] = useState(-1);
   const [height, setHeight] = useState(0);
 

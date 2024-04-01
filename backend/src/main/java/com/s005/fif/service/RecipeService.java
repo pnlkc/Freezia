@@ -631,6 +631,48 @@ public class RecipeService {
 		return recipeDeletedList.size() + recipeStepDeletedList.size();
 	}
 
+	/**
+	 * 레시피 이름을 입력받아 이미지 생성 및 S3에 업로드 후 S3 URL을 반환합니다.
+	 * @param recipeName 레시피 이름
+	 * @return S3 URL
+	 */
+	public String generateAndSaveImageByRecipeName(String recipeName) {
+		// buffer 크기 제한 해제
+		ExchangeStrategies exchangeStrategies = ExchangeStrategies.builder()
+			.codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(-1))
+			.build();
+
+		// WebClient 기본 설정
+		WebClient webClient = WebClient.builder()
+			.baseUrl(aiServerBaseUrl)
+			.exchangeStrategies(exchangeStrategies)
+			.build();
+
+		// API 요청
+		String imgB64Json = webClient.get()
+			.uri(uriBuilder -> uriBuilder
+				.path("/image")
+				.queryParam("recipeName", recipeName)
+				.queryParam("ingredients", "")
+				.queryParam("recipeTypes", "")
+				.build())
+			.retrieve()
+			.bodyToMono(String.class)
+			.block();
+
+		if (imgB64Json != null) {
+			imgB64Json = imgB64Json.replaceAll("\"", "");
+		}
+
+		// B64 String -> byte[]
+		byte[] image = Base64.decodeBase64(imgB64Json);
+
+		// byte[] -> MultipartFile
+		CustomMultipartFile multipartFile = new CustomMultipartFile(image);
+
+		return s3Service.uploadFile(multipartFile);
+	}
+
 	public int getNewRecipeId(int memberId) {
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new CustomException(ExceptionType.MEMBER_NOT_FOUND));

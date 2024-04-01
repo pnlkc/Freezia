@@ -108,6 +108,10 @@ public class Recipe {
 		this.completeYn = false;
 	}
 
+	public void updateName(String name) {
+		this.name = name;
+	}
+
 	private List<String[]> parseIngredients(String ingredientList) {
 		return Arrays.stream(ingredientList.split(",")).map((ingredient) -> ingredient.split(":")).toList();
 	}

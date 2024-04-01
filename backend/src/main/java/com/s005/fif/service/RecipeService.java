@@ -654,4 +654,11 @@ public class RecipeService {
 		Recipe saved = recipeRepository.save(dummyRecipe);
 		return saved.getRecipeId();
 	}
+
+	public void updateRecipeName(int recipeId, String newRecipeName) {
+		Recipe recipe = recipeRepository.findById(recipeId)
+			.orElseThrow(() -> new CustomException(ExceptionType.RECIPE_NOT_FOUND));
+		recipe.updateName(newRecipeName);
+		recipeRepository.saveAndFlush(recipe);
+	}
 }

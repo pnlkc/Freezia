@@ -1,20 +1,25 @@
 package com.s005.fif.controller;
 
+import java.io.IOException;
+
 import com.s005.fif.common.auth.MemberDto;
 import com.s005.fif.common.response.Response;
 import com.s005.fif.common.scheduler.GeneAIRecipeScheduler;
 import com.s005.fif.dto.request.GeneAIPromptRequestDto;
+import com.s005.fif.dto.request.GeneAIRecipeImageRequestDto;
 import com.s005.fif.service.GeneAIService;
 import com.s005.fif.service.RecipeService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 
@@ -39,6 +44,13 @@ public class GeneAIController {
     @Operation(summary = "더미 레시피 생성해서 레시피 아이디 반환")
     public Response getNewRecipeId(@Parameter(hidden = true) MemberDto memberDto) {
         return new Response("recipeId", recipeService.getNewRecipeId(memberDto.getMemberId()));
+    }
+
+    @PostMapping("/generate-recipe-image-with-name")
+    @Operation(summary = "레시피 이름 업데이트 및 이미지 생성 후 저장")
+    public Response generateRecipeImageWithName(@RequestBody @Valid GeneAIRecipeImageRequestDto dto) throws IOException {
+        recipeService.updateRecipeName(dto.getRecipeId(), dto.getRecipeName());
+        return new Response("imgUrl", recipeService.generateAndSaveImage(dto.getRecipeId()));
     }
 
     @PostMapping("/generate-recipes")

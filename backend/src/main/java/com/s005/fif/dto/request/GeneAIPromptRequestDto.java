@@ -12,4 +12,5 @@ public class GeneAIPromptRequestDto {
     private String diseases;
     private String dislikeIngredients;
     private String prompt;
+    private Integer recipeId;
 }

@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import '../../assets/styles/cooking/header.css';
-import { profileImageErrorHaner } from '../../utils/imageErrorHandler';
+import { profileImageErrorHandler } from '../../utils/imageErrorHandler';
 
 export default function Header({ isHome }) {
   const navigate = useNavigate();
@@ -42,7 +42,7 @@ export default function Header({ isHome }) {
             className="cooking-header-profile"
             src={JSON.parse(sessionStorage.profile).imgUrl}
             alt="사용자"
-            onError={profileImageErrorHaner}
+            onError={profileImageErrorHandler}
           />
         </Link>
       </div>

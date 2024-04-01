@@ -21,19 +21,21 @@ export default function RealTimeMessage({ recipe }) {
             {recipeInfo.seasoningList.length > 0 &&
               recipeInfo.seasoningList[0].name !== '' && <h4>필요 조미료</h4>}
             {recipeInfo.seasoningList.map(({ name, amounts, unit }) => (
-              <div key={name}>{`${name} ${amounts} ${unit}`}</div>
+              <div
+                key={name}
+              >{`${name} ${amounts} ${amounts.match(/['약간' | '조금']/) ? '' : unit}`}</div>
             ))}
           </div>
           <div className="create-recipe-info-box">
             {recipeInfo.cookTime !== '' && <h4>요리 정보</h4>}
             {recipeInfo.cookTime !== '' && (
-              <span>{`요리 시간: ${Math.floor(recipeInfo.cookTime / 60)} 분`}</span>
+              <span>{`요리 시간: ${recipeInfo.cookTime.match('분') ? recipeInfo.cookTime : `${Math.ceil(recipeInfo.cookTime / 60)}분`}`}</span>
             )}
             {recipeInfo.calorie !== '' && (
-              <span>{`, 칼로리: ${recipeInfo.calorie}`}</span>
+              <span>{`, 칼로리: ${recipeInfo.calorie.match(/['kcal' | 'Kcal']/) ? recipeInfo.calorie : `${recipeInfo.calorie}kcal`}`}</span>
             )}
             {recipeInfo.servings !== '' && (
-              <span>{`, 제공량: ${recipeInfo.servings} 인분`}</span>
+              <span>{`, 제공량: ${recipeInfo.servings.match('인분') ? recipeInfo.servings : `${recipeInfo.servings}인분`}`}</span>
             )}
           </div>
           <div className="create-recipe-steps">

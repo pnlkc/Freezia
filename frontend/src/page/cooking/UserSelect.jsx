@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import '../../assets/styles/userselect.css';
 import { getMemberList, selectUser } from '../../apis/user';
-import { profileImageErrorHaner } from '../../utils/imageErrorHandler';
+import { profileImageErrorHandler } from '../../utils/imageErrorHandler';
 
 export default function UserSelect() {
   const [userList, setUserList] = useState([]);
@@ -44,7 +44,7 @@ export default function UserSelect() {
               className="user-profile-image"
               src={imgUrl}
               alt="사용자 사진"
-              onError={profileImageErrorHaner}
+              onError={profileImageErrorHandler}
             />
             <div className="user-profile-name">{name}</div>
           </div>

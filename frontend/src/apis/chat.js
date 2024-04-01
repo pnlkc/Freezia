@@ -13,8 +13,8 @@ export const registHook = (newSetRecipe, newSetIsProgress) => {
   if (eventSource) {
     eventSource.onmessage = (event) => {
       try {
-        if (event.data.trim() === '') return;
-        parser.parse(event.data);
+        console.log(event.data.replaceAll('#', ' '));
+        parser.parse(event.data.replaceAll('#', ' '));
         if (setRecipe) setRecipe(JSON.parse(JSON.stringify(parser.recipe)));
       } catch (error) {
         console.error(error);
@@ -35,6 +35,7 @@ const sendMessage = async (url, newSetRecipe, newSetIsProgress) => {
   eventSource = new EventSource(`${import.meta.env.VITE_BASE_URL}/${url}`, {
     headers: {
       Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+      'Content-Type': 'text/event-stream',
     },
   });
 

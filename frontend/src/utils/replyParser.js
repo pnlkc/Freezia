@@ -22,14 +22,16 @@ class ReplyParser {
 
   processCharacter(char) {
     if (char !== '{' && this.stack.length === 0) return;
+    if (this.buffer === '' && char === ' ') return;
     this.total += char;
 
-    if (this.isEscaped) {
-      this.buffer += char;
-      this.isEscaped = false;
-    } else if (char === '\\') {
-      this.isEscaped = true;
-    } else if (char === '"') {
+    // if (this.isEscaped) {
+    //   this.buffer += char;
+    //   this.isEscaped = false;
+    // } else if (char === '\\') {
+    //   this.isEscaped = true;
+    // } else
+    if (char === '"') {
       this.inString = !this.inString;
       if (!this.inString) {
         if (this.currentKey === '') {
@@ -152,8 +154,6 @@ class ReplyParser {
         } else context[context.length - 1] += result.value;
       }
     } catch (error) {
-      // console.log(result);
-      // console.log(recipe);
       console.error(error);
     } finally {
       sessionStorage.setItem('replyRecipe', JSON.stringify(this.recipe));

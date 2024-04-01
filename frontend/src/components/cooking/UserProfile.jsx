@@ -10,6 +10,7 @@ export default function UserProfile() {
       maxValue: 10,
       id: 'stress',
       color: 'progress-red',
+      suffix: '',
     },
     {
       name: '수면시간',
@@ -17,15 +18,23 @@ export default function UserProfile() {
       maxValue: 10,
       id: 'sleep',
       color: 'progress-blue',
+      suffix: ' 시간',
     },
     {
       name: '혈중산소',
       value: userInfo.bloodOxygen,
-      maxValue: 100,
-      id: 'bloodOxgen',
+      maxValue: 15,
+      id: 'bloodOxygen',
       color: 'progress-green',
+      suffix: ' %',
     },
   ];
+
+  const selectIcon = (value) => {
+    if (value <= 3) return '😀';
+    else if (value <= 7) return '😐';
+    else return '😢';
+  };
 
   return (
     <div className="user-profile-container">
@@ -35,8 +44,10 @@ export default function UserProfile() {
         <span className="o-7 regular">님</span>
       </div>
       <div className="user-health-info-box box-shadow">
+        <div>
+          <span className="sans f-1 bold">Samsung Health</span>
+        </div>
         {/* <div className="user-health-info-profile">
-          <div className="sans f-1 bold">Samsung Health</div>
           <div className="user-profile-image-wrapper">
             <img
               className="user-profile-image"
@@ -58,16 +69,20 @@ export default function UserProfile() {
                 /> */}
                 <div className="user-health-data-info-wrapper">
                   <div
-                    className="user-health-data-info"
-                    style={{ left: `${(data.value / data.maxValue) * 100}%` }}
+                    className={`user-health-data-info ${data.id}`}
+                    style={{
+                      left: `${((data.id === 'bloodOxygen' ? data.value - 85 : data.value) / data.maxValue) * 100}%`,
+                    }}
                   >
-                    {data.value}
+                    {`${data.id === 'stress' ? selectIcon(data.value) : data.value}${data.suffix}`}
                   </div>
                 </div>
-                <div className="user-health-data-progress-wrapper">
+                <div className={`user-health-data-progress-wrapper ${data.id}`}>
                   <div
-                    className="user-health-data-progress-bar"
-                    style={{ left: `${(data.value / data.maxValue) * 100}%` }}
+                    className={`user-health-data-progress-bar ${data.id}`}
+                    style={{
+                      left: `${((data.id === 'bloodOxygen' ? data.value - 85 : data.value) / data.maxValue) * 100}%`,
+                    }}
                   />
                 </div>
               </div>

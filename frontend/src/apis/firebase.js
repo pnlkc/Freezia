@@ -28,6 +28,16 @@ export const setWatchToken = async (token) => {
 };
 
 export const sendWarning = async () => {
-  const { data } = await axios.get('fridge-ingredients/fcmtest/1');
+  // const { data } = await axios.get('fridge-ingredients/fcmtest/1');
+  await axios.post('fridge-ingredients', { name: '복숭아' });
+  const { data } = await axios.get('fridge-ingredients');
+  await axios.delete('fridge-ingredients', {
+    data: {
+      fridgeIngredientId:
+        data.fridgeIngredients[data.fridgeIngredients.length - 1]
+          .fridgeIngredientId,
+    },
+  });
+
   return data;
 };

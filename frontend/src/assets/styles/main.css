@@ -4,7 +4,15 @@
   height: 100vh;
 }
 
-.background-out {
+.background-fridge {
+  position: absolute;
+  width: 180vw;
+  height: 180vh;
+  left: -25.2%;
+  top: -12%;
+}
+
+.background-screen {
   position: absolute;
   width: 270vw;
   height: 270vh;
@@ -12,7 +20,7 @@
   top: -44%;
 }
 
-.background-in {
+.background-out {
   position: absolute;
   width: 100vw;
   height: 100vh;
@@ -67,25 +75,38 @@ button {
   margin: 20px 0;
 }
 
-.focus-in {
+.focus-fridge {
+  width: 180vw;
+  height: 180vh;
+  left: -25.2%;
+  top: -12%;
+  animation: slide-in-fridge 0.7s ease-out;
+}
+
+.focus-screen {
   width: 270vw;
   height: 270vh;
   left: -95.2%;
   top: -44%;
-  animation: slide-in 0.7s ease-out;
+  animation: slide-in-screen 0.7s ease-out;
 }
 
-.focus-out {
+.focus-out-fridge {
   position: absolute;
   width: 100vw;
   height: 100vh;
   left: 0%;
   top: 0%;
-  animation: slide-out 0.7s ease-out;
+  animation: slide-out-fridge 0.7s ease-out;
 }
 
-.background-in.focus-in {
-  animation: none;
+.focus-out-screen {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  left: 0%;
+  top: 0%;
+  animation: slide-out-screen 0.7s ease-out;
 }
 
 .open-door-button {
@@ -150,7 +171,45 @@ button {
   opacity: 0.4;
 }
 
-@keyframes slide-in {
+.fridge-focus-out-button {
+  position: absolute;
+  width: 40%;
+  height: 100%;
+  top: 0;
+  right: 0;
+  background-color: white;
+  opacity: 0;
+  transition: all 0.5s;
+  cursor: pointer;
+}
+
+.fridge-focus-out-button:hover {
+  opacity: 0.4;
+}
+
+.fridge-select-ingredient-button {
+  position: absolute;
+  width: 23%;
+  height: 75%;
+  top: 14%;
+  left: 36.5%;
+  cursor: pointer;
+  opacity: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid white;
+  border-style: dashed;
+  transition: all 0.5s;
+  color: white;
+  background-color: rgba(64, 64, 64, 0.546);
+}
+
+.fridge-select-ingredient-button:hover {
+  opacity: 1;
+}
+
+@keyframes slide-in-screen {
   from {
     left: 0;
     top: 0;
@@ -165,7 +224,7 @@ button {
   }
 }
 
-@keyframes slide-out {
+@keyframes slide-out-screen {
   from {
     left: -95.2%;
     top: -44%;
@@ -177,5 +236,35 @@ button {
     top: 0;
     width: 100vw;
     height: 100vh;
+  }
+}
+
+@keyframes slide-out-fridge {
+  from {
+    width: 180vw;
+    height: 180vh;
+    left: -25.2%;
+    top: -12%;
+  }
+  to {
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+  }
+}
+
+@keyframes slide-in-fridge {
+  from {
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+  }
+  to {
+    width: 180vw;
+    height: 180vh;
+    left: -25.2%;
+    top: -12%;
   }
 }

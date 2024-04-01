@@ -6,7 +6,9 @@ export default function ScreenFrame({ onScreen }) {
   return (
     <div
       className="screen-frame"
-      style={{ display: onScreen ? 'flex' : 'none' }}
+      style={{
+        display: onScreen ? 'flex' : 'none',
+      }}
     >
       <Screen />
       <Footer />

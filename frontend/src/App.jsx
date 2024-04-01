@@ -8,15 +8,46 @@ import navigateInstance from './utils/navigate';
 
 import { sendWarning } from './apis/firebase';
 import { registMessageEvent } from './utils/messageEventHandler';
+import Ingredients from './components/Ingredients';
 
 function App() {
-  const [focused, setFocused] = useState(
-    sessionStorage.getItem('focused') &&
-      sessionStorage.getItem('focused') !== 'undefined'
-      ? JSON.parse(sessionStorage.getItem('focused'))
-      : false,
+  const handlBackgroundClass = (mode, oldMode) => {
+    switch (mode) {
+      case 'screen':
+        return { background: 'background-screen', animation: 'focus-screen' };
+      case 'fridge':
+        return { background: 'background-fridge', animation: 'focus-fridge' };
+      default:
+        return {
+          background: 'background-out',
+          animation: `focus-out-${oldMode}`,
+        };
+    }
+  };
+
+  const handlBackgroundClassStart = (mode) => {
+    switch (mode) {
+      case 'screen':
+        return { background: 'background-screen', animation: '' };
+      case 'fridge':
+        return { background: 'background-fridge', animation: '' };
+      default:
+        return { background: 'background-out', animation: '' };
+    }
+  };
+
+  const [mode, setMode] = useState(
+    sessionStorage.mode ? sessionStorage.mode : 'home',
   );
   const [onScreen, setOnScreen] = useState(false);
+  const [background, setBackground] = useState(handlBackgroundClassStart(mode));
+  const [onAnimate, setOnAnimate] = useState(false);
+  const [onIngredientManager, setOnIngredientManager] = useState(false);
+
+  const handleMode = (newMode) => {
+    setBackground(handlBackgroundClass(newMode, mode));
+    setMode(newMode);
+  };
 
   useEffect(() => {
     // startRecognition();
@@ -25,39 +56,35 @@ function App() {
       sessionStorage.setItem('warning', JSON.stringify(message));
       const { navigate } = navigateInstance;
       navigate('/Cooking/warning');
-      setFocused(true);
+      handleMode('screen');
     }, 1);
   }, []);
+
   useEffect(() => {
-    if (focused) {
-      if (
-        sessionStorage.getItem('focused') &&
-        sessionStorage.getItem('focused') !== 'undefined' &&
-        JSON.parse(sessionStorage.getItem('focused')) === focused
-      ) {
+    if (mode === 'screen') {
+      if (sessionStorage.mode === 'screen') {
         setOnScreen(true);
       } else {
         setTimeout(() => {
           setOnScreen(true);
         }, 700);
       }
-    } else setOnScreen(false);
-
-    sessionStorage.setItem('focused', JSON.stringify(focused));
-  }, [focused]);
+    } else {
+      setOnScreen(false);
+    }
+    sessionStorage.setItem('mode', mode);
+    setOnAnimate(true);
+    setTimeout(() => {
+      setOnAnimate(false);
+    }, 700);
+  }, [mode]);
 
   return (
     <div>
       <div className="background-crop">
         <img
-          className={`${
-            sessionStorage.getItem('focused') &&
-            sessionStorage.getItem('focused') !== 'undefined' &&
-            JSON.parse(sessionStorage.getItem('focused'))
-              ? 'background-in'
-              : 'background-out'
-          } ${focused ? 'focus-in' : 'focus-out'}`}
-          src="/images/background.png"
+          className={`${background.background} ${background.animation}`}
+          src={`${mode === 'fridge' ? '/images/background_open.png' : '/images/background.png'}`}
           alt="background"
         />
       </div>
@@ -65,41 +92,65 @@ function App() {
       {/* <div id="container">
         <div id="result" />
       </div> */}
-      {!focused && (
+      {!onAnimate && mode === 'home' && (
         <div
           className="open-door-button"
           onClick={() => {
             sendWarning();
+            // handleMode('fridge');
           }}
         >
           문 열기
         </div>
       )}
-      {!focused && (
+      {!onAnimate && mode === 'home' && (
         <div
           className="focus-button"
           onClick={() => {
-            setFocused(!focused);
+            handleMode('screen');
           }}
         >
           패널 사용하기
         </div>
       )}
-      {onScreen && (
+      {!onAnimate && onScreen && (
         <div
           className="focus-out-left-button"
           onClick={() => {
-            setFocused(!focused);
+            handleMode('home');
           }}
         />
       )}
-      {onScreen && (
+      {!onAnimate && onScreen && (
         <div
           className="focus-out-right-button"
           onClick={() => {
-            setFocused(!focused);
+            handleMode('home');
           }}
         />
+      )}
+      {!onAnimate && mode === 'fridge' && (
+        <div
+          className="fridge-focus-out-button"
+          onClick={() => {
+            handleMode('home');
+          }}
+        />
+      )}
+      {!onAnimate && mode === 'fridge' && (
+        <div
+          className="fridge-select-ingredient-button"
+          onClick={() => {
+            // sendWarning();
+            // handleMode('home');
+            // setOnIngredientManager(true);
+          }}
+        >
+          식재료 꺼내기
+        </div>
+      )}
+      {onIngredientManager && (
+        <Ingredients setOnIngredientManager={setOnIngredientManager} />
       )}
     </div>
   );

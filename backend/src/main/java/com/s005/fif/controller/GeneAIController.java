@@ -5,6 +5,7 @@ import com.s005.fif.common.response.Response;
 import com.s005.fif.common.scheduler.GeneAIRecipeScheduler;
 import com.s005.fif.dto.request.GeneAIPromptRequestDto;
 import com.s005.fif.service.GeneAIService;
+import com.s005.fif.service.RecipeService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -24,6 +25,7 @@ public class GeneAIController {
 
     private final GeneAIService geneAIService;
     private final GeneAIRecipeScheduler geneAIRecipeScheduler;
+    private final RecipeService recipeService;
 
     @GetMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @Operation(summary = "대화형 레시피 추천")
@@ -31,6 +33,12 @@ public class GeneAIController {
 
         // FastAPI에서 받아온 스트림을 그대로 클라이언트에 전송
         return geneAIService.getStreamDataFromAI(memberDto, geneAIPromptRequestDto);
+    }
+
+    @GetMapping("/new-recipe-id")
+    @Operation(summary = "더미 레시피 생성해서 레시피 아이디 반환")
+    public Response getNewRecipeId(@Parameter(hidden = true) MemberDto memberDto) {
+        return new Response("recipeId", recipeService.getNewRecipeId(memberDto.getMemberId()));
     }
 
     @PostMapping("/generate-recipes")

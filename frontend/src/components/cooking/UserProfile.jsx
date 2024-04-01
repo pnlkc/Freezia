@@ -1,5 +1,4 @@
 import '../../assets/styles/cooking/userprofile.css';
-import { profileImageErrorHaner } from '../../utils/imageErrorHandler';
 
 export default function UserProfile() {
   const userInfo = JSON.parse(sessionStorage.getItem('profile'));
@@ -36,7 +35,7 @@ export default function UserProfile() {
         <span className="o-7 regular">님</span>
       </div>
       <div className="user-health-info-box box-shadow">
-        <div className="user-health-info-profile">
+        {/* <div className="user-health-info-profile">
           <div className="sans f-1 bold">Samsung Health</div>
           <div className="user-profile-image-wrapper">
             <img
@@ -46,17 +45,31 @@ export default function UserProfile() {
               onError={profileImageErrorHaner}
             />
           </div>
-        </div>
+        </div> */}
         <div className="user-health-data-list ">
           {healthData.map((data) => (
-            <div className="user-health-data " key={data.id}>
-              <div className="user-health-data-name f-0 bold">{data.name}</div>
+            <div className="user-health-data" key={data.id}>
+              <div className="user-health-data-name f-1 bold">{data.name}</div>
               <div className="user-health-data-value ">
-                <progress
+                {/* <progress
                   className={`user-health-data-progress ${data.color}`}
                   max={data.maxValue}
                   value={data.value}
-                />
+                /> */}
+                <div className="user-health-data-info-wrapper">
+                  <div
+                    className="user-health-data-info"
+                    style={{ left: `${(data.value / data.maxValue) * 100}%` }}
+                  >
+                    {data.value}
+                  </div>
+                </div>
+                <div className="user-health-data-progress-wrapper">
+                  <div
+                    className="user-health-data-progress-bar"
+                    style={{ left: `${(data.value / data.maxValue) * 100}%` }}
+                  />
+                </div>
               </div>
             </div>
           ))}

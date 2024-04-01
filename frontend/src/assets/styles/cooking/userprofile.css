@@ -30,7 +30,6 @@
 }
 
 .user-health-data-list {
-  margin-left: 2vw;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -40,16 +39,43 @@
 .user-health-data {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
+  padding: 0.7vw 1vw;
+  border-radius: 1.4vw;
+  margin: 0.2vw 0;
+  background-color: #c4c4c46d;
 }
 
 .user-health-data-name {
+  margin-left: 0.1vw;
   margin-right: 0.5vw;
+  margin-top: 0.2vw;
 }
 
 .user-health-data-value {
-  height: 1.8vw;
-  flex-grow: 1;
+  /* height: 1.8vw; */
+  margin-left: auto;
+  position: relative;
+}
+.user-health-data-info-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  height: 1.5vw;
+  margin-bottom: 0.3vw;
+}
+
+.user-health-data-info {
+  position: absolute;
+  top: 0;
+  padding: 0.2vw 0.6vw;
+  transform: translateX(-40%);
+  background-color: blue;
+  color: white;
+  font-weight: 600;
+  border-radius: 1vw;
+  font-size: 0.8vw;
 }
 
 .user-health-data-progress {
@@ -81,4 +107,20 @@
 
 .progress-green::-webkit-progress-value {
   background-color: var(--green);
+}
+
+.user-health-data-progress-wrapper {
+  width: 10vw;
+  height: 1vw;
+  background-color: white;
+  position: relative;
+  border-radius: 1vw;
+  overflow: hidden;
+}
+
+.user-health-data-progress-bar {
+  position: absolute;
+  width: 0.3vw;
+  height: 1vw;
+  background-color: black;
 }

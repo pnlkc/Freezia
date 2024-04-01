@@ -1,6 +1,7 @@
 package com.s005.fif.service;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +34,7 @@ import com.s005.fif.entity.FridgeIngredient;
 import com.s005.fif.entity.Member;
 import com.s005.fif.repository.FridgeIngredientRepository;
 import com.s005.fif.repository.MemberRepository;
+import com.s005.fif.repository.RecipeStepRepository;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -55,8 +57,8 @@ public class GeneAIService {
 
 	private final FridgeIngredientRepository fridgeIngredientRepository;
 
-	private final RecipeService recipeService;
 	private final RecipeRepository recipeRepository;
+	private final RecipeStepRepository recipeStepRepository;
 
 	private final RestClient restClient = RestClient.create();
 
@@ -234,31 +236,37 @@ public class GeneAIService {
 		Recipe recipe =  recipeRepository.findById(recipeId).orElseThrow(() ->  new CustomException(ExceptionType.RECIPE_NOT_FOUND));
 		Member member = memberRepository.findById(memberDto.getMemberId()).orElseThrow(() -> new CustomException(ExceptionType.MEMBER_NOT_FOUND));
 
+		List<RecipeStep> newRecipeSteps = new ArrayList<>();
+
 		geneAIResponseRecipeTempDto.getRecipeList().forEach((r) -> {
 			Recipe newRecipe;
 			try {
-				newRecipe = GeneAIResponseRecipeTempDto.GeneAIRecipeDto.toEntity(r, member, "", geneAIResponseRecipeTempDto.getReply(), RecipeRecommendType.NONE.getNumber());
+				newRecipe = GeneAIResponseRecipeTempDto.GeneAIRecipeDto.toEntity(r, member, recipe.getImgUrl(), geneAIResponseRecipeTempDto.getReply(), RecipeRecommendType.NONE.getNumber());
 			} catch (Exception e) {
 				log.error("생성된 레시피 세부 정보 매핑 중 에러 발생 - 생성된 레시피: {}", r, e);
 				return;
 			}
-			BeanUtils.copyProperties(recipe, newRecipe);
+			BeanUtils.copyProperties(newRecipe, recipe);
+			recipe.setRecipeId(recipeId);
+			recipe.setCreateDate(LocalDate.now());
+			recipe.setUpdateDate(LocalDate.now());
 
 			List<GeneAIResponseRecipeTempDto.GeneAIRecipeStepDto> geneAIRecipeStepDtoList = r.getRecipeSteps();
-			RecipeStep newRecipeStep = null;
 			for (int i = 0; i < geneAIRecipeStepDtoList.size(); i++) {
 				GeneAIResponseRecipeTempDto.GeneAIRecipeStepDto geneAIRecipeStepDto = geneAIRecipeStepDtoList.get(i);
 				try {
-					newRecipeStep = GeneAIResponseRecipeTempDto.GeneAIRecipeStepDto.toEntity(geneAIRecipeStepDto, newRecipe, i + 1);
-
+					RecipeStep newRecipeStep = GeneAIResponseRecipeTempDto.GeneAIRecipeStepDto.toEntity(geneAIRecipeStepDto, recipe, i + 1);
+					newRecipeSteps.add(newRecipeStep);
 				} catch (Exception e) {
 					log.error("생성된 레시피 단계 정보 매핑 중 에러 발생 - 생성된 레시피: {}", r, e);
 				}
 			}
-
-			newRecipeStep.setRecipe(recipe);
-
 		});
+
+		List<RecipeStep> recipeStepsOld = recipeStepRepository.findByRecipe(recipe);
+		recipeStepRepository.deleteAll(recipeStepsOld);
+		recipeRepository.save(recipe);
+		recipeStepRepository.saveAll(newRecipeSteps);
 
 	}
 

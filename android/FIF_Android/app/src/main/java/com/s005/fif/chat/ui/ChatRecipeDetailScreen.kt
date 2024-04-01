@@ -353,7 +353,7 @@ fun ChatRecipeDetailInfoRow(
             modifier = Modifier
                 .weight(1f),
             title = stringResource(id = R.string.text_calorie),
-            body = calorie
+            body = if (!calorie.contains("cal")) "$calorie kcal" else calorie
         )
     }
 }
@@ -377,7 +377,7 @@ fun ChatRecipeDetailInfoItemColumn(
         )
 
         Text(
-            text = body + if (!body.contains("cal")) " kcal" else "",
+            text = body,
             style = Typography.bodyLarge,
             color = Color.Black
         )

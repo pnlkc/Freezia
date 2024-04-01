@@ -377,7 +377,7 @@ fun ChatRecipeDetailInfoItemColumn(
         )
 
         Text(
-            text = body,
+            text = body + if (!body.contains("cal")) " kcal" else "",
             style = Typography.bodyLarge,
             color = Color.Black
         )

@@ -85,6 +85,7 @@ class ChatViewModel @Inject constructor(
                         val recipeDataResponse = Json.decodeFromString<ChatResultResponse>(
                             ChatResultObject.chatResult
                                 .replace("```", "")
+
                                 .replace("json", "")
                         )
 

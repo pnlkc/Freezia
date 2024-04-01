@@ -13,7 +13,6 @@ export const registHook = (newSetRecipe, newSetIsProgress) => {
   if (eventSource) {
     eventSource.onmessage = (event) => {
       try {
-        console.log(event.data.replaceAll('#', ' '));
         parser.parse(event.data.replaceAll('#', ' '));
         if (setRecipe) setRecipe(JSON.parse(JSON.stringify(parser.recipe)));
       } catch (error) {

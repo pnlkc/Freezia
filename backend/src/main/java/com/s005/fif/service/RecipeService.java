@@ -1,6 +1,7 @@
 package com.s005.fif.service;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -670,5 +671,36 @@ public class RecipeService {
 		CustomMultipartFile multipartFile = new CustomMultipartFile(image);
 
 		return s3Service.uploadFile(multipartFile);
+	}
+
+	public int getNewRecipeId(int memberId) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new CustomException(ExceptionType.MEMBER_NOT_FOUND));
+		Recipe dummyRecipe = Recipe.builder()
+			.member(member)
+			.name("맛있는 콩나물무침")
+			// .createDate(LocalDate.now())
+			// .updateDate(LocalDate.now())
+			.cookTime(30)
+			.calorie(300)
+			.ingredientList("콩나물:300:g")
+			.seasoningList("참기름:1:T,소금:1:t,통깨:1:T")
+			.imgUrl("https://example.com/recipe.jpg")
+			.saveYn(false)
+			.completeYn(false)
+			.recommendType(RecipeRecommendType.NONE.getNumber())
+			.recommendDesc("맛있는 콩나물 무침")
+			.recipeTypes("한식,밑반찬")
+			.serving(1)
+			.build();
+		Recipe saved = recipeRepository.save(dummyRecipe);
+		return saved.getRecipeId();
+	}
+
+	public void updateRecipeName(int recipeId, String newRecipeName) {
+		Recipe recipe = recipeRepository.findById(recipeId)
+			.orElseThrow(() -> new CustomException(ExceptionType.RECIPE_NOT_FOUND));
+		recipe.updateName(newRecipeName);
+		recipeRepository.saveAndFlush(recipe);
 	}
 }

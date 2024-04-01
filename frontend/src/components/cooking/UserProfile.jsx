@@ -33,7 +33,7 @@ export default function UserProfile() {
   const selectIcon = (value) => {
     if (value <= 3) return '😀';
     else if (value <= 7) return '😐';
-    else return '😢';
+    return '😢';
   };
 
   return (
@@ -45,7 +45,7 @@ export default function UserProfile() {
       </div>
       <div className="user-health-info-box box-shadow">
         <div>
-          <span className="sans f-1 bold">Samsung Health</span>
+          <span className="sans f-2 bold">Samsung Health</span>
         </div>
         {/* <div className="user-health-info-profile">
           <div className="user-profile-image-wrapper">

@@ -16,6 +16,12 @@
     rgba(245, 245, 245, 1) 100%
   );
   --box-border: 0.05vw solid rgba(0, 0, 0, 0.158);
+  --stress-progress-gradient: linear-gradient(
+    90deg,
+    rgba(99, 254, 0, 1) 0%,
+    rgba(255, 244, 17, 1) 53%,
+    rgba(255, 111, 0, 1) 100%
+  );
 
   --red: #f24405;
   --blue: #0524f2;

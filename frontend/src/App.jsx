@@ -96,8 +96,8 @@ function App() {
         <div
           className="open-door-button"
           onClick={() => {
-            sendWarning();
-            // handleMode('fridge');
+            // sendWarning();
+            handleMode('fridge');
           }}
         >
           문 열기
@@ -143,14 +143,17 @@ function App() {
           onClick={() => {
             // sendWarning();
             // handleMode('home');
-            // setOnIngredientManager(true);
+            setOnIngredientManager(true);
           }}
         >
           식재료 꺼내기
         </div>
       )}
       {onIngredientManager && (
-        <Ingredients setOnIngredientManager={setOnIngredientManager} />
+        <Ingredients
+          setOnIngredientManager={setOnIngredientManager}
+          handleMode={handleMode}
+        />
       )}
     </div>
   );

@@ -73,3 +73,11 @@ export const selectUser = async (memberId) => {
 
   return data;
 };
+
+export const deleteIngredient = (fridgeIngredientId) => {
+  axios.delete('fridge-ingredients', {
+    data: {
+      fridgeIngredientId,
+    },
+  });
+};

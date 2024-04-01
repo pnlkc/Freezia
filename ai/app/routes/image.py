@@ -13,7 +13,7 @@ def generate_image(
         prompt = f"""
         음식 사진를 만들어 줘.
         음식 : {recipeName}
-        식재료 : {ingredients}
+        식재료 : 소고기, 치즈, 양파, 두부, 계란, 돼지고기, 닭고기, 연어, 베이컨, 파스타면, 김치, 파
         음식 유형 : {recipeTypes}
         
         식재료를 알려주는 이유는 음식이라는 피사체에 반영하고 싶기 때문입니다.

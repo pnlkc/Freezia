@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.s005.fif.common.auth.MemberDto;
@@ -165,5 +166,19 @@ public class RecipeController {
     )
     public Response generateAndSaveImage(@Parameter(hidden = true) MemberDto memberDto, @PathVariable Integer recipeId) throws IOException {
         return new Response("imgUrl", recipeService.generateAndSaveImage(memberDto.getMemberId(), recipeId));
+    }
+
+    @PostMapping("/image")
+    @Operation(summary = "레시피 이름으로 레시피 이미지 생성 및 저장")
+    @ApiResponse(
+        content = {
+            @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = String.class)
+            )
+        }
+    )
+    public Response generateAndSaveImageByRecipeName(@RequestParam String recipeName) {
+        return new Response("imgUrl", recipeService.generateAndSaveImageByRecipeName(recipeName));
     }
 }

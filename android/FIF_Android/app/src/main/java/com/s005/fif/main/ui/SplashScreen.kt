@@ -64,9 +64,8 @@ fun SplashScreen(
         Image(
             modifier = Modifier
                 .size(100.dp),
-            painter = painterResource(id = R.drawable.account),
+            painter = painterResource(id = R.drawable.logo),
             contentDescription = "",
-            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
             contentScale = ContentScale.Crop
         )
 

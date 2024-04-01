@@ -69,12 +69,12 @@ class ChatViewModel @Inject constructor(
                                 isReplyDone = true
                             } else {
                                 chatList[chatList.lastIndex] = chatList[chatList.lastIndex].copy(
-                                    content = chatList[chatList.lastIndex].content + chatStream
+                                    content = chatList[chatList.lastIndex].content + chatStream.replace("#", " ")
                                 )
                             }
                         }
 
-                        ChatResultObject.chatResult += chatStream
+                        ChatResultObject.chatResult += chatStream.replace("#", " ")
 
                         Log.d(
                             "로그",

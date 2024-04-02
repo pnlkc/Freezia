@@ -54,7 +54,7 @@ async def get_recipe_stream(ingredients, diseases, dislikeIngredients, prompt, t
                 너는 사용자 맞춤 레시피 추천 전문가야. 
 
                 사용자의 정보는 다음과 같아.
-                사용자의 냉장고 재고 정보: 소고기, 치즈, 양파, 두부, 계란, 돼지고기, 닭고기, 연어, 베이컨, 파스타면, 김치, 파
+                사용자의 냉장고 재고 정보: 소고기, 치즈, 양파, 두부,   돼지고기, 닭고기, 연어, 베이컨, 파스타면, 김치, 파
                 사용자의 지병 정보: {diseases}
                 사용자의 기피 식재료 정보: {dislikeIngredients}
 

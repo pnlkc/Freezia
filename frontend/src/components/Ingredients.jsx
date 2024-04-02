@@ -10,7 +10,9 @@ import {
 
 export default function Ingredients({ setOnIngredientManager, handleMode }) {
   const [ingredientList, setIngredientList] = useState(
-    sessionStorage.ingredients ? JSON.parse(sessionStorage.ingredients) : [],
+    sessionStorage.ingredients
+      ? JSON.parse(sessionStorage.ingredients).reverse()
+      : [],
   );
 
   const [selected, setSelected] = useState([]);
@@ -18,17 +20,9 @@ export default function Ingredients({ setOnIngredientManager, handleMode }) {
     if (!event.target.checked) {
       setSelected(selected.filter((id) => id === recipeId));
     } else {
-      setSelected([...selected, recipeId]);
+      setSelected([recipeId, ...selected]);
     }
   };
-
-  useEffect(() => {
-    addIngredient('복숭아').then(() => {
-      getFridgeIngredients().then((ingredients) => {
-        setIngredientList(ingredients);
-      });
-    });
-  }, []);
 
   return (
     <div className="ingredient-manage-container">
@@ -44,31 +38,29 @@ export default function Ingredients({ setOnIngredientManager, handleMode }) {
           />
         </div>
         <div className="ingredient-manage-list">
-          {ingredientList
-            .reverse()
-            .map(({ fridgeIngredientId, imgUrl, name }) => (
-              <label
-                className="ingredient-mange-item"
-                key={fridgeIngredientId}
-                htmlFor={fridgeIngredientId}
-              >
-                <img
-                  className="ingredient-manage-item-image"
-                  src={imgUrl}
-                  alt={name}
-                  onError={ingredientImageErrorHander}
-                />
-                <div className="ingredient-manage-item-name">{name}</div>
-                <input
-                  type="checkbox"
-                  id={fridgeIngredientId}
-                  className="ingredient-manage-item-checkbox"
-                  onChange={(event) => {
-                    changeHandler(event, fridgeIngredientId);
-                  }}
-                />
-              </label>
-            ))}
+          {ingredientList.map(({ fridgeIngredientId, imgUrl, name }) => (
+            <label
+              className="ingredient-mange-item"
+              key={fridgeIngredientId}
+              htmlFor={fridgeIngredientId}
+            >
+              <img
+                className="ingredient-manage-item-image"
+                src={imgUrl}
+                alt={name}
+                onError={ingredientImageErrorHander}
+              />
+              <div className="ingredient-manage-item-name">{name}</div>
+              <input
+                type="checkbox"
+                id={fridgeIngredientId}
+                className="ingredient-manage-item-checkbox"
+                onChange={(event) => {
+                  changeHandler(event, fridgeIngredientId);
+                }}
+              />
+            </label>
+          ))}
         </div>
         <div
           className="ingrdient-manage-button"

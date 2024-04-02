@@ -1,5 +1,6 @@
 // import axios from 'axios';
 import axios from './axios';
+import { setFcmToken } from './firebase';
 
 export const getMemberList = async () => {
   const { data } = await axios.get('/members');
@@ -82,6 +83,7 @@ export const deleteIngredient = (fridgeIngredientId) => {
   });
 };
 
-export const addIngredient = (name) => {
-  axios.post('fridge-ingredients', { name });
+export const addIngredient = async (name) => {
+  await setFcmToken(1, sessionStorage.fcmToken);
+  await axios.post('fridge-ingredients', { name });
 };

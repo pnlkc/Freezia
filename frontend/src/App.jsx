@@ -9,6 +9,7 @@ import navigateInstance from './utils/navigate';
 import { sendWarning } from './apis/firebase';
 import { registMessageEvent } from './utils/messageEventHandler';
 import Ingredients from './components/Ingredients';
+import { addIngredient, getFridgeIngredients } from './apis/user';
 
 function App() {
   const handlBackgroundClass = (mode, oldMode) => {
@@ -151,7 +152,20 @@ function App() {
           onClick={() => {
             // sendWarning();
             // handleMode('home');
-            setOnIngredientManager(true);
+            if (
+              sessionStorage.ingredients &&
+              JSON.parse(sessionStorage.ingredients)?.filter(
+                ({ name }) => name === '복숭아',
+              ).length === 0
+            ) {
+              addIngredient('복숭아').then(() => {
+                getFridgeIngredients().then(() => {
+                  setOnIngredientManager(true);
+                });
+              });
+            } else {
+              setOnIngredientManager(true);
+            }
           }}
         >
           식재료 꺼내기

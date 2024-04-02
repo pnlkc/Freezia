@@ -1,0 +1,15 @@
+spring:
+  profiles:
+    include:
+      - deploy
+
+#  # 사용자 인증: 필터 bean 재등록
+#  main:
+#    allow-bean-definition-overriding: true
+
+AUTHORIZATION_HEADER_NAME: Authorization
+AUTHORIZATION_TYPE: Bearer
+JWT_SECRET_KEY: FridgeIsFreeIsFridgeFridgeIsFreeIsFridgeFridgeIsFreeIsFridgeSecret
+ACCESS_TOKEN_EXPIRE_TIME_MILLI_SEC: 86400000 # 1일
+REFRESH_TOKEN_EXPIRE_TIME_MILLI_SEC: 86400000 # 1일
+REFRESH_TOKEN_NAME: refreshToken

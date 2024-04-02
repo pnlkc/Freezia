@@ -115,6 +115,8 @@ fun RecipeStepScreen(
                 recipeViewModel.moveRecipeStep(page + 1)
                 RecipeLiveData.isFcmNotification = false
             }
+
+            TTSUtil.stop()
         }
     }
 
@@ -303,8 +305,7 @@ fun ControlBtnRow(
                 .size(btnSize)
                 .clip(CircleShape)
                 .clickable {
-                    val tts = TTSUtil()
-                    tts.speak(context = context, text = ttsText)
+                    TTSUtil.speak(context = context, text = ttsText)
                 }
                 .padding(ScreenSize.screenHeightDp.toDpSize(2)),
             painter = painterResource(id = R.drawable.speaker),

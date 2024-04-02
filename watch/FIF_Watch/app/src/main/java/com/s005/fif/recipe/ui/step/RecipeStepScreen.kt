@@ -1,6 +1,7 @@
 package com.s005.fif.recipe.ui.step
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -46,6 +47,7 @@ import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.PageIndicatorState
 import androidx.wear.compose.material.Text
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.util.Util
 import com.s005.fif.R
 import com.s005.fif.components.BackgroundImage
 import com.s005.fif.fcm.RecipeLiveData
@@ -67,6 +69,7 @@ fun RecipeStepScreen(
     timerViewModel: TimerViewModel,
     navigateToMain: () -> Unit,
     navigateToTimerDetail: (Int) -> Unit,
+    navigateUp: () -> Unit,
     step: Int,
 ) {
     val maxPages = RecipeLiveData.recipeData!!.recipeSteps.size
@@ -96,6 +99,11 @@ fun RecipeStepScreen(
     }
 
     val coroutineScope = rememberCoroutineScope()
+
+    BackHandler {
+        TTSUtil.stop()
+        navigateUp()
+    }
 
     LaunchedEffect(key1 = step) {
         if (pagerState.currentPage != step && RecipeLiveData.isFcmNotification) {

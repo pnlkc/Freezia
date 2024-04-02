@@ -110,6 +110,9 @@ fun FIFWatchNavHost(
                         launchSingleTop = true
                     }
                 },
+                navigateUp = {
+                    navController.navigateUp()
+                },
                 step = step
             )
         }

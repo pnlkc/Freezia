@@ -1,10 +1,28 @@
 import { EventSourcePolyfill, NativeEventSource } from 'event-source-polyfill';
 import parser from '../utils/replyParser';
+import axios from './axios';
 
 const EventSource = EventSourcePolyfill || NativeEventSource;
 let setRecipe;
 let setIsProgress;
 let eventSource;
+
+export const getCreateRecipeId = async () => {
+  const { data } = await axios.get('generate-AI/new-recipe-id');
+
+  sessionStorage.setItem('createRecipeId', data.recipeId);
+
+  return data.recipeId;
+};
+
+export const updateImage = async ({ recipeId, recipeName }) => {
+  const { data } = await axios.post(
+    'generate-AI/generate-recipe-image-with-name',
+    { recipeId, recipeName },
+  );
+
+  return data.imgUrl;
+};
 
 export const registHook = (newSetRecipe, newSetIsProgress) => {
   setRecipe = newSetRecipe;
@@ -31,7 +49,11 @@ export const registHook = (newSetRecipe, newSetIsProgress) => {
 };
 
 const sendMessage = async (url, newSetRecipe, newSetIsProgress) => {
-  eventSource = new EventSource(`${import.meta.env.VITE_BASE_URL}/${url}`, {
+  const createRecipeId = await getCreateRecipeId();
+
+  const newUrl = `${url}&recipeId=${createRecipeId}`;
+
+  eventSource = new EventSource(`${import.meta.env.VITE_BASE_URL}/${newUrl}`, {
     headers: {
       Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
       'Content-Type': 'text/event-stream',

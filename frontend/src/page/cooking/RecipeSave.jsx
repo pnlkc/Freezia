@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import '../../assets/styles/cooking/recipesave.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { ingredientImageErrorHander } from '../../utils/imageErrorHandler';
-import { saveCompleteRecipe } from '../../apis/history';
+import { getRecipeHistory, saveCompleteRecipe } from '../../apis/history';
 import { disconnectWatch } from '../../apis/firebase';
 
 export default function RecipeSave() {
@@ -160,6 +160,7 @@ export default function RecipeSave() {
           });
 
           disconnectWatch(recipeDetail.recipeId);
+          getRecipeHistory(recipeDetail.recipeId);
 
           sessionStorage.removeItem('addIngredientList');
           sessionStorage.removeItem('removeIngredientList');

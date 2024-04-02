@@ -38,6 +38,7 @@ export default function RecipeSteps() {
     return () => {
       disconnectWatch(recipeDetail.recipeId);
       window.removeEventListener('resize', event);
+      sessionStorage.removeItem('currentStep');
     };
   }, []);
 

@@ -1,3 +1,5 @@
+import { updateImage } from '../apis/chat';
+
 class ReplyParser {
   constructor() {
     this.reset();
@@ -86,6 +88,7 @@ class ReplyParser {
       } else {
         // 'object'
         context.object[this.currentKey] = ('' + value).trim();
+        this.makeCard(this.currentKey, context.object[this.currentKey]);
         this.currentKey = '';
       }
       this.isValue = false;
@@ -192,6 +195,20 @@ class ReplyParser {
       });
     } else {
       recipeContext.push('');
+    }
+  }
+
+  makeCard(key, value) {
+    const lastKey = this.keyStack[this.keyStack.length - 1];
+    console.log(key, value);
+    if (lastKey === 'recipeList' && key === 'name') {
+      const { createRecipeId } = sessionStorage;
+      updateImage({ recipeId: createRecipeId, recipeName: value }).then(
+        (imgUrl) => {
+          const idx = this.recipe.recipeList.length - 1;
+          this.recipe.recipeList[idx].imgUrl = imgUrl;
+        },
+      );
     }
   }
 

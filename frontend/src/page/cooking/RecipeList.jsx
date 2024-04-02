@@ -6,6 +6,7 @@ import Header from '../../components/cooking/Header';
 import { recipeTypeList } from '../../utils/data';
 
 import '../../assets/styles/cooking/recipelist.css';
+import { getRecipeList } from '../../apis/user';
 
 export default function RecipeList() {
   const [recipeList, setRecipeList] = useState(
@@ -13,6 +14,12 @@ export default function RecipeList() {
   );
   const [selectedList, setSelectedList] = useState([]);
   const [filteredList, setFilteredList] = useState([]);
+
+  useEffect(() => {
+    getRecipeList().then((recipes) => {
+      setRecipeList(recipes);
+    });
+  }, []);
 
   useEffect(() => {
     const filterSet = new Set(selectedList);

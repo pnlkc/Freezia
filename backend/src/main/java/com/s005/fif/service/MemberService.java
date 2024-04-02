@@ -81,11 +81,34 @@ public class MemberService {
 		return MemberDetailResponseDto.fromEntity(member, diseaseIds, dislikeIngredientIds);
 	}
 
-	public void setMemberOnboarding(Integer memberId, MemberOnboardingRequestDto memberOnboardingRequestDto) {
+	public List<String> getMemberDiseases(Integer memberId) {
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new CustomException(ExceptionType.MEMBER_NOT_FOUND));
 
-		if (member.getOnboardYn())
+		return memberDiseaseRepository.findAllByMember(member)
+			.stream()
+			.map((md) -> md.getDisease().getName())
+			.toList();
+	}
+
+	public List<String> getMemberDislikeIngredients(Integer memberId) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new CustomException(ExceptionType.MEMBER_NOT_FOUND));
+
+		return dislikeIngredientRepository.findAllByMember(member)
+			.stream()
+			.map((di) -> di.getIngredient().getName())
+			.toList();
+	}
+
+	public void setMemberInfo(Integer memberId,
+		MemberOnboardingRequestDto memberOnboardingRequestDto,
+		boolean isOnboarding
+	) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new CustomException(ExceptionType.MEMBER_NOT_FOUND));
+
+		if (isOnboarding && member.getOnboardYn())
 			throw new CustomException(ExceptionType.MEMBER_ONBOARDED);
 
 		List<Integer> diseasesIds = memberOnboardingRequestDto.getDiseases();
@@ -115,7 +138,10 @@ public class MemberService {
 			);
 		}
 
-		member.updateOnboarding(memberOnboardingRequestDto.getPreferMenu());
+		if (isOnboarding)
+			member.updateOnboarding(memberOnboardingRequestDto.getPreferMenu());
+		else
+			member.updatePreference(memberOnboardingRequestDto.getPreferMenu());
 		memberRepository.save(member);
 	}
 

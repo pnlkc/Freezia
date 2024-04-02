@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
 @Getter
-public class RemoveIngredientDto {
+public class IngredientNameDto {
 	@Size(max = Constant.COMMON_TITLE_LENGTH)
 	private String name;
 }

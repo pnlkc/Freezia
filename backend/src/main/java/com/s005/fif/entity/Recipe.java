@@ -1,15 +1,22 @@
 package com.s005.fif.entity;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.s005.fif.common.Constant;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,17 +24,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.Size;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class Recipe {
 
 	@Id
@@ -44,7 +48,12 @@ public class Recipe {
 	private String name;
 
 	@Column(nullable = false)
+	@CreatedDate
 	private LocalDate createDate;
+
+	@Column(nullable = false)
+	@LastModifiedDate
+	private LocalDate updateDate;
 
 	@Column(nullable = false)
 	private Integer cookTime;
@@ -73,6 +82,9 @@ public class Recipe {
 	@Column(nullable = false)
 	private Integer recommendType;
 
+	@Size(max = Constant.COMMON_LARGE_CONTENT_LENGTH)
+	private String recommendDesc;
+
 	@Column(nullable = false)
 	@Size(max = Constant.RECIPE_TYPE_LIST_LENGTH)
 	private String recipeTypes;
@@ -88,4 +100,28 @@ public class Recipe {
 	public void completeCook() {
 		this.completeYn = true;
 	}
+
+	public void setCompleteYnFalse() {
+		this.completeYn = false;
+	}
+
+	public void updateName(String name) {
+		this.name = name;
+	}
+
+	private List<String[]> parseIngredients(String ingredientList) {
+		return Arrays.stream(ingredientList.split(",")).map((ingredient) -> ingredient.split(":")).toList();
+	}
+	public List<String[]> getParsedIngredientList() {
+		return parseIngredients(this.ingredientList);
+	}
+
+	public List<String[]> getParsedSeasoningList() {
+		return parseIngredients(this.seasoningList);
+	}
+
+	public void updateImgUrl(String imgUrl) {
+		this.imgUrl = imgUrl;
+	}
+
 }

@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class IngredientDto {
+	private Integer ingredientId;
 	private String name;
 	private String image;
 	private String amounts;

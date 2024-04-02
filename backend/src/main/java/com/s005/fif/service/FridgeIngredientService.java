@@ -79,28 +79,76 @@ public class FridgeIngredientService {
 		fridgeIngredientRepository.delete(fridgeIngredient);
 
 		// 위험식재료 판단
-		Optional<CautionIngredientRel> cautionIngredient = cautionIngredientRelRepository.findByMemberIdAndIngredientId(
+		List<CautionIngredientRel> cautionIngredients = cautionIngredientRelRepository.findAllByMemberIdAndIngredientId(
 			memberId, fridgeIngredient.getIngredient().getIngredientId());
-		if(cautionIngredient.isPresent()) {
-			Member member = memberRepository.findById(memberId)
-				.orElseThrow(() -> new CustomException(ExceptionType.MEMBER_NOT_FOUND));
-			Ingredient ingredient = cautionIngredient.get().getIngredient();
+
+		// 위험 식재료가 아니라면 종료
+		if(cautionIngredients.isEmpty()) return;
+
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new CustomException(ExceptionType.MEMBER_NOT_FOUND));
+		String watchToken = member.getWatchToken();
+		String webToken = fridgeIngredient.getFridge().getFridgeToken();
+
+		// 하나의 식재료에 대해 지병별로 알림이 여러개라면 여러번 전송
+		for(int i=0; i<cautionIngredients.size(); i++){
+			Ingredient ingredient = cautionIngredients.get(i).getIngredient();
 			FcmSendDto fcmSendDto = FcmSendDto.builder()
 				.title("위험 식재료 알림")
 				.body("방금 꺼내신 "+ingredient.getName()+"는 지병에 좋지 않아요.")
 				.data(CautionIngredientResponseDto.builder()
+					.type(1)
 					.name(ingredient.getName())
-					.description(cautionIngredient.get().getDescription())
+					.disease(cautionIngredients.get(i).getDisease().getName())
+					.description(cautionIngredients.get(i).getDescription())
 					.imgUrl(ingredient.getImgUrl())
 					.build())
 				.build();
 
 			// 워치 푸시
-			fcmSendDto.setToken(member.getWatchToken());
+			fcmSendDto.setToken(watchToken);
 			fcmService.sendMessageTo(fcmSendDto);
 			// 웹 패널 푸시
-			fcmSendDto.setToken(fridgeIngredient.getFridge().getFridgeToken());
+			fcmSendDto.setToken(webToken);
 			fcmService.sendMessageTo(fcmSendDto);
 		}
+	}
+
+	public void sendFCMIngredientForTest(Integer memberId, Integer fridgeIngredientId) {
+
+
+		// 위험식재료 판단
+		FridgeIngredient fridgeIngredient = fridgeIngredientRepository.findById(fridgeIngredientId)
+				.orElseThrow(() -> new CustomException(ExceptionType.FRIDGE_INGREDIENT_NOT_FOUND));
+
+		Member member = memberRepository.findById(memberId)
+				.orElseThrow(() -> new CustomException(ExceptionType.MEMBER_NOT_FOUND));
+		String watchToken = member.getWatchToken();
+		String webToken = fridgeIngredient.getFridge().getFridgeToken();
+
+		CautionIngredientRel cautionIngredient = cautionIngredientRelRepository.findById(fridgeIngredientId)
+				.orElseThrow(() -> new CustomException(ExceptionType.FRIDGE_INGREDIENT_NOT_FOUND));;
+
+		// 하나의 식재료에 대해 지병별로 알림이 여러개라면 여러번 전송
+
+		FcmSendDto fcmSendDto = FcmSendDto.builder()
+				.title("위험 식재료 알림")
+				.body("방금 꺼내신 복숭아는 지병에 좋지 않아요.")
+				.data(CautionIngredientResponseDto.builder()
+						.type(1)
+						.name("복숭아")
+						.disease("당뇨")
+						.description(cautionIngredient.getDescription())
+						.imgUrl("https://cdn.pixabay.com/photo/2017/07/12/18/00/peach-2497691_1280.png")
+						.build())
+				.build();
+
+		// 워치 푸시
+		fcmSendDto.setToken(watchToken);
+		fcmService.sendMessageTo(fcmSendDto);
+		// 웹 패널 푸시
+		fcmSendDto.setToken(webToken);
+		fcmService.sendMessageTo(fcmSendDto);
+
 	}
 }

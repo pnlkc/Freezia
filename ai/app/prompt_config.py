@@ -3,11 +3,6 @@ CONVERSATION_JSON_FORMAT = """
 
                 {
                     reply : "냉장고에 있는 스팸, 마요네즈, 김치를 사용해 레시피를 생성했습니다.",
-                    recommendList : [
-                        "가장 최근에 만든 요리와 비슷한 재료를 사용하는 레시피를 알려줘",
-                        "간식으로 먹고 싶은데 칼로리를 절반으로 줄인 레시피를 알려줘",
-                        "덮밥말고 볶음밥 레시피로 알려줘"
-                    ],
                     recipeList : [
                         {
                             name : '스팸마요김치덮밥',
@@ -25,20 +20,26 @@ CONVERSATION_JSON_FORMAT = """
                                     unit : '단위 종류',  // 조금, 약간 같은 애매한 단위를 제시하지 말고 명확한 단위를 제시해줘. ex) g, kg, 한줌, 1T, 1스푼
                                 }
                             ],
-                            cookTime : '총 요리에 필요한 시간',
-                            carlorie : '요리의 칼로리 수치',
-                            servings : '요리 제공량' // 몇 인분인지,
+                            cookTime : '총 요리에 필요한 시간', 
+                            calorie : '요리의 칼로리 수치', // kcal
+                            servings : '요리 제공량' // 몇 인분인지, 
                             recipeType : '요리 유형', // 이 예시 내에서만 반환 - 한식, 양식, 중식, 일식, 밑반찬, 면요리, 볶음요리, 찜요리, 국물요리, 유통기한 임박 중 하나로 리턴해줘.
                             recipeSteps: [
                                 {
-                                    type: '단계 유형', // ex: '끓이기', '재료손질', '굽기', '볶기'
+                                    type: '단계 유형', // 단계 유형은 다음 3가지에서만 보여줘: 재료 손질, 조리, 마무리;
+                                    name : '해당 단계 세부 이름',
                                     description : '해당 단계 설명',
-                                    name : '해당 단계 이름',
                                     duration : '해당 단계 진행 시간, 타이머에 사용할 것이므로 초 단위로 숫자만 제공', ex: 300
                                     tip : '해당 단계에 도움이 되는 요리 팁',
+                                    timer : '해당 단계에서 걸리는 시간' 
                                 },
                             ]
                         },
+                    ],
+                    recommendList : [
+                        "가장 최근에 만든 요리와 비슷한 재료를 사용하는 레시피를 알려줘",
+                        "간식으로 먹고 싶은데 칼로리를 절반으로 줄인 레시피를 알려줘",
+                        "덮밥말고 볶음밥 레시피로 알려줘"
                     ]
                 }
             """
@@ -68,17 +69,17 @@ RECIPE_JSON_FORMAT = """
                 }
             ],
             cookTime : '총 요리에 필요한 시간',
-            carlorie : '요리의 칼로리',
-            servings : '요리 제공량' // 몇 인분인지,
-            recipeType : '요리 유형', // 이 예시 내에서만 반환 - 한식, 양식, 중식, 일식, 밑반찬, 면요리, 볶음요리, 찜요리, 국물요리, 유통기한 임박 중 하나로 리턴해줘.
+            calorie : '요리의 칼로리', // kcal
+            servings : '요리 제공량' // 몇 인분인지, 
+            recipeType : '요리 유형', // 이 예시 내에서만 반환 - 한식, 양식, 중식, 일식, 밑반 찬, 면요리, 볶음요리, 찜요리, 국물요리, 유통기한 임박 중 하나로 리턴해줘.
             recipeSteps: [
                 {
-                    type: '단계 유형', // ex: '끓이기', '재료손질', '굽기', '볶기'
+                    type: '단계 유형', // 단계 유형은 다음 3가지에서만 보여줘: 재료 손질, 조리, 마무리;
                     description : '해당 단계 설명',
-                    name : '해당 단계 이름',
+                    name : '해당 단계 세부 이름',
                     duration : '해당 단계 진행 시간, 타이머에 사용',
                     tip : '해당 단계에 도움이 되는 요리 팁',
-                    timer : '해당 단계에서 걸리는 시간'
+                    timer : '해당 단계에서 걸리는 시간' 
                 },
             ]
         },
@@ -309,6 +310,18 @@ ex) {
 """
 
 
+EXPIRATION_DATE_JSON= """
+현재 유통기한 임박한 냉장고 재고 정보를 활용하여 즉시 만들 수 있는 요리 레시피 20개를 아래와 같은 JSON 형식으로 반환해주고 이외의 말은 하지마:
+{
+     레시피 제목 : 확률(int값으로 반환)
+}
+
+ex) {
+    만들 수 있는 레시피 : 100
+}
+"""
+
+
 define = {
     "중식" : CHINA,
     "양식" : RESTAURANT,
@@ -323,9 +336,10 @@ answer = {
     "한식" : KOREA_ANSWER_JSON,
     "일식" : JAPAN_ANSWER_JSON,
     "면요리" : NOODLE_ANSWER_JSON,
-    "국물 요리": SOUP_ANSWER_JSON,
-    "찜 요리": STEAM_ANSWER_JSON,
-    "볶음 요리": STIR_FRY_ANSWER_JSON,
-    "튀김 요리": FRY_ANSWER_JSON,
-    "밑반찬": SIDE_ANSWER_JSON
+    "국물요리": SOUP_ANSWER_JSON,
+    "찜요리": STEAM_ANSWER_JSON,
+    "볶음요리": STIR_FRY_ANSWER_JSON,
+    "튀김요리": FRY_ANSWER_JSON,
+    "밑반찬": SIDE_ANSWER_JSON,
+    "유통기한 임박": EXPIRATION_DATE_JSON
 }

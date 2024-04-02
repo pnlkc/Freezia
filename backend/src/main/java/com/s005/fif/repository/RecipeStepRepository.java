@@ -9,4 +9,5 @@ import com.s005.fif.entity.RecipeStep;
 
 public interface RecipeStepRepository extends JpaRepository<RecipeStep, Integer> {
 	List<RecipeStep> findByRecipeOrderByStepNumberAsc(Recipe recipe);
+	List<RecipeStep> findByRecipe(Recipe recipe);
 }

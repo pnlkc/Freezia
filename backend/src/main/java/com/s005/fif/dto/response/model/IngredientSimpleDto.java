@@ -1,0 +1,12 @@
+package com.s005.fif.dto.response.model;
+
+import lombok.Builder;
+import lombok.Getter;
+
+@Getter
+@Builder
+public class IngredientSimpleDto {
+	private Integer ingredientId;
+	private String name;
+	private String image;
+}

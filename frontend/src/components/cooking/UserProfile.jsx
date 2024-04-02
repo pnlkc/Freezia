@@ -71,7 +71,7 @@ export default function UserProfile() {
                   <div
                     className={`user-health-data-info ${data.id}`}
                     style={{
-                      left: `${((data.id === 'bloodOxygen' ? data.value - 85 : data.value) / data.maxValue) * 100}%`,
+                      left: `${((data.id === 'bloodOxygen' ? Math.max(data.value - 85, 0) : data.value) / data.maxValue) * 100}%`,
                     }}
                   >
                     {`${data.id === 'stress' ? selectIcon(data.value) : data.value}${data.suffix}`}
@@ -81,7 +81,7 @@ export default function UserProfile() {
                   <div
                     className={`user-health-data-progress-bar ${data.id}`}
                     style={{
-                      left: `${((data.id === 'bloodOxygen' ? data.value - 85 : data.value) / data.maxValue) * 100}%`,
+                      left: `${((data.id === 'bloodOxygen' ? Math.max(data.value - 85, 0) : data.value) / data.maxValue) * 100}%`,
                     }}
                   />
                 </div>

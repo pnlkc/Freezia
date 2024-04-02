@@ -7,9 +7,15 @@
 
 .profile-content-container {
   width: 100%;
+  height: calc(100% - 7vw);
   display: flex;
   flex-direction: column;
   padding: 0 1.5vw;
+  overflow-y: scroll;
+}
+
+.profile-content-container::-webkit-scrollbar {
+  display: none;
 }
 
 .prefrence-menu-box {

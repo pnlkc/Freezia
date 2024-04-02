@@ -4,10 +4,12 @@ import android.content.Context
 import android.speech.tts.TextToSpeech
 import java.util.Locale
 
-class TTSUtil {
+object TTSUtil {
     private var tts: TextToSpeech? = null
 
     fun speak(context: Context, text: String) {
+        stop()
+
         tts = TextToSpeech(
             context
         ) {

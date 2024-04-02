@@ -9,7 +9,7 @@ class ThreadRequest(BaseModel):
     class Config:
         json_schema_extra = {
             "example": {
-                "ingredients" : "베이컨, 토마토, 계란, 대파, 마늘",
+                "ingredients" : "베이컨, 토마토,   대파, 마늘",
                 "diseases" : "당뇨, 고혈압",
                 "dislikeIngredients" : "토마토, 오이, 가지"
                 }

@@ -34,6 +34,7 @@ export default function RecipeCreate() {
       ? JSON.parse(sessionStorage.recommendList)
       : [],
   );
+  let autoScroll = true;
 
   // useEffect(() => {
   //   const { message } = newMessage;
@@ -140,9 +141,18 @@ export default function RecipeCreate() {
       //     );
       //   });
 
+      let scrollEvent;
       if (sessionStorage.isDone !== 'false') {
         sendMessage(url, setRecipe, setIsProgress);
+        autoScroll = true;
+        scrollEvent = window.addEventListener('scroll', () => {
+          autoScroll = false;
+        });
       }
+
+      return () => {
+        window.removeEventListener('scroll', scrollEvent);
+      };
     }
   }, [isProgress]);
 

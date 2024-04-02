@@ -84,12 +84,11 @@
 }
 
 .recipe-item-description-duration {
-  margin-bottom: 0.3vw;
   color: white;
 }
 
 .recipe-item-description-name {
-  font-size: 1vw;
+  font-size: 1.3vw;
   word-break: keep-all;
   color: white;
   opacity: 0.99;

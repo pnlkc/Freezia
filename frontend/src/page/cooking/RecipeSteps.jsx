@@ -59,7 +59,7 @@ export default function RecipeSteps() {
       </div>
 
       <div
-        className="recipe-step-finish-phrase f-3 bold"
+        className="recipe-step-finish-phrase f-5 bold"
         style={{
           top: step === maxStep ? '4vw' : '-10vw',
         }}

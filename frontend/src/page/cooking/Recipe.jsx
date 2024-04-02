@@ -96,7 +96,7 @@ export default function Recipe() {
           />
         </div>
         <div className="recipe-header-description-box">
-          <div className="recipe-header-name f-3">
+          <div className="recipe-header-name bold f-5">
             {recipeDetail ? recipeDetail.name : ''}
           </div>
           <div className="recipe-header-tags">
@@ -138,7 +138,7 @@ export default function Recipe() {
               <div className="recipe-info-value">{`${recipeDetail ? recipeDetail.calorie : 0}kcal`}</div>
             </div>
           </div>
-          <Link to="connect" className="recipe-connect-link link f-0">
+          <Link to="connect" className="recipe-connect-link link f-1">
             상세 레시피 보기
           </Link>
           <div className="recipe-info-container-separator" />

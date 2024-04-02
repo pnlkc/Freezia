@@ -22,7 +22,7 @@ export default function RecipeListBox({ recipeList, selected }) {
                 />
                 {`${cookTime}min`}
               </div>
-              <div className="recipe-item-description-name">{name}</div>
+              <div className="recipe-item-description-name bold">{name}</div>
             </div>
           </div>
         </Link>

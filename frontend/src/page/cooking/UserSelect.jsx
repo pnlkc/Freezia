@@ -22,6 +22,14 @@ export default function UserSelect() {
 
   return (
     <div className="user-select-container">
+      <div to="/Cooking/main" className="user-select-logo bold f-5">
+        <img
+          className="cooking-header-logo"
+          src="/images/logo.png"
+          alt="FREEZIA"
+        />
+        FREEZIA
+      </div>
       <div className="user-select-title f-5">사용자를 선택해주세요</div>
       <div className="profile-list-container">
         <div className="profile-add-button">

@@ -2,7 +2,7 @@
   --screen-width: 30.3%;
   --screen-height: 95.45%;
 
-  --primary-color: #fe9738;
+  --primary-color: #f08d31;
   --screen-background-color: #ddd8d0;
   --cooking-background-colr: #f6f1ec;
   --widget-background-color: #f2f1ee;
@@ -11,10 +11,20 @@
   --reply-chat-color: #ffb638b9;
   --background-filter-gradient: linear-gradient(
     0deg,
+    rgba(0, 0, 0, 1) 50%,
+    rgba(160, 160, 160, 0.1) 100%
+  );
+  --background-filter-gradient: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.9) 30%,
+    rgba(160, 160, 160, 0.1) 100%
+  );
+  /* linear-gradient(
+    0deg,
     rgba(0, 0, 0, 1) 30%,
     rgba(128, 128, 128, 1) 51%,
     rgba(245, 245, 245, 1) 100%
-  );
+  ); */
   --box-border: 0.05vw solid rgba(0, 0, 0, 0.158);
   --stress-progress-gradient: linear-gradient(
     90deg,

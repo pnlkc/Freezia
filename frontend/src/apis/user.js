@@ -81,6 +81,7 @@ export const deleteIngredient = (fridgeIngredientId) => {
       fridgeIngredientId,
     },
   });
+  getFridgeIngredients();
 };
 
 export const addIngredient = async (name) => {

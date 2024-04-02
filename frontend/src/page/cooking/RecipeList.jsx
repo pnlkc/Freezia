@@ -62,7 +62,7 @@ export default function RecipeList() {
             <div className="recipe-item-description">
               <div className="recipe-item-background-filter" />
               <div className="recipe-item-description-wrapper">
-                <div className="recipe-item-description-duration f-0 o-5">
+                <div className="recipe-item-description-duration f-0 o-7">
                   <img
                     src="/images/cooking/time.svg"
                     alt="아이콘"
@@ -70,7 +70,7 @@ export default function RecipeList() {
                   />
                   {`${cookTime} min`}
                 </div>
-                <div className="recipe-item-description-name">{name}</div>
+                <div className="recipe-item-description-name bold">{name}</div>
               </div>
             </div>
           </Link>

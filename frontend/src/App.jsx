@@ -6,7 +6,6 @@ import './assets/styles/main.css';
 import { setToken } from './utils/firebase';
 import navigateInstance from './utils/navigate';
 
-import { sendWarning } from './apis/firebase';
 import { registMessageEvent } from './utils/messageEventHandler';
 import Ingredients from './components/Ingredients';
 import { addIngredient, getFridgeIngredients } from './apis/user';
@@ -95,7 +94,7 @@ function App() {
       </div> */}
       {!onAnimate && mode === 'home' && (
         <div
-          className="open-door-button"
+          className="open-door-button f-4"
           onClick={() => {
             // sendWarning();
             handleMode('fridge');
@@ -106,7 +105,7 @@ function App() {
       )}
       {!onAnimate && mode === 'home' && (
         <div
-          className="focus-button"
+          className="focus-button f-3"
           onClick={() => {
             handleMode('screen');
           }}
@@ -148,7 +147,7 @@ function App() {
       )}
       {!onAnimate && mode === 'fridge' && (
         <div
-          className="fridge-select-ingredient-button"
+          className="fridge-select-ingredient-button f-4"
           onClick={() => {
             // sendWarning();
             // handleMode('home');

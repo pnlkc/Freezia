@@ -32,13 +32,13 @@ export default function WatchConnect() {
         </div>
       </div>
       <div className="watch-connect-button-box">
-        <Link to="waiting" className="watch-connect-button orange link">
-          <span className="sans">Galaxy Watch</span>
-          <span>와 연동하기</span>
+        <Link to="waiting" className="watch-connect-button orange link bold">
+          <span className="sans bold">Galaxy Watch</span>
+          <span> 와 연동하기</span>
         </Link>
         <Link
           to="/Cooking/recipe/1/steps/0"
-          className="watch-connect-button link"
+          className="watch-connect-button link bold"
           onClick={() => {
             sessionStorage.setItem('isConnected', 'false');
           }}

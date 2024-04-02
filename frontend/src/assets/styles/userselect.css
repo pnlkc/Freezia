@@ -50,3 +50,10 @@
   font-weight: 600;
   margin-top: 0.5vw;
 }
+
+.user-select-logo {
+  display: flex;
+  align-items: center;
+  color: var(--primary-color);
+  margin-bottom: 2vw;
+}

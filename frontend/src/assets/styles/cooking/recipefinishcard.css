@@ -22,12 +22,13 @@
 .recipe-finish-card-name {
   z-index: 2;
   position: absolute;
-  bottom: 1.2vw;
+  bottom: 1.8vw;
   width: 100%;
   left: 50%;
   transform: translateX(-50%);
   text-align: center;
   color: white;
+  font-weight: 600;
 }
 
 .recipe-finish-card-image-box::after {
@@ -38,7 +39,7 @@
   left: 0;
   content: '';
   background: var(--background-filter-gradient);
-  opacity: 0.3;
+  opacity: 0.4;
 }
 
 .recipe-finish-card-bookmark-wrapper {
@@ -72,11 +73,11 @@
 }
 
 .recipe-finish-card-info-wrapper {
-  width: 30%;
+  width: 40%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 3vw;
+  height: 3.5vw;
   text-align: center;
 }
 

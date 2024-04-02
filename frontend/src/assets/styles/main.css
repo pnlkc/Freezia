@@ -124,6 +124,7 @@ button {
   color: white;
   border-style: dashed;
   transition: all 0.5s;
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
 .open-door-button:hover {
@@ -145,6 +146,7 @@ button {
   border-style: dashed;
   transition: all 0.5s;
   color: white;
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
 .focus-button:hover {
@@ -237,7 +239,7 @@ button {
   border-style: dashed;
   transition: all 0.5s;
   color: white;
-  background-color: rgba(64, 64, 64, 0.546);
+  background-color: rgba(0, 0, 0, 0.6);
 }
 
 .fridge-select-ingredient-button:hover {

@@ -14,24 +14,18 @@ export default function RecipeFinsishCard() {
           src={recipeDetail.imgUrl}
           alt="음식 사진"
         />
-        <div className="recipe-finish-card-name f-3">{recipeDetail?.name}</div>
-        <div className="recipe-finish-card-bookmark-wrapper">
-          <img
-            className="recipe-finish-card-bookmark-icon"
-            src="/images/cooking/bookmark.svg"
-            alt="북마크"
-          />
-        </div>
+        <div className="recipe-finish-card-name f-4">{recipeDetail?.name}</div>
+        <div className="recipe-finish-card-bookmark-wrapper"></div>
       </div>
       <div className="recipe-finish-card-box">
         <div className="recipe-finsih-card-info-box">
           <div className="recipe-finish-card-info-wrapper">
-            <div className="f-0">요리 시간</div>
-            <div>{`${recipeDetail?.cookTime} m`}</div>
+            <div className="f-1">요리 시간</div>
+            <div className="f-2">{`${recipeDetail?.cookTime} m`}</div>
           </div>
           <div className="recipe-finish-card-info-wrapper">
-            <div className="f-0">칼로리</div>
-            <div>{`${recipeDetail.calorie} kcal`}</div>
+            <div className="f-1">칼로리</div>
+            <div className="f-2">{`${recipeDetail.calorie} kcal`}</div>
           </div>
         </div>
         <div className="recipe-finish-card-button-box">

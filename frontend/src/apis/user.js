@@ -81,3 +81,7 @@ export const deleteIngredient = (fridgeIngredientId) => {
     },
   });
 };
+
+export const addIngredient = (name) => {
+  axios.post('fridge-ingredients', { name });
+};

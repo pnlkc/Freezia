@@ -150,13 +150,18 @@ button {
 .focus-button:hover {
   opacity: 1;
 }
+
 .focus-out-right-button,
 .focus-out-left-button {
   position: absolute;
   width: 32%;
   height: 100%;
   top: 0;
-  background-color: white;
+  background: linear-gradient(
+    270deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.6) 100%
+  );
   opacity: 0;
   transition: all 0.5s;
   cursor: pointer;
@@ -164,6 +169,11 @@ button {
 
 .focus-out-right-button {
   right: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.6) 100%
+  );
 }
 
 .focus-out-right-button:hover,
@@ -171,7 +181,7 @@ button {
   opacity: 0.4;
 }
 
-.fridge-focus-out-button {
+.fridge-focus-out-right-button {
   position: absolute;
   width: 40%;
   height: 100%;
@@ -181,10 +191,35 @@ button {
   opacity: 0;
   transition: all 0.5s;
   cursor: pointer;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.6) 100%
+  );
 }
 
-.fridge-focus-out-button:hover {
-  opacity: 0.4;
+.fridge-focus-out-left-button {
+  position: absolute;
+  width: 40%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  transition: all 0.5s;
+  cursor: pointer;
+  background: linear-gradient(
+    270deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.6) 100%
+  );
+}
+
+.fridge-focus-out-right-button:hover {
+  opacity: 0.7;
+}
+
+.fridge-focus-out-left-button:hover {
+  opacity: 0.7;
 }
 
 .fridge-select-ingredient-button {

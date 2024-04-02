@@ -31,6 +31,10 @@ export default function RecipeSave() {
       'addIngredientList',
       JSON.stringify(addIngredientList),
     );
+
+    return () => {
+      sessionStorage.removeItem('addIngredientList');
+    };
   }, [addIngredientList]);
 
   useEffect(() => {
@@ -38,6 +42,10 @@ export default function RecipeSave() {
       'removeIngredientList',
       JSON.stringify(removeIngredientList),
     );
+
+    return () => {
+      sessionStorage.removeItem('removeIngredientList');
+    };
   }, [removeIngredientList]);
 
   return (
@@ -159,7 +167,9 @@ export default function RecipeSave() {
             memo,
           });
 
-          disconnectWatch(recipeDetail.recipeId);
+          if (sessionStorage.isConnected === 'true') {
+            disconnectWatch(recipeDetail.recipeId);
+          }
           getRecipeHistory(recipeDetail.recipeId);
 
           sessionStorage.removeItem('addIngredientList');

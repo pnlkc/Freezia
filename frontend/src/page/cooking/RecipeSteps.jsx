@@ -23,7 +23,7 @@ export default function RecipeSteps() {
   useEffect(() => {
     setWidth(slideRef.current.getBoundingClientRect().width);
     registMessageEvent((message) => {
-      if (message.sender === 0 && sessionStorage.isConnected !== 'true') return;
+      if (message.sender === 0 || sessionStorage.isConnected !== 'true') return;
       setStep(message.step - 1);
     }, 4);
 
@@ -36,7 +36,9 @@ export default function RecipeSteps() {
     });
 
     return () => {
-      disconnectWatch(recipeDetail.recipeId);
+      if (sessionStorage.isConnected === 'true') {
+        disconnectWatch(recipeDetail.recipeId);
+      }
       window.removeEventListener('resize', event);
       sessionStorage.removeItem('currentStep');
     };

@@ -110,7 +110,7 @@ function App() {
             handleMode('screen');
           }}
         >
-          패널 사용하기
+          스크린 사용하기
         </div>
       )}
       {!onAnimate && onScreen && (
@@ -131,7 +131,15 @@ function App() {
       )}
       {!onAnimate && mode === 'fridge' && (
         <div
-          className="fridge-focus-out-button"
+          className="fridge-focus-out-right-button"
+          onClick={() => {
+            handleMode('home');
+          }}
+        />
+      )}
+      {!onAnimate && mode === 'fridge' && (
+        <div
+          className="fridge-focus-out-left-button"
           onClick={() => {
             handleMode('home');
           }}

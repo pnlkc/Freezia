@@ -93,8 +93,8 @@ class TimerViewModel @Inject constructor(
         timerList.add(
             TimerInfo(
                 cTimerId++,
-                initTime = time,
-                leftTime = time,
+                initTime = if (step > 2) 7 else time / 60,
+                leftTime = if (step > 2) 7 else time / 60,
                 isStart = false,
                 timeMillis = System.currentTimeMillis(),
                 title = name,

@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">FREEZIA</string>
+    <!--
+    This string is used for square devices and overridden by hello_world in
+    values-round/strings.xml for round devices.
+    -->
+    <string name="profile_img_desc">프로필 이미지</string>
+    <string name="ingredient_img_desc">식재료 이미지</string>
+    <string name="not_select_recipe">진행 중인 요리가 없습니다</string>
+    <string name="btn_recipe_desc">레시피 버튼</string>
+    <string name="btn_shopping_list_desc">쇼핑 리스트 버튼</string>
+    <string name="btn_timer_desc">타이머 버튼</string>
+    <string name="shopping_list">쇼핑 리스트</string>
+    <string name="fridge_ingredient_list">냉장고 재고</string>
+    <string name="cook_time_text">요리 시간 %1$d분</string>
+    <string name="use_timer">타이머 사용하기</string>
+    <string name="btn_recipe_step_back">레시피 뒤로 가기 버튼</string>
+    <string name="btn_recipe_step_forward">레시피 앞으로 가기 버튼</string>
+    <string name="btn_recipe_step_tts">레시피 TTS 버튼</string>
+    <string name="recipe_done_message">냉장고 패널에서 요리를\n더 자세히 기록해보세요!</string>
+    <string name="recipe_done">요리 완료하기</string>
+    <string name="record_panel">패널에서 기록할래요</string>
+    <string name="warning_text">%1$s는 %2$s에\n좋지 않습니다</string>
+    <string name="timer_list">타이머 목록</string>
+    <string name="timer_list_to_detail_icon">타이머 세부 화면 이동 아이콘</string>
+    <string name="btn_timer_back">이전 타이머 버튼</string>
+    <string name="btn_timer_forward">다음 타이머 버튼</string>
+    <string name="btn_timer_reset">타이머 초기화 버튼</string>
+    <string name="btn_timer_list">타이머 리스트 버튼</string>
+    <string name="btn_timer_to_recipe">타이머에서 레시피 단계로 이동 버튼</string>
+    <string name="btn_fridge_ingredient">냉장고 재고 이동 버튼</string>
+    <string name="btn_timer_play">타이머 시작 버튼</string>
+    <string name="background_image">배경 이미지</string>
+    <string name="timer_done_icon">타이머 완료 아이콘</string>
+    <string name="timer_done_text">%1$s 완료</string>
+    <string name="btn_timer_done">타이머 완료 확인 버튼</string>
+    <string name="notification_timer_done_title">타이머 완료</string>
+    <string name="notification_timer_done_content">타이머가 완료되었습니다</string>
+    <string name="notification_recipe_connect_title">레시피 연동</string>
+    <string name="notification_recipe_connect_content">레시피 연동되었습니다</string>
+    <string name="text_user_name">%1$s님</string>
+    <string name="description_warning_ingredient_icon">위험 식재료 아이콘</string>
+    <string name="text_danger_ingredient">위험 식재료 알림</string>
+    <string name="text_danger_ingredient_body">방금 꺼내신 %1$s는 %2$s에 좋지 않아요</string>
+    <string name="exit_toast_message">뒤로가기 버튼을 한번 더 누르면 종료됩니다</string>
+</resources>

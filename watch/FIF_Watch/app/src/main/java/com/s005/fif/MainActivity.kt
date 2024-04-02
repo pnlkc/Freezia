@@ -15,6 +15,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.DisplayMetrics
 import android.util.Log
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -80,6 +81,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setTheme(android.R.style.Theme_DeviceDefault)
+
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             getNotificationPermission()

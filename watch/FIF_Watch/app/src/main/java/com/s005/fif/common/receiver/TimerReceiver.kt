@@ -17,9 +17,12 @@ class TimerReceiver : BroadcastReceiver() {
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     override fun onReceive(context: Context, intent: Intent) {
         Log.d("로그", "TimerReceiver - onReceive() 호출됨")
-        
-        val action = intent.action
 
-        NotificationUtil.showFullScreenNotification(context)
+        NotificationUtil.showTimerNotification(
+            context,
+            intent.getStringExtra("title") ?: "",
+            intent.getIntExtra("initTime", 0),
+            intent.getIntExtra("id", 0)
+        )
     }
 }

@@ -1,0 +1,67 @@
+.recommend-recipe-contents-box {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  margin-top: 0.5vw;
+  border-radius: 1vw;
+  background-color: white;
+  padding: 1vw 1vw 0vw 1vw;
+  border: var(--box-border);
+}
+
+.recommend-recipe-title {
+  margin-top: 1vw;
+}
+
+.recommend-recipe-carousel-container {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.recommend-recipe-carousel-slider {
+  display: flex;
+}
+
+.recommend-recipe-carousel-item {
+  width: 100%;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  cursor: grab;
+}
+.carousel-item-image {
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 1vw;
+  object-fit: cover;
+  padding: 0.5vw;
+  cursor: pointer;
+}
+
+.carousel-item-description {
+  margin-top: 1vw;
+}
+
+.carousel-pagenation {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.5vw;
+  margin-bottom: 1vw;
+}
+
+.carousel-pagenation-checked,
+.carousel-pagenation-empty {
+  width: 0.4vw;
+  height: 0.4vw;
+  border-radius: 0.2vw;
+  border: 0.1vw solid var(--primary-color);
+  margin: 0 0.15vw;
+  opacity: 0.5;
+  transition: all 0.3s;
+}
+
+.carousel-pagenation-checked {
+  background-color: var(--primary-color);
+  opacity: 1;
+}

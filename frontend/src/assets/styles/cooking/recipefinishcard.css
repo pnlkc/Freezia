@@ -1,0 +1,117 @@
+.recipe-finish-card {
+  width: 80%;
+  margin: 0 10%;
+  display: flex;
+  flex-direction: column;
+}
+
+.recipe-finish-card-image-box {
+  position: relative;
+  width: 100%;
+  border-radius: 2vw 2vw 0 0;
+  overflow: hidden;
+}
+
+.recipe-finish-card-image {
+  width: 100%;
+  position: relative;
+  aspect-ratio: 3/2;
+  object-fit: cover;
+}
+
+.recipe-finish-card-name {
+  z-index: 2;
+  position: absolute;
+  bottom: 1.2vw;
+  width: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  color: white;
+}
+
+.recipe-finish-card-image-box::after {
+  position: absolute;
+  width: 100%;
+  height: calc(100% - 0.3vw);
+  top: 0;
+  left: 0;
+  content: '';
+  background: var(--background-filter-gradient);
+  opacity: 0.3;
+}
+
+.recipe-finish-card-bookmark-wrapper {
+  position: absolute;
+  top: 1vw;
+  right: 0;
+  cursor: pointer;
+}
+
+.recipe-finish-card-bookmark-icon {
+  width: 50%;
+}
+
+.recipe-finsih-card-info-box {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1.5vw;
+}
+
+.recipe-finsih-card-info-box::after {
+  position: absolute;
+  content: '';
+  border-radius: 1vw;
+  width: 0.05vw;
+  height: 75%;
+  background-color: black;
+  opacity: 0.3;
+}
+
+.recipe-finish-card-info-wrapper {
+  width: 30%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 3vw;
+  text-align: center;
+}
+
+.recipe-finish-card-box {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.recipe-finish-card-button-box {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+}
+
+.finish-card-button-save,
+.finish-card-button-exit {
+  font-size: 0.9vw;
+  width: 12vw;
+  padding: 0.5vw 0;
+  margin: 0.6vw 0;
+  border-radius: 1vw;
+  cursor: pointer;
+  text-align: center;
+}
+
+.finish-card-button-save {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.finish-card-button-exit {
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+}

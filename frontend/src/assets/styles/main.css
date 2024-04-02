@@ -1,0 +1,305 @@
+.background {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+}
+
+.background-fridge {
+  position: absolute;
+  width: 180vw;
+  height: 180vh;
+  left: -25.2%;
+  top: -12%;
+}
+
+.background-screen {
+  position: absolute;
+  width: 270vw;
+  height: 270vh;
+  left: -95.2%;
+  top: -44%;
+}
+
+.background-out {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  left: 0%;
+  top: 0%;
+}
+
+.background-crop {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.container {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#result {
+  position: absolute;
+  border: 2px solid black;
+  width: 20%;
+  right: 5%;
+  top: 5%;
+  height: 200px;
+  background-color: white;
+  opacity: 0.7;
+  border-radius: 3px;
+  font-size: 14px;
+}
+
+#input {
+  width: 90%;
+  border-radius: 3px;
+  border: 2px solid black;
+  padding: 4px 2px;
+}
+
+.label {
+  width: 90%;
+  font-size: 0.8rem;
+  margin: 2px;
+}
+
+button {
+  width: 100px;
+  margin: 20px 0;
+}
+
+.focus-fridge {
+  width: 180vw;
+  height: 180vh;
+  left: -25.2%;
+  top: -12%;
+  animation: slide-in-fridge 0.7s ease-out;
+}
+
+.focus-screen {
+  width: 270vw;
+  height: 270vh;
+  left: -95.2%;
+  top: -44%;
+  animation: slide-in-screen 0.7s ease-out;
+}
+
+.focus-out-fridge {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  left: 0%;
+  top: 0%;
+  animation: slide-out-fridge 0.7s ease-out;
+}
+
+.focus-out-screen {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  left: 0%;
+  top: 0%;
+  animation: slide-out-screen 0.7s ease-out;
+}
+
+.open-door-button {
+  position: absolute;
+  width: 12.8%;
+  height: 46.3%;
+  top: 12.1%;
+  left: 34.4%;
+  cursor: pointer;
+  opacity: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid rgba(255, 255, 255, 0.548);
+  color: white;
+  border-style: dashed;
+  transition: all 0.5s;
+}
+
+.open-door-button:hover {
+  opacity: 1;
+}
+
+.focus-button {
+  position: absolute;
+  width: 11.2%;
+  height: 35.8%;
+  top: 16.9%;
+  left: 48.2%;
+  cursor: pointer;
+  opacity: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid rgba(255, 255, 255, 0.548);
+  border-style: dashed;
+  transition: all 0.5s;
+  color: white;
+}
+
+.focus-button:hover {
+  opacity: 1;
+}
+
+.focus-out-right-button,
+.focus-out-left-button {
+  position: absolute;
+  width: 32%;
+  height: 100%;
+  top: 0;
+  background: linear-gradient(
+    270deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.6) 100%
+  );
+  opacity: 0;
+  transition: all 0.5s;
+  cursor: pointer;
+}
+
+.focus-out-right-button {
+  right: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.6) 100%
+  );
+}
+
+.focus-out-right-button:hover,
+.focus-out-left-button:hover {
+  opacity: 0.4;
+}
+
+.fridge-focus-out-right-button {
+  position: absolute;
+  width: 40%;
+  height: 100%;
+  top: 0;
+  right: 0;
+  background-color: white;
+  opacity: 0;
+  transition: all 0.5s;
+  cursor: pointer;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.6) 100%
+  );
+}
+
+.fridge-focus-out-left-button {
+  position: absolute;
+  width: 40%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  transition: all 0.5s;
+  cursor: pointer;
+  background: linear-gradient(
+    270deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.6) 100%
+  );
+}
+
+.fridge-focus-out-right-button:hover {
+  opacity: 0.7;
+}
+
+.fridge-focus-out-left-button:hover {
+  opacity: 0.7;
+}
+
+.fridge-select-ingredient-button {
+  position: absolute;
+  width: 23%;
+  height: 75%;
+  top: 14%;
+  left: 36.5%;
+  cursor: pointer;
+  opacity: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid white;
+  border-style: dashed;
+  transition: all 0.5s;
+  color: white;
+  background-color: rgba(64, 64, 64, 0.546);
+}
+
+.fridge-select-ingredient-button:hover {
+  opacity: 1;
+}
+
+@keyframes slide-in-screen {
+  from {
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+  }
+  to {
+    left: -95.2%;
+    top: -44%;
+    width: 270vw;
+    height: 270vh;
+  }
+}
+
+@keyframes slide-out-screen {
+  from {
+    left: -95.2%;
+    top: -44%;
+    width: 270vw;
+    height: 270vh;
+  }
+  to {
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+  }
+}
+
+@keyframes slide-out-fridge {
+  from {
+    width: 180vw;
+    height: 180vh;
+    left: -25.2%;
+    top: -12%;
+  }
+  to {
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+  }
+}
+
+@keyframes slide-in-fridge {
+  from {
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+  }
+  to {
+    width: 180vw;
+    height: 180vh;
+    left: -25.2%;
+    top: -12%;
+  }
+}

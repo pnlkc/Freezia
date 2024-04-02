@@ -1,0 +1,88 @@
+.watch-connect-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-size: cover;
+  background-position: center;
+  align-items: center;
+}
+
+.watch-connect-container::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: black;
+  opacity: 0.5;
+}
+
+.connect-recipe-info-box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 9vw;
+}
+
+.connect-recipe-header-name {
+  opacity: 0.99;
+  color: white;
+}
+
+.connect-recipe-header-tags {
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: row;
+  margin-top: 0.7vw;
+}
+
+.connect-recipe-header-tag {
+  padding: 0.4vw 0.9vw;
+  background-color: #b6b4b450;
+  border-radius: 1vw;
+  color: white;
+  font-size: 0.7vw;
+  margin-right: 0.5vw;
+  opacity: 0.9;
+}
+
+.watch-connect-button-box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 14vw;
+}
+
+.watch-connect-button {
+  font-size: 0.9vw;
+  text-align: center;
+  width: 15vw;
+  padding: 0.7vw 0;
+  border-radius: 2vw;
+  background-color: var(--dark-grey);
+  color: white;
+  opacity: 0.99;
+  margin: 0.5vw 0;
+  cursor: pointer;
+}
+
+.orange {
+  background-color: var(--primary-color);
+}
+
+.connect-recipe-back-button {
+  font-size: 1.8vw;
+  margin-top: 1vw;
+  margin-left: 1vw;
+  color: white;
+  opacity: 0.99;
+  cursor: pointer;
+  align-self: flex-start;
+}

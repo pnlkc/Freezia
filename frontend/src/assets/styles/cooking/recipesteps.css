@@ -1,0 +1,133 @@
+.recipe-step-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.recipe-step-back-button {
+  width: 100%;
+  font-size: 1.8vw;
+  margin-top: 0.3vw;
+  padding-left: 0.7vw;
+  color: black;
+  opacity: 0.7;
+  cursor: pointer;
+}
+
+.recipe-step-progress {
+  width: 80%;
+  height: 1.8vw;
+  border-radius: 1vw;
+  background-color: white;
+  border: 0.1vw solid var(--grey);
+  position: relative;
+  margin-top: 1vw;
+  transition: all 0.4s ease-in-out;
+}
+
+.recipe-step-progress-bar {
+  position: absolute;
+  top: -0.05vw;
+  width: 10%;
+  height: 1.7vw;
+  border-radius: 1vw 0 0 1vw;
+  background-color: var(--primary-color);
+  transition: all 0.3s;
+}
+
+.recipe-step-progress-value {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 0.6vw;
+  opacity: 0.5;
+  font-size: 1vw;
+  transition: all 0.3s;
+}
+
+.recipe-step-content-card-container {
+  display: flex;
+  margin-top: 10%;
+  width: 100%;
+  flex-grow: 1;
+  transition: 0.3s;
+}
+
+.recipe-step-content-card,
+.recipe-finish-card {
+  border-radius: 2vw;
+  width: 80%;
+  height: 100%;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  margin: 0 10%;
+}
+
+.content-card-image {
+  width: 100%;
+  aspect-ratio: 3/2;
+  object-fit: cover;
+  border-radius: 2vw 2vw 0 0;
+}
+
+.content-card-box {
+  width: 100%;
+  flex-grow: 1;
+  padding: 1.5vw;
+  padding-top: 0;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  word-break: keep-all;
+}
+
+.content-card-box-description {
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+  font-size: 1.5vw;
+  line-height: 1.5;
+}
+
+.content-card-box-tip {
+  font-size: 0.8vw;
+  opacity: 0.5;
+  margin-bottom: 2vw;
+}
+
+.recipe-step-content-stt-button {
+  padding: 1vw;
+  margin: 1.5vw 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  cursor: pointer;
+  transition: all 0.4s ease-in-out;
+}
+
+.recipe-step-content-stt-button-icon {
+  width: 2.5vw;
+  height: 2.5vw;
+}
+
+.progress-up {
+  transform: translateY(-10vw);
+}
+
+.stt-button-down {
+  transform: translateY(10vw);
+}
+
+.recipe-step-finish-phrase {
+  position: absolute;
+  top: -4vw;
+  color: var(--primary-color);
+  transition: 0.4s ease-in-out;
+}

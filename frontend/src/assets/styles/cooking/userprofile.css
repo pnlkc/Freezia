@@ -1,0 +1,161 @@
+.user-health-info-box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-top: 0.5vw;
+  border-radius: 1vw;
+  background-color: white;
+  padding: 1.5vw;
+  border: var(--box-border);
+}
+
+.user-health-info-profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.user-profile-image-wrapper {
+  margin-top: 1vw;
+  width: 6vw;
+  height: 6vw;
+  border-radius: 3vw;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 3px 8px;
+}
+
+.user-profile-image {
+  width: 6vw;
+  height: 6vw;
+}
+
+.user-health-data-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-grow: 1;
+  margin-top: 1vw;
+}
+
+.user-health-data {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 0.7vw 1vw;
+  border-radius: 1.4vw;
+  margin: 0.2vw 0;
+  background-color: rgba(202, 150, 61, 0.16);
+}
+
+.user-health-data-name {
+  margin-left: 0.3vw;
+  margin-right: 0.5vw;
+  margin-top: 0.3vw;
+  font-size: 1.6vw;
+}
+
+.user-health-data-value {
+  /* height: 1.8vw; */
+  margin-left: auto;
+  position: relative;
+}
+.user-health-data-info-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  flex-direction: row;
+  height: 1.6vw;
+  margin-bottom: 0.3vw;
+  margin-top: 1vw;
+}
+
+.user-health-data-info {
+  position: absolute;
+  top: 0;
+  padding: 0.2vw 0;
+  transform: translateX(-40%);
+  background-color: #fe9838c2;
+  color: white;
+  font-weight: 600;
+  border-radius: 1vw;
+  font-size: 0.8vw;
+  text-align: center;
+}
+
+.user-health-data-progress {
+  appearance: none;
+  width: 100%;
+}
+
+.user-health-data-progress::-webkit-progress-bar {
+  height: 1.5vw;
+  border: 0.06vw solid rgba(0, 0, 0, 0.3);
+  border-radius: 1vw;
+  background-color: #fcfcfc;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 3px 8px;
+}
+
+.user-health-data-progress::-webkit-progress-value {
+  height: 1.5vw;
+  border-radius: 1vw;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 8px;
+}
+
+.progress-red::-webkit-progress-value {
+  background-color: var(--red);
+}
+
+.progress-blue::-webkit-progress-value {
+  background-color: var(--blue);
+}
+
+.progress-green::-webkit-progress-value {
+  background-color: var(--green);
+}
+
+.user-health-data-progress-wrapper {
+  width: 10vw;
+  height: 0.9vw;
+  background-color: white;
+  position: relative;
+  border-radius: 1vw;
+  overflow: hidden;
+}
+
+.user-health-data-progress-wrapper.stress {
+  background: var(--stress-progress-gradient);
+}
+
+.user-health-data-progress-bar {
+  position: absolute;
+  width: 0.3vw;
+  height: 1vw;
+  background-color: black;
+  opacity: 0.5;
+}
+
+.user-health-data-progress-bar.sleep {
+  width: 100%;
+  transform: translateX(-100%);
+  background-color: #bb88ff;
+}
+
+.user-health-data-progress-bar.bloodOxygen {
+  background-color: #0099ee;
+}
+
+.user-health-data-info.stress {
+  width: 1.6vw;
+  padding-bottom: 0.3vw;
+}
+
+.user-health-data-info.sleep {
+  width: 3.3vw;
+  background-color: #bc88ffa2;
+}
+
+.user-health-data-info.bloodOxygen {
+  width: 2.8vw;
+  background-color: #009beea2;
+}

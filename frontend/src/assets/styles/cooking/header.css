@@ -1,0 +1,46 @@
+.cooking-header {
+  width: 100%;
+  height: 4vw;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 1vw;
+}
+
+.cooking-header-logo {
+  height: 2vw;
+}
+
+.cooking-header-title {
+  color: var(--primary-color);
+  cursor: pointer;
+  display: flex;
+}
+
+.cooking-header-icon-box {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-left: auto;
+}
+
+.cooking-header-icon {
+  height: 1.2vw;
+  margin: 0 0.7vw;
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+.cooking-header-profile {
+  height: 2vw;
+  width: 2vw;
+  border-radius: 50%;
+  background-color: white;
+  cursor: pointer;
+  object-fit: cover;
+}
+
+.header-back-button {
+  opacity: 0.5;
+  cursor: pointer;
+}

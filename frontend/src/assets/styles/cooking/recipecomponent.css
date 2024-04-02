@@ -1,0 +1,86 @@
+.recipe-component-list-container {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  padding: 1vw;
+  overflow-y: scroll;
+}
+
+.recipe-component-list-container::-webkit-scrollbar {
+  display: none;
+}
+
+.component-list-menu {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 1vw;
+}
+
+.serving-select-menu {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-left: auto;
+}
+
+.serving-select-button {
+  height: 1.3vw;
+  margin: 0 0.8vw;
+  cursor: pointer;
+}
+
+.serving-value {
+  width: 4vw;
+  text-align: center;
+}
+
+.component-list-title {
+  font-size: 1.2vw;
+  font-weight: 600;
+  margin-bottom: 0.3vw;
+}
+
+.ingredient-list-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 2vw;
+  font-size: 1vw;
+  line-height: 2vw;
+  margin: 0.7vw 0;
+  padding: 1.4vw 0;
+}
+
+.ingredient-list-item::after {
+  content: '';
+  position: absolute;
+  bottom: -0.35vw;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 92%;
+  height: 0.01vw;
+  background-color: #333;
+  opacity: 0.2;
+}
+
+.ingredient-item-image {
+  width: 2vw;
+  height: 2vw;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.item-name {
+  flex-grow: 1;
+  margin-left: 0.6vw;
+}
+
+.item-amount {
+  margin-right: 0.4vw;
+}
+
+.ingredient-list-box {
+  margin-bottom: 1.5vw;
+}

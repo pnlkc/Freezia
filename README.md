@@ -70,7 +70,7 @@
 <img src="https://github.com/user-attachments/assets/c68bc743-23a6-4362-8910-606d1fd07b30" width="300"/>
 
 ### 워치 냉장고 재고 확인
-<img src="[https://github.com/user-attachments/assets/c68bc743-23a6-4362-8910-606d1fd07b30](https://github.com/user-attachments/assets/d454ba56-c623-470e-966d-fbee206f5163)" width="300"/>
+<img src="https://github.com/user-attachments/assets/d454ba56-c623-470e-966d-fbee206f5163" width="300"/>
   
 &nbsp;
 &nbsp;
